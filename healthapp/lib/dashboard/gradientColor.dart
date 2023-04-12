@@ -17,4 +17,9 @@ class GradientColor {
   static List<Color> getGradient(int c){
     return [hueShift(c), Color(c)];
   }
+
+  static Color lightenColor(int c) {
+    var hslColor = HSLColor.fromColor(Color(c));
+    return hslColor.withLightness(0.92).withSaturation(1).toColor();
+  }
 }
