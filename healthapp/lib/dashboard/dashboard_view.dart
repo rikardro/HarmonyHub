@@ -6,13 +6,30 @@ import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 
 class DashboardView extends StatelessWidget {
-  const DashboardView({Key? key}) : super(key: key);
+  DashboardView({Key? key}) : super(key: key);
+
+  final topTextStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Välkommen!", style: topTextStyle,),
+                Row(
+                  children: [
+                    Icon(Icons.location_on, color: Colors.grey[600],),
+                    Text("Göteborg", style: topTextStyle)
+                  ],
+                )
+              ],
+            ),
+          ),
           Row(
             children: [
               WeatherCard(),
