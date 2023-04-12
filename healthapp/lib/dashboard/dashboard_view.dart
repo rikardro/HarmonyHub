@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 
 class DashboardView extends StatelessWidget {
@@ -13,10 +14,11 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
+      child: ListView(
+        physics: BouncingScrollPhysics(),
         children: [
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -64,6 +66,20 @@ class DashboardView extends StatelessWidget {
               )
             ],
           ),
+          Container(
+            margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Suggested running days",
+              style: topTextStyle,
+            ),
+          ),
+          Column(
+            children: [
+              SuggestedRunningCard(),
+              SuggestedRunningCard()
+            ],
+          )
         ],
       ),
     );
