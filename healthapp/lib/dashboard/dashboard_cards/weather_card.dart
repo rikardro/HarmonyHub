@@ -22,18 +22,21 @@ class WeatherCard extends StatelessWidget {
     return DashboardCard(
       flex: 12, color: const Color(0xFFFF9900),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Image(image: AssetImage('assets/images/3d-sun-with-smile-face-cartoon-style-rendered-object-illustration-png 1.png'),
               width: 100,),
             ],
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                margin: const EdgeInsets.only(left: 25),
+                margin: const EdgeInsets.only(right: 30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -41,8 +44,8 @@ class WeatherCard extends StatelessWidget {
                     Text("17 °C", style: TextStyle(fontSize: 20, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows)),
                     Text("3 m/s", style: TextStyle(fontSize: 16, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows))
                   ],
+                ),
               ),
-            ),
             ],
           ),
         ],
