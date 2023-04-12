@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class DashboardCard extends StatefulWidget {
-  const DashboardCard({Key? key, this.flex = 1, this.color = Colors.white}) : super(key: key);
+  const DashboardCard({Key? key, this.flex = 1, this.color = Colors.white, this.height = 120, this.child}) : super(key: key);
   final int? flex;
   final Color? color;
+  final double? height;
+  final Widget? child;
 
   @override
   State<DashboardCard> createState() => _DashboardCardState();
@@ -16,7 +18,7 @@ class _DashboardCardState extends State<DashboardCard> {
       flex: widget.flex!,
       child: Container(
         margin: EdgeInsets.all(10),
-        height: 120,
+        height: widget.height,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: widget.color!,
@@ -30,7 +32,7 @@ class _DashboardCardState extends State<DashboardCard> {
             ),
           ],
         ),
-        child: Container(),
+        child: widget.child,
       ));
   }
 }
