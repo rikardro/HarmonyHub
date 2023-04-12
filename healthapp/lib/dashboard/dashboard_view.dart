@@ -14,10 +14,7 @@ class DashboardView extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            children: [
-              WeatherCard(),
-              AirQualityCard()
-            ],
+            children: [WeatherCard(), AirQualityCard()],
           ),
           Row(
             children: [
@@ -28,11 +25,10 @@ class DashboardView extends StatelessWidget {
                 iconColor: Colors.grey[600],
               ),
               const HealthCard(
-                title: "Heart",
-                value: "69",
-                icon: Icons.favorite,
-                iconColor: Colors.red
-              )
+                  title: "Heart",
+                  value: "69",
+                  icon: Icons.favorite,
+                  iconColor: Colors.red)
             ],
           ),
           Row(
@@ -46,7 +42,9 @@ class DashboardView extends StatelessWidget {
                 iconColor: Colors.grey[600],
                 topPadding: 24,
               ),
-              CaffeineCard()
+              CaffeineCard(
+                caffeine: 50,
+              )
             ],
           ),
         ],
