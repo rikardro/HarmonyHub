@@ -1,7 +1,6 @@
 // Gets the information from the api in json format and parses it to a dart object
 import 'dart:convert';
 import 'package:healthapp/backend/weather/parseJson.dart';
-import 'package:healthapp/backend/weather/weatherJson.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthapp/backend/weather/apiConstants.dart';
 
