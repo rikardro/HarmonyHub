@@ -1,14 +1,15 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:healthapp/util/weatherType.dart';
 
-
-
 class JsonParser{
-  HashMap weatherTypeMap = HashMap<String, WeatherType>();
+  late HourlyWeatherCollection hwc;
+  HashMap weatherTypeMap = HashMap<int, WeatherType>();
 
-  JsonParser(){
+  JsonParser(String weatherJson){
     initWeatherTypes();
+    initHwc(weatherJson);
   }
 
   void initWeatherTypes(){
@@ -38,6 +39,45 @@ class JsonParser{
     weatherTypeMap[85] = WeatherType.snowing; // slight snow showers
     weatherTypeMap[86] = WeatherType.snowing; // heavy snow showers
   }
+
+  void initHwc(String weatherJson){
+      List<String> hourlyList = weatherJson.split("hourly");
+      String hourlyString = hourlyList[2].substring(2, hourlyList[2].length - 1);
+      Map<String, dynamic> valuemap = json.decode(hourlyString);
+      this.hwc = HourlyWeatherCollection.fromJson(valuemap);
+  }
+}
+
+class HourlyWeatherCollection {
+  HourlyWeatherCollection({required this.time, required this.temperature_2m, required this.precipitation, 
+  required this.snowfall, required this.snow_depth, required this.weathercode, required this.cloudcover,
+  required this.windspeed_10m, required this.winddirection_10m});
+  List<dynamic> time;  
+  List<double> temperature_2m;
+  List<double> precipitation;
+  List<double> snowfall;
+  List<double> snow_depth;
+  List<int> weathercode;
+  List<int> cloudcover;
+  List<double> windspeed_10m;
+  List<int> winddirection_10m;
+
+  factory HourlyWeatherCollection.fromJson(Map <String, dynamic> data){
+    final time = data['time'].cast<String>() as List<String>; 
+    final temperature_2m = data['temperature_2m'].cast<double>() as List<double>; 
+    final precipitation = data['precipitation'].cast<double>() as List<double>;
+    final snowfall = data['snowfall'].cast<double>() as List<double>;
+    final snow_depth = data['snow_depth'].cast<double>() as List<double>;
+    final weathercode = data['weathercode'].cast<int>() as List<int>;
+    final cloudcover = data['cloudcover'].cast<int>() as List<int>;
+    final windspeed_10m = data['windspeed_10m'].cast<double>() as List<double>;
+    final winddirection_10m = data['winddirection_10m'].cast<int>() as List<int>;
+    return HourlyWeatherCollection(time: time, temperature_2m: temperature_2m, 
+    precipitation: precipitation, snowfall: snowfall, snow_depth: snow_depth, 
+    weathercode: weathercode, cloudcover: cloudcover, 
+    windspeed_10m: windspeed_10m, winddirection_10m: winddirection_10m);
+  }
+
 }
 
 
