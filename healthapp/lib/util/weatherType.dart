@@ -1,1 +1,1 @@
-enum WeatherType { cloudy, clear, snowing, raining, halfCloudy }
+enum WeatherType { cloudy, clear, foggy, snowing, raining, halfCloudy }
