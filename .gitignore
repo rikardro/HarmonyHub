@@ -1,0 +1,12 @@
+
+.vscode/c_cpp_properties.json
+.vscode/settings.json
+healthapp/linux/flutter/generated_plugin_registrant.cc
+healthapp/linux/flutter/generated_plugin_registrant.cc
+healthapp/linux/flutter/generated_plugin_registrant.h
+healthapp/linux/flutter/generated_plugins.cmake
+healthapp/macos/Flutter/GeneratedPluginRegistrant.swift
+healthapp/pubspec.lock
+healthapp/windows/flutter/generated_plugin_registrant.cc
+healthapp/windows/flutter/generated_plugin_registrant.h
+healthapp/windows/flutter/generated_plugins.cmake
