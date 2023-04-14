@@ -76,10 +76,14 @@ class _DashboardCardState extends State<DashboardCard> {
                   top: -40,
                   child: circle(170, 0)
               ) : Container(),
-              Expanded(child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: widget.child!,
-              ))
+              Stack(
+                children: [
+                  Positioned.fill(child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: widget.child!,
+                  )),
+                ],
+              )
             ],
           ),
         ));
