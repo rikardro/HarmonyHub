@@ -1,0 +1,12 @@
+Individual Reflection Week 1 - Isac Ingvast Wennerström : 
+
+1.   For next week I would like to improve my understanding and abilities in the Flutter Framework and the Dart language.
+This is the first time I'm working with either of these tools so I have learnt a lot during this first week. 
+I would also like to improve my teamwork so that we can be more efficient in the future. 
+
+2.   My contributions this week where split in two parts. Initially my teammembers and I spent some time really planning what
+we where going to be doing and how during this sprint. During this planning stage I helped with formulating a valid plan for the week. 
+Codewise my contributions have largely been towards helping my teammates with their problems. Together with Carl however I developed a 
+standard utility class for sending weather data from our backend to our frontend. During the next sprint I'm going to focus more on
+helping my teammates and working together with them than I did during this week. This feels like the largest hindrance of my contributions 
+and is something I should definetly improve. 
