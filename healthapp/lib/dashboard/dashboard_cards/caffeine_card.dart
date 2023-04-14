@@ -20,7 +20,7 @@ class CaffeineCard extends StatelessWidget {
         if (state.status == CaffeineStatus.loading) {
           return CircularProgressIndicator();
         } else {
-          final caffeine = state.caffeine;
+          final caffeine = state.caffeine!.toInt();
           final status = state.caffeineStatus;
           return Padding(
             padding: const EdgeInsets.only(right: 15.0, left: 15.0),

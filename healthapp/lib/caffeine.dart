@@ -3,19 +3,19 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Caffeine {
-  final String id;
+  //final String id;
   //final String userId;
   final double amount;
-  //final String status;
-  final Timestamp timestamp;
+  final String status;
+  //final Timestamp timestamp;
 
-  Caffeine({required this.id, required this.timestamp, required this.amount});
+  Caffeine({required this.amount, required this.status});
 
-  static Caffeine fromFirestore(QueryDocumentSnapshot<Object?> doc) {
+  /* static Caffeine fromFirestore(QueryDocumentSnapshot<Object?> doc) {
     // TODO: NULL CHECK!
     // TODO: fix status?
 
-    log(doc.data().toString());
+    //log(doc.data().toString());
 
     /* final caffeine = Caffeine(
       id: doc.id,
@@ -31,10 +31,10 @@ class Caffeine {
  
     log(caffeine.toString());
     return caffeine;
-  }
+  } */
 
-  @override
+  /* @override
   String toString() {
     return 'Caffeine { amount: $amount, timestamp: $timestamp }';
-  }
+  } */
 }
