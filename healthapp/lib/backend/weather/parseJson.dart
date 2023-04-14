@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:healthapp/util/weatherInformation.dart';
 import 'package:healthapp/util/weatherType.dart';
 
 class JsonParser{
@@ -46,13 +47,26 @@ class JsonParser{
       Map<String, dynamic> valuemap = json.decode(hourlyString);
       this.hwc = HourlyWeatherCollection.fromJson(valuemap);
   }
+
+  List<WeatherInformation> jsonDataConverter(){
+    List<WeatherInformation> weatherInformation = [];
+
+    for( int i = 0 ; i < hwc.time.length ; i++ ){
+      WeatherType wt = weatherTypeMap[hwc.weathercode[i]];
+      WeatherInformation wi = WeatherInformation(hwc.time[i], hwc.temperature_2m[i], hwc.precipitation[i], 
+      hwc.snowfall[i], hwc.snow_depth[i], wt, hwc.cloudcover[i], hwc.windspeed_10m[i],
+      hwc.winddirection_10m[i]);
+      weatherInformation.add(wi);
+    }
+    return weatherInformation;
+  }
 }
 
 class HourlyWeatherCollection {
   HourlyWeatherCollection({required this.time, required this.temperature_2m, required this.precipitation, 
   required this.snowfall, required this.snow_depth, required this.weathercode, required this.cloudcover,
   required this.windspeed_10m, required this.winddirection_10m});
-  List<dynamic> time;  
+  List<String> time;  
   List<double> temperature_2m;
   List<double> precipitation;
   List<double> snowfall;

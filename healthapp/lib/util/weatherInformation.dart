@@ -2,23 +2,28 @@ import 'package:healthapp/util/cardinalDirections.dart';
 import 'package:healthapp/util/weatherType.dart';
 
 class WeatherInformation {
+  final String _time;
   final double _temperature;
-  final double _windspeed;
   final double _precipitation;
+  final double _snowfall;
+  final double _snow_depth;
   final WeatherType _weather;
+  final int _cloudcover;
+  final double _windspeed;
+  final int _windDegrees;
   final CardinalDirection _windDirection;
-  final double _windDegrees;
+  
 
-  WeatherInformation(
-      {temperature = 0,
-      windspeed = 0,
-      precipitation = 0,
-      weather = WeatherType.clear,
-      windDegrees = 0})
-      : _temperature = temperature,
-        _windspeed = windspeed,
+  WeatherInformation(String time, double temperature, double precipitation, double snowfall, 
+  double snow_depth, WeatherType weather, int cloudcover, double windspeed, int windDegrees)
+      : _time = time,
+        _temperature = temperature,
         _precipitation = precipitation,
+        _snowfall = snowfall,
+        _snow_depth = snow_depth,
         _weather = weather,
+        _cloudcover = cloudcover,
+        _windspeed = windspeed,
         _windDegrees = windDegrees,
         _windDirection = _convertDegreesToCardinal(windDegrees);
 
@@ -27,10 +32,10 @@ class WeatherInformation {
   double get precipitation => _precipitation;
   WeatherType get weatherType => _weather;
   CardinalDirection get windDirectionCardinal => _windDirection;
-  double get windDirectionDegrees => _windDegrees;
+  int get windDirectionDegrees => _windDegrees;
 
-  static CardinalDirection _convertDegreesToCardinal(double degrees) {
-    int amount = ((degrees + 22.5) ~/ 45) % 8;
+  static CardinalDirection _convertDegreesToCardinal(int degrees) {
+    int amount = ((degrees.toDouble() + 22.5) ~/ 45) % 8;
     // amount is an expression converting degrees into which 45* turn it represents.
     switch (amount) {
       case 0:

@@ -1,6 +1,7 @@
 // Gets the information from the api in json format and parses it to a dart object
 import 'dart:convert';
 import 'package:healthapp/backend/weather/parseJson.dart';
+import 'package:healthapp/util/weatherInformation.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthapp/backend/weather/apiConstants.dart';
 
@@ -12,7 +13,9 @@ class ApiParser{
     var response = await http.get(url);
     if(response.statusCode == 200){
       JsonParser jsonParser = JsonParser(response.body.toString());
-      print(jsonParser.hwc.temperature_2m.toString());
+      List<WeatherInformation> wi = jsonParser.jsonDataConverter();
+      print(jsonParser.hwc.temperature_2m.toString() + "\n");
+      print(wi[1].temperature.toString());
     }
   }
 
