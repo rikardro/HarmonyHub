@@ -14,25 +14,27 @@ class AirQualityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return DashboardCard(
       flex: 5, color: const Color(0xFF7EC9FF),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Air quality", style: TextStyle(shadows: [textShadow], color: Colors.white)),
-          const Image(image: AssetImage('assets/images/Air.png')),
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [Color(0xFF05FF00), Color(0xFF00FFFF)],
-            ).createShader(bounds),
-            child: Text('Good',
-              style: TextStyle(
-                shadows: [textShadow], 
-                fontWeight: FontWeight.bold,
-                fontSize: 25.0,
-                color: Colors.white,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Air quality", style: TextStyle(shadows: [textShadow], color: Colors.white)),
+            const Image(image: AssetImage('assets/images/Air.png')),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [Color(0xFF05FF00), Color(0xFF00FFFF)],
+              ).createShader(bounds),
+              child: Text('Good',
+                style: TextStyle(
+                  shadows: [textShadow], 
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25.0,
+                  color: Colors.white,
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ), // CONTENT HERE
     );
   }
