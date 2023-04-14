@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:healthapp/util/weatherType.dart';
+import '../../backend/weather/weather.dart';
+import '../../util/weatherInformation.dart';
 import '../dashboard_card.dart';
 
 class WeatherCard extends StatelessWidget {
-  const WeatherCard(
+   WeatherCard(
       {Key? key,
       required this.weather,
       required this.degrees,
@@ -13,7 +16,9 @@ class WeatherCard extends StatelessWidget {
   final double degrees;
   final double wind;
 
-  AssetImage weatherImage() {
+  DateTime now = DateTime.now();
+
+  AssetImage weatherImage(weather) {
     switch (weather) {
       case ("Sunny"):
         {
@@ -23,7 +28,7 @@ class WeatherCard extends StatelessWidget {
         {
           return const AssetImage('assets/images/raining.png');
         }
-      case ("Cloudy"):
+      case ("cloudy"):
         {
           return const AssetImage('assets/images/cloudy.png');
         }
@@ -46,7 +51,7 @@ class WeatherCard extends StatelessWidget {
     }
   }
 
-  Color weatherColor() {
+  Color weatherColor(weather) {
     switch (weather) {
       case ("Sunny"):
         {
@@ -54,9 +59,9 @@ class WeatherCard extends StatelessWidget {
         }
       case ("Rainy"):
         {
-          return Color.fromARGB(255, 137, 192, 255);
+          return const Color.fromARGB(255, 137, 192, 255);
         }
-      case ("Cloudy"):
+      case ("cloudy"):
         {
           return const Color.fromARGB(255, 152, 166, 182);
         }
@@ -66,7 +71,7 @@ class WeatherCard extends StatelessWidget {
         }
       case ("Half cloudy"):
         {
-          return Color.fromARGB(255, 255, 216, 143);
+          return const Color.fromARGB(255, 255, 216, 143);
         }
       case ("Snowing"):
         {
@@ -79,8 +84,15 @@ class WeatherCard extends StatelessWidget {
     }
   }
 
+  Future<List<WeatherInformation>> fetchWeatherData() async {
+    ApiParser apiParser = ApiParser();
+    List<WeatherInformation> wi = await apiParser.requestWeather(57.71, 11.97);
+    return wi;
+  }
+
   @override
   Widget build(BuildContext context) {
+
     final baseTextStyle = TextStyle(
       color: Colors.white,
       fontSize: 15,
@@ -94,56 +106,46 @@ class WeatherCard extends StatelessWidget {
       ],
     );
 
-    return DashboardCard(
-        flex: 12,
-        color: weatherColor(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image(
-                  image: weatherImage(),
-                  width: 100,
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(right: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(weather,
-                          style: TextStyle(
-                              fontSize: 25,
-                              color: baseTextStyle.color,
-                              fontFamily: baseTextStyle.fontFamily,
-                              shadows: baseTextStyle.shadows,
-                              fontWeight: FontWeight.w500)),
-                      Text("$degrees °C",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: baseTextStyle.color,
-                              fontFamily: baseTextStyle.fontFamily,
-                              shadows: baseTextStyle.shadows)),
-                      Text("$wind m/s",
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: baseTextStyle.color,
-                              fontFamily: baseTextStyle.fontFamily,
-                              shadows: baseTextStyle.shadows))
-                    ],
+    return FutureBuilder(
+      future: fetchWeatherData(),
+      builder: (context, AsyncSnapshot<List<WeatherInformation>> weatherData){
+        if(weatherData.hasData){
+        return DashboardCard(
+          flex: 12, color: weatherColor(weatherData.data![now.hour].weatherType.toShortString()),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(image: weatherImage(weatherData.data![now.hour].weatherType.toShortString()),
+                  width: 100)
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(weatherData.data![now.hour].weatherType.toShortString(), style: TextStyle(fontSize: 25, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows, fontWeight: FontWeight.w500)),
+                        Text("${weatherData.data![now.hour].temperature} °C", style: TextStyle(fontSize: 20, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows)),
+                        Text("${weatherData.data![now.hour].windspeed} m/s", style: TextStyle(fontSize: 16, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows))
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ));
+                ],
+              ),
+            ],
+          ));
+      }else{
+        return const DashboardCard(flex: 12, color: Color(0xFFFF9900),child: Text("Kunde inte ladda vädret"));
+      }});
+    
+    
   }
 }
