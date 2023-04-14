@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:healthapp/backend/weather/customExceptions.dart';
 import 'package:healthapp/backend/weather/parseJson.dart';
 import 'package:healthapp/util/weatherInformation.dart';
+import 'package:healthapp/util/weatherType.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthapp/backend/weather/apiConstants.dart';
 
@@ -16,10 +17,13 @@ class ApiParser{
       JsonParser jsonParser = JsonParser(response.body.toString());
       List<WeatherInformation> wi = jsonParser.jsonDataConverter();
       return wi;
-    } else {
-      throw APIException('could not load data from Meteo weather API');
+      } 
+      else {
+        throw APIException('could not load data from Meteo weather API');
     }
   }
+
+  
 
 }
 
