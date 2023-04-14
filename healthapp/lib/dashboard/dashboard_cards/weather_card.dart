@@ -54,7 +54,7 @@ class WeatherCard extends StatelessWidget {
         }
       case ("Rainy"):
         {
-          return const Color.fromARGB(255, 71, 157, 255);
+          return Color.fromARGB(255, 137, 192, 255);
         }
       case ("Cloudy"):
         {
