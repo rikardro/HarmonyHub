@@ -8,6 +8,8 @@ class WeatherCard extends StatelessWidget {
   final double degrees;
   final double wind;
 
+
+
   @override
   Widget build(BuildContext context) {
     final baseTextStyle = TextStyle(
@@ -31,7 +33,7 @@ class WeatherCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              Image(image: AssetImage('assets/images/3d-sun-with-smile-face-cartoon-style-rendered-object-illustration-png 1.png'),
+              Image(image: AssetImage('assets/images/sun.png'),
               width: 100,),
             ],
           ),
