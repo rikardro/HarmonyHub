@@ -9,7 +9,7 @@ import 'package:healthapp/backend/weather/apiConstants.dart';
 class ApiParser{
   
   Future<List<WeatherInformation>> requestWeather(double latitude, double longitude) async{
-    String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m";
+    String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&timezone=Europe%2FBerlin";
     var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
     var response = await http.get(url);
     if(response.statusCode == 200){
@@ -25,6 +25,6 @@ class ApiParser{
 
   void main(){
     ApiParser api = new ApiParser();
-    api.requestWeather(58.0, 12.0);
+    api.requestWeather(57.71, 11.97);
   }
 
