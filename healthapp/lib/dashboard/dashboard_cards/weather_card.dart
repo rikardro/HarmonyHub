@@ -33,7 +33,7 @@ class WeatherCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              Image(image: AssetImage('assets/images/sun.png'),
+              Image(image: AssetImage('assets/images/clear_day.png'),
               width: 100,),
             ],
           ),
