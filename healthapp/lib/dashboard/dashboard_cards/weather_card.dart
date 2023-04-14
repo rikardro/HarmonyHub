@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import '../dashboard_card.dart';
 
 class WeatherCard extends StatelessWidget {
-  const WeatherCard({Key? key}) : super(key: key);
+  const WeatherCard({Key? key, required this.weather, required this.degrees, required this.wind}) : super(key: key);
   
+  final String weather;
+  final double degrees;
+  final double wind;
+
   @override
   Widget build(BuildContext context) {
     final baseTextStyle = TextStyle(
@@ -40,9 +44,9 @@ class WeatherCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Sunny", style: TextStyle(fontSize: 25, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows, fontWeight: FontWeight.w500)),
-                    Text("17 °C", style: TextStyle(fontSize: 20, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows)),
-                    Text("3 m/s", style: TextStyle(fontSize: 16, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows))
+                    Text(weather, style: TextStyle(fontSize: 25, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows, fontWeight: FontWeight.w500)),
+                    Text("$degrees °C", style: TextStyle(fontSize: 20, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows)),
+                    Text("$wind m/s", style: TextStyle(fontSize: 16, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows))
                   ],
                 ),
               ),

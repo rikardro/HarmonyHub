@@ -33,7 +33,7 @@ class DashboardView extends StatelessWidget {
             ),
           ),
           Row(
-            children: [WeatherCard(), AirQualityCard()],
+            children: [const WeatherCard(weather: "Sunny", degrees: 19, wind: 4), AirQualityCard(quality: "Okey")],
           ),
           Row(
             children: [
