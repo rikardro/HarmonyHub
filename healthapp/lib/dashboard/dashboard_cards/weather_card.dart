@@ -8,7 +8,7 @@ class WeatherCard extends StatelessWidget {
   final double degrees;
   final double wind;
 
-
+  
 
   @override
   Widget build(BuildContext context) {
