@@ -5,18 +5,7 @@ import '../../util/weatherInformation.dart';
 import '../dashboard_card.dart';
 
 class WeatherCard extends StatelessWidget {
-   WeatherCard(
-      {Key? key,
-      required this.weather,
-      required this.degrees,
-      required this.wind})
-      : super(key: key);
-
-  final String weather;
-  final double degrees;
-  final double wind;
-
-  DateTime now = DateTime.now();
+   WeatherCard( {Key? key,}) : super(key: key);
 
   AssetImage weatherImage(weather) {
     switch (weather) {
@@ -84,9 +73,9 @@ class WeatherCard extends StatelessWidget {
     }
   }
 
-  Future<List<WeatherInformation>> fetchWeatherData() async {
+  Future<WeatherInformation> fetchWeatherData() async {
     ApiParser apiParser = ApiParser();
-    List<WeatherInformation> wi = await apiParser.requestWeather(57.71, 11.97);
+    WeatherInformation wi = await apiParser.requestCurrentWeather(57.71, 11.97);
     return wi;
   }
 
@@ -108,10 +97,10 @@ class WeatherCard extends StatelessWidget {
 
     return FutureBuilder(
       future: fetchWeatherData(),
-      builder: (context, AsyncSnapshot<List<WeatherInformation>> weatherData){
+      builder: (context, AsyncSnapshot<WeatherInformation> weatherData){
         if(weatherData.hasData){
         return DashboardCard(
-          flex: 12, color: weatherColor(weatherData.data![now.hour].weatherType.toShortString()),
+          flex: 12, color: weatherColor(weatherData.data!.weatherType.toShortString()),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -119,7 +108,7 @@ class WeatherCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image(image: weatherImage(weatherData.data![now.hour].weatherType.toShortString()),
+                  Image(image: weatherImage(weatherData.data!.weatherType.toShortString()),
                   width: 100)
                 ],
               ),
@@ -132,9 +121,9 @@ class WeatherCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(weatherData.data![now.hour].weatherType.toShortString(), style: TextStyle(fontSize: 25, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows, fontWeight: FontWeight.w500)),
-                        Text("${weatherData.data![now.hour].temperature} °C", style: TextStyle(fontSize: 20, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows)),
-                        Text("${weatherData.data![now.hour].windspeed} m/s", style: TextStyle(fontSize: 16, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows))
+                        Text(weatherData.data!.weatherType.toShortString(), style: TextStyle(fontSize: 25, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows, fontWeight: FontWeight.w500)),
+                        Text("${weatherData.data!.temperature} °C", style: TextStyle(fontSize: 20, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows)),
+                        Text("${weatherData.data!.windspeed} m/s", style: TextStyle(fontSize: 16, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows))
                       ],
                     ),
                   ),
