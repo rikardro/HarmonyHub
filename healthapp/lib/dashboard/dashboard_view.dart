@@ -1,15 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 
+import '../bloc/caffeine_bloc.dart';
+
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
 
-  final topTextStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
+  final topTextStyle = TextStyle(
+      fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +27,16 @@ class DashboardView extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Välkommen!", style: topTextStyle,),
+                Text(
+                  "Välkommen!",
+                  style: topTextStyle,
+                ),
                 Row(
                   children: [
-                    Icon(Icons.location_on, color: Colors.grey[600],),
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.grey[600],
+                    ),
                     Text("Göteborg", style: topTextStyle)
                   ],
                 )
@@ -61,8 +72,10 @@ class DashboardView extends StatelessWidget {
                 iconColor: Colors.grey[600],
                 topPadding: 24,
               ),
-              CaffeineCard(
-                caffeine: 50,
+              BlocProvider(
+                create: (context) => CaffeineBloc(CaffeineRepository())
+                  ..add(const FetchCaffeine()),
+                child: CaffeineCard(),
               )
             ],
           ),
@@ -75,10 +88,7 @@ class DashboardView extends StatelessWidget {
             ),
           ),
           Column(
-            children: [
-              SuggestedRunningCard(),
-              SuggestedRunningCard()
-            ],
+            children: [SuggestedRunningCard(), SuggestedRunningCard()],
           )
         ],
       ),
