@@ -31,9 +31,13 @@ class ApiParser{
     var response = await http.get(url);
     var time = DateTime.now();
     int hour = time.hour;
+    double currentTime = (time.hour + time.minute/60); 
+
+
     if(time.minute >= 45){
       hour += 1;
     }
+
     if(response.statusCode == 200){
       JsonParser jsonParser = JsonParser(response.body.toString());
       List<WeatherInformation> wi = jsonParser.jsonDataConverter();
@@ -46,11 +50,31 @@ class ApiParser{
     }
   }
   
+  Future<SunUp> getSunUp(double latitude, double longitude) async{
+    String request = "lat=$latitude&lng=$longitude&timezone=EET&date=today";
+    var url = Uri.parse(ApiConstants.sunsetSunrise + request);
+    var response = await http.get(url);
+    SunUp sunUp = parseSunUpJson(response.body.toString());
+    if (response.statusCode == 200){
+      return sunUp;
+    }
+    else{
+      throw APIException('could not load data from sunrise api');
+    }
+  }
+
+  SunUp parseSunUpJson(String jsonString){
+    String split1 = jsonString.split("results")[1];
+    String split2 = split1.split("}")[0];
+    String sunUpJson = "${split2.substring(2)}}"; 
+    Map<String, dynamic> valuemap = json.decode(sunUpJson);
+    return SunUp(valuemap["sunrise"], valuemap["sunset"], valuemap["day_length"]);
+  }
 
 }
 
   void main(){
     ApiParser api = new ApiParser();
-    var wi = api.requestWeather(57.71, 11.97);
+    var wi = api.getSunUp(57.71, 11.97);
   }
 
