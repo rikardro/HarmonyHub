@@ -31,6 +31,8 @@ class CaffeineCard extends StatelessWidget {
                   builder: (context) => CaffeineDetailedView(),
                 ),
               );
+              /* context.read<CaffeineBloc>().add(const AddCaffeine(
+                  amount: 100, drinkType: "Cappuccino")); */
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 15.0, left: 15.0),

@@ -41,11 +41,10 @@ class CaffeineRepository {
     log(querySnapshot.docs.length.toString());
     log("got here hej");
 
-    return Caffeine(amount: 0, status: "Low");
-    /* final total = getTotalCaffeine(querySnapshot);
+    final total = getTotalCaffeine(querySnapshot);
     final status = _getStatus(total);
 
-    return Caffeine(amount: total, status: status); */
+    return Caffeine(amount: total, status: status);
   }
 
   /// Returns the status of the caffeine level.
@@ -94,12 +93,14 @@ class CaffeineRepository {
   }
 
   /// Adds a new caffeine consumption to the database
-  Future<void> addConsumedCaffeine(String userId, int caffeineLevel) async {
+  Future<void> addConsumedCaffeine(double caffeineLevel, String drinkType) async {
     try {
+      //TODO: needs null check?
       await FirebaseFirestore.instance.collection('ConsumptionHistory').add({
-        'userId': userId,
+        'userId': provider.currentUser?.id,
         'amountConsumed': caffeineLevel,
         'timeConsumed': FieldValue.serverTimestamp(),
+        'drinkType': drinkType,
       });
       print('Document added successfully!');
     } catch (e) {

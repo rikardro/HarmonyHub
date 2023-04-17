@@ -25,6 +25,21 @@ class CaffeineBloc extends Bloc<CaffeineEvent, CaffeineState> {
         }
       },
     );
+
+    on<AddCaffeine>(
+      (event, emit) async {
+        emit(state.copyWith(status: CaffeineStatus.loading));
+        try {
+          await repository.addConsumedCaffeine(event.amount, event.drinkType);
+          emit(state.copyWith(
+              status: CaffeineStatus.success,
+              caffeine: null,
+              caffeineStatus: null));
+        } catch (_) {
+          emit(state.copyWith(status: CaffeineStatus.error));
+        }
+      },
+    );
   }
 }
 
@@ -35,6 +50,12 @@ abstract class CaffeineEvent {
 
 class FetchCaffeine extends CaffeineEvent {
   const FetchCaffeine();
+}
+
+class AddCaffeine extends CaffeineEvent {
+  final double amount;
+  final String drinkType;
+  const AddCaffeine({required this.amount, required this.drinkType});
 }
 
 enum CaffeineStatus { loading, success, error }

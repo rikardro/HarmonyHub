@@ -23,7 +23,6 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("got here1");
     return Container(
       child: ListView(
         physics: BouncingScrollPhysics(),
