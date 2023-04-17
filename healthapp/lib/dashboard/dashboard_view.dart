@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthapp/backend/weather/weather.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
+import 'package:healthapp/util/weatherInformation.dart';
 
 import '../bloc/caffeine_bloc.dart';
 
@@ -15,6 +17,12 @@ class DashboardView extends StatelessWidget {
 
   final topTextStyle = TextStyle(
       fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
+
+  Future<WeatherInformation> fetchWeatherData() async {
+    ApiParser apiParser = ApiParser();
+    WeatherInformation wi = await apiParser.requestCurrentWeather(57.71, 11.97);
+    return wi;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +52,15 @@ class DashboardView extends StatelessWidget {
             ),
           ),
           Row(
-            children: [WeatherCard(), AirQualityCard(quality: "Okey")],
+            children: [
+              FutureBuilder(
+                  future: fetchWeatherData(),
+                  builder:
+                      (context, AsyncSnapshot<WeatherInformation> weatherData) {
+                      return WeatherCard(weatherData);
+                  }),
+              AirQualityCard(quality: "Okey")
+            ],
           ),
           Row(
             children: [

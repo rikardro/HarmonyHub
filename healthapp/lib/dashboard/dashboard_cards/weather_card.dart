@@ -1,87 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:healthapp/util/weatherType.dart';
-import '../../backend/weather/weather.dart';
 import '../../util/weatherInformation.dart';
 import '../dashboard_card.dart';
 
 class WeatherCard extends StatelessWidget {
-   WeatherCard( {Key? key,}) : super(key: key);
+  bool isDay = true;
+  AssetImage weatherImage = const AssetImage('assets/images/clear_day.png');
+  Color weatherColor = const Color(0xFFFF9900);
+  String weather = "Kunde inte ladda vädret";
+  double temperature = 0;
+  double windSpeed = 0;
 
-  AssetImage weatherImage(weather) {
-    switch (weather) {
-      case ("Sunny"):
-        {
-          return const AssetImage('assets/images/clear_day.png');
-        }
-      case ("Rainy"):
-        {
-          return const AssetImage('assets/images/raining.png');
-        }
-      case ("cloudy"):
-        {
-          return const AssetImage('assets/images/cloudy.png');
-        }
-      case ("Foggy"):
-        {
-          return const AssetImage('assets/images/foggy.png');
-        }
-      case ("Half cloudy"):
-        {
-          return const AssetImage('assets/images/halfcloudy_day.png');
-        }
-      case ("Snowing"):
-        {
-          return const AssetImage('assets/images/snowing.png');
-        }
-      default:
-        {
-          return const AssetImage('assets/images/clear_day.png');
-        }
+  WeatherCard(AsyncSnapshot<WeatherInformation> weatherData, {Key? key})
+      : super(key: key) {
+    if (weatherData.hasData) {
+      String w = weatherData.data!.weatherType.toShortString();
+      init(w, isDay);
+      temperature = weatherData.data!.temperature;
+      windSpeed = weatherData.data!.windspeed;
     }
   }
 
-  Color weatherColor(weather) {
+  init(String weather, bool isDay) {
     switch (weather) {
-      case ("Sunny"):
+      case ("clear"):
         {
-          return const Color(0xFFFF9900);
-        }
-      case ("Rainy"):
-        {
-          return const Color.fromARGB(255, 137, 192, 255);
+          if (isDay) {
+            this.weather = "Sunny";
+            weatherImage = const AssetImage('assets/images/clear_day.png');
+            weatherColor = const Color(0xFFFF9900);
+          } else {
+            this.weather = "Clear";
+            weatherImage = const AssetImage('assets/images/clear_night.png');
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
+          }
+          break;
         }
       case ("cloudy"):
         {
-          return const Color.fromARGB(255, 152, 166, 182);
+          this.weather = "Cloudy";
+          weatherImage = const AssetImage('assets/images/cloudy.png');
+          weatherColor = const Color.fromARGB(255, 152, 166, 182);
+          break;
         }
-      case ("Foggy"):
+      case ("foggy"):
         {
-          return const Color.fromARGB(255, 194, 223, 255);
+          this.weather = "Foggy";
+          weatherImage = const AssetImage('assets/images/foggy.png');
+          weatherColor = const Color.fromARGB(255, 194, 223, 255);
+          break;
         }
-      case ("Half cloudy"):
+      case ("snowing"):
         {
-          return const Color.fromARGB(255, 255, 216, 143);
+          this.weather = "Snowing";
+          weatherImage = const AssetImage('assets/images/snowing.png');
+          weatherColor = const Color.fromARGB(255, 203, 210, 255);
+          break;
         }
-      case ("Snowing"):
+      case ("raining"):
         {
-          return const Color.fromARGB(255, 203, 210, 255);
+          this.weather = "Raining";
+          weatherImage = const AssetImage('assets/images/raining.png');
+          weatherColor = const Color.fromARGB(255, 137, 192, 255);
+          break;
+        }
+      case ("halfCloudy"):
+        {
+          if (isDay) {
+            this.weather = "Half cloudy";
+            weatherImage = const AssetImage('assets/images/halfcloudy_day.png');
+            weatherColor = const Color.fromARGB(255, 255, 216, 143);
+          }
+          else {
+            this.weather = "Half cloudy";
+            weatherImage = const AssetImage('assets/images/halfcloudy_night.png');
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
+          }
+          break;
         }
       default:
-        {
-          return const Color.fromARGB(255, 114, 180, 255);
-        }
+        this.weather = "Weather";
     }
-  }
-
-  Future<WeatherInformation> fetchWeatherData() async {
-    ApiParser apiParser = ApiParser();
-    WeatherInformation wi = await apiParser.requestCurrentWeather(57.71, 11.97);
-    return wi;
   }
 
   @override
   Widget build(BuildContext context) {
-
     final baseTextStyle = TextStyle(
       color: Colors.white,
       fontSize: 15,
@@ -95,46 +98,51 @@ class WeatherCard extends StatelessWidget {
       ],
     );
 
-    return FutureBuilder(
-      future: fetchWeatherData(),
-      builder: (context, AsyncSnapshot<WeatherInformation> weatherData){
-        if(weatherData.hasData){
-        return DashboardCard(
-          flex: 12, color: weatherColor(weatherData.data!.weatherType.toShortString()),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image(image: weatherImage(weatherData.data!.weatherType.toShortString()),
-                  width: 100)
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(right: 30),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(weatherData.data!.weatherType.toShortString(), style: TextStyle(fontSize: 25, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows, fontWeight: FontWeight.w500)),
-                        Text("${weatherData.data!.temperature} °C", style: TextStyle(fontSize: 20, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows)),
-                        Text("${weatherData.data!.windspeed} m/s", style: TextStyle(fontSize: 16, color: baseTextStyle.color, fontFamily: baseTextStyle.fontFamily, shadows: baseTextStyle.shadows))
-                      ],
-                    ),
+    return DashboardCard(
+        flex: 12,
+        color: weatherColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Image(image: weatherImage, width: 80)],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(right: 30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(weather,
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: baseTextStyle.color,
+                              fontFamily: baseTextStyle.fontFamily,
+                              shadows: baseTextStyle.shadows,
+                              fontWeight: FontWeight.w500)),
+                      Text("$temperature °C",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: baseTextStyle.color,
+                              fontFamily: baseTextStyle.fontFamily,
+                              shadows: baseTextStyle.shadows)),
+                      Text("$windSpeed m/s",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: baseTextStyle.color,
+                              fontFamily: baseTextStyle.fontFamily,
+                              shadows: baseTextStyle.shadows))
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ));
-      }else{
-        return const DashboardCard(flex: 12, color: Color(0xFFFF9900),child: Text("Kunde inte ladda vädret"));
-      }});
-    
-    
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 }
