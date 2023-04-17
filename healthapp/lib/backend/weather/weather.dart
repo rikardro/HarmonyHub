@@ -26,21 +26,26 @@ class ApiParser{
   }
 
   // returns weather for the current hour, switching to next on :45 minutes+
-  Future<WeatherInformation> requestCurrentWeather(double latitude, double longitude) async{
+  Future<WeatherInformationCurrent> requestCurrentWeather(double latitude, double longitude) async{
     String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&windspeed_unit=ms&timezone=Europe%2FBerlin";
     var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
     var response = await http.get(url);
     var time = DateTime.now();
     int hour = time.hour;
     double currentTime = (time.hour + time.minute/60);
+    
     if(time.minute >= 45){
       hour += 1;
     }
 
     if(response.statusCode == 200){
       JsonParser jsonParser = JsonParser(response.body.toString());
-      List<WeatherInformation> wi = jsonParser.jsonDataConverter();
-      WeatherInformation now = wi[hour];
+      List<WeatherInformation> wiList = jsonParser.jsonDataConverter();
+      WeatherInformation wi = wiList[hour];
+      WeatherInformationCurrent now = WeatherInformationCurrent(wi.time, wi.temperature, wi.precipitation, wi.snowfall, 
+      wi.snow_depth, wi.weather, wi.cloudcover, wi.windspeed, wi.windDegrees);
+      bool sunUp = await getSunUp(latitude, longitude);
+      now.setsun_up(sunUp);
       return now;
       } 
       else {

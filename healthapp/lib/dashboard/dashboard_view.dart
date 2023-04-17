@@ -18,9 +18,9 @@ class DashboardView extends StatelessWidget {
   final topTextStyle = TextStyle(
       fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
 
-  Future<WeatherInformation> fetchWeatherData() async {
+  Future<WeatherInformationCurrent> fetchWeatherData() async {
     ApiParser apiParser = ApiParser();
-    WeatherInformation wi = await apiParser.requestCurrentWeather(57.71, 11.97);
+    WeatherInformationCurrent wi = await apiParser.requestCurrentWeather(57.71, 11.97);
     return wi;
   }
 
@@ -56,10 +56,10 @@ class DashboardView extends StatelessWidget {
               FutureBuilder(
                   future: fetchWeatherData(),
                   builder:
-                      (context, AsyncSnapshot<WeatherInformation> weatherData) {
+                      (context, AsyncSnapshot<WeatherInformationCurrent> weatherData) {
                       return WeatherCard(weatherData);
                   }),
-              AirQualityCard(quality: "Okey")
+              AirQualityCard(quality: "Good")
             ],
           ),
           Row(
