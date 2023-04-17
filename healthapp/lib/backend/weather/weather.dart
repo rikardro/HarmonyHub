@@ -12,7 +12,7 @@ class ApiParser{
   
   // returns a list of the hourly weather information for the next seven days
   Future<List<WeatherInformation>> requestWeather(double latitude, double longitude) async{
-    String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&timezone=Europe%2FBerlin";
+    String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&windspeed_unit=ms&timezone=Europe%2FBerlin";
     var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
     var response = await http.get(url);
     if(response.statusCode == 200){
@@ -27,7 +27,7 @@ class ApiParser{
 
   // returns weather for the current hour, switching to next on :45 minutes+
   Future<WeatherInformation> requestCurrentWeather(double latitude, double longitude) async{
-    String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&timezone=Europe%2FBerlin";
+    String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&windspeed_unit=ms&timezone=Europe%2FBerlin";
     var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
     var response = await http.get(url);
     var time = DateTime.now();
