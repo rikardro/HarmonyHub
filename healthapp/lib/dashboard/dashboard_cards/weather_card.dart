@@ -4,7 +4,7 @@ import '../../util/weatherInformation.dart';
 import '../dashboard_card.dart';
 
 class WeatherCard extends StatelessWidget {
-  bool isDay = false;
+  bool isDay = true;
   AssetImage weatherImage = const AssetImage('assets/images/clear_day.png');
   Color weatherColor = const Color(0xFFFF9900);
   String weather = "Kunde inte ladda vädret";
@@ -32,7 +32,7 @@ class WeatherCard extends StatelessWidget {
           } else {
             this.weather = "Clear";
             weatherImage = const AssetImage('assets/images/clear_night.png');
-            weatherColor = Color.fromARGB(255, 150, 64, 255);
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
           }
           break;
         }
@@ -74,7 +74,7 @@ class WeatherCard extends StatelessWidget {
           else {
             this.weather = "Half cloudy";
             weatherImage = const AssetImage('assets/images/halfcloudy_night.png');
-            weatherColor = const Color.fromARGB(255, 150, 64, 255);
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
           }
           break;
         }
@@ -125,13 +125,13 @@ class WeatherCard extends StatelessWidget {
                               fontFamily: baseTextStyle.fontFamily,
                               shadows: baseTextStyle.shadows,
                               fontWeight: FontWeight.w500)),
-                      Text("${temperature} °C",
+                      Text("$temperature °C",
                           style: TextStyle(
                               fontSize: 20,
                               color: baseTextStyle.color,
                               fontFamily: baseTextStyle.fontFamily,
                               shadows: baseTextStyle.shadows)),
-                      Text("${windSpeed} m/s",
+                      Text("$windSpeed m/s",
                           style: TextStyle(
                               fontSize: 16,
                               color: baseTextStyle.color,
