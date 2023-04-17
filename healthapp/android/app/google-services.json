@@ -29,6 +29,13 @@
             {
               "client_id": "132676685431-trilu20q8418rg2c45kgeq30je7mmtg1.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "132676685431-991q4ngfb7v6ucc34r7nebfaro919i65.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.healthapp"
+              }
             }
           ]
         }
