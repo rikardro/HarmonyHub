@@ -59,7 +59,7 @@ class DashboardView extends StatelessWidget {
                       (context, AsyncSnapshot<WeatherInformation> weatherData) {
                       return WeatherCard(weatherData);
                   }),
-              AirQualityCard(quality: "Okey")
+              AirQualityCard(quality: "Poor")
             ],
           ),
           Row(
