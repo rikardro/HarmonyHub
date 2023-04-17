@@ -12,6 +12,7 @@ class CaffeineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<CaffeineBloc>().add(const FetchCaffeine());
     return DashboardCard(
       flex: 12,
       color: Color(0xFFEB7D7A),

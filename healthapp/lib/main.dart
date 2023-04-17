@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthapp/bloc/caffeine_bloc.dart';
+import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_view.dart';
 import 'package:healthapp/services/auth/auth/bloc/auth_bloc.dart';
 import 'package:healthapp/services/auth/auth/bloc/auth_event.dart';
@@ -24,15 +26,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: BlocProvider<AuthBloc>(
-        create: (context) =>
-            AuthBloc(FirebaseAuthProvider())..add(const AuthEventInitialize()),
-        child: const MyHomePage(title: "title"),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(FirebaseAuthProvider())
+            ..add(const AuthEventInitialize()),
+        ),
+        BlocProvider<CaffeineBloc>(
+          create: (context) => CaffeineBloc(
+            CaffeineRepository(),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(title: "title"),
       ),
     );
   }

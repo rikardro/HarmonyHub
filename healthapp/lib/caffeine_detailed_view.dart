@@ -59,9 +59,10 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
             ElevatedButton(
               onPressed: () {
                 log("Adding caffeine");
-                context
-                    .read<CaffeineBloc>()
-                    .add(AddCaffeine(amount: 50.0, drinkType: "Kaffe"));
+                //TODO: Why does this not work?
+                context.read<CaffeineBloc>().add(
+                      AddCaffeine(amount: 50.0, drinkType: "Kaffe"),
+                    );
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.white),

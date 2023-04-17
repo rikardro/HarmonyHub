@@ -77,10 +77,7 @@ class DashboardView extends StatelessWidget {
                 iconColor: Colors.grey[600],
                 topPadding: 24,
               ),
-              BlocProvider(
-                  create: (context) => CaffeineBloc(CaffeineRepository())
-                    ..add(const FetchCaffeine()),
-                  child: CaffeineCard()),
+              CaffeineCard(),
             ],
           ),
           Container(
