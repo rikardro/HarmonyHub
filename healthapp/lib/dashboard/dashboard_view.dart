@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart'
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 
 import '../bloc/caffeine_bloc.dart';
+import '../caffeine_detailed_view.dart';
 import '../services/auth/auth/bloc/auth_bloc.dart';
 import '../services/auth/auth/bloc/auth_event.dart';
 
@@ -20,6 +23,7 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log("got here1");
     return Container(
       child: ListView(
         physics: BouncingScrollPhysics(),
@@ -75,10 +79,9 @@ class DashboardView extends StatelessWidget {
                 topPadding: 24,
               ),
               BlocProvider(
-                create: (context) => CaffeineBloc(CaffeineRepository())
-                  ..add(const FetchCaffeine()),
-                child: CaffeineCard(),
-              )
+                  create: (context) => CaffeineBloc(CaffeineRepository())
+                    ..add(const FetchCaffeine()),
+                  child: CaffeineCard()),
             ],
           ),
           Container(
