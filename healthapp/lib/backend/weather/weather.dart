@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:healthapp/backend/weather/customExceptions.dart';
 import 'package:healthapp/backend/weather/parseJson.dart';
+import 'package:healthapp/backend/weather/sunUp.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 import 'package:healthapp/util/weatherType.dart';
 import 'package:http/http.dart' as http;
@@ -31,9 +32,7 @@ class ApiParser{
     var response = await http.get(url);
     var time = DateTime.now();
     int hour = time.hour;
-    double currentTime = (time.hour + time.minute/60); 
-
-
+    double currentTime = (time.hour + time.minute/60);
     if(time.minute >= 45){
       hour += 1;
     }
@@ -42,7 +41,6 @@ class ApiParser{
       JsonParser jsonParser = JsonParser(response.body.toString());
       List<WeatherInformation> wi = jsonParser.jsonDataConverter();
       WeatherInformation now = wi[hour];
-    
       return now;
       } 
       else {
@@ -50,13 +48,16 @@ class ApiParser{
     }
   }
   
-  Future<SunUp> getSunUp(double latitude, double longitude) async{
+  Future<bool> getSunUp(double latitude, double longitude) async{
     String request = "lat=$latitude&lng=$longitude&timezone=EET&date=today";
     var url = Uri.parse(ApiConstants.sunsetSunrise + request);
     var response = await http.get(url);
     SunUp sunUp = parseSunUpJson(response.body.toString());
+    var time = DateTime.now();
+    double currentTime = (time.hour + time.minute/60);
+    
     if (response.statusCode == 200){
-      return sunUp;
+      return sunUp.sunIsUp(currentTime);
     }
     else{
       throw APIException('could not load data from sunrise api');
@@ -75,6 +76,6 @@ class ApiParser{
 
   void main(){
     ApiParser api = new ApiParser();
-    var wi = api.getSunUp(57.71, 11.97);
+    var sun = api.getSunUp(57.71, 11.97);
   }
 
