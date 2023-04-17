@@ -33,14 +33,19 @@ class ApiParser{
     var time = DateTime.now();
     int hour = time.hour;
     double currentTime = (time.hour + time.minute/60);
+    
     if(time.minute >= 45){
       hour += 1;
     }
 
     if(response.statusCode == 200){
       JsonParser jsonParser = JsonParser(response.body.toString());
-      List<WeatherInformation> wi = jsonParser.jsonDataConverter();
-      WeatherInformation now = wi[hour];
+      List<WeatherInformation> wiList = jsonParser.jsonDataConverter();
+      WeatherInformation wi = wiList[hour];
+      WeatherInformationCurrent now = WeatherInformationCurrent(wi.time, wi.temperature, wi.precipitation, wi.snowfall, 
+      wi.snow_depth, wi.weather, wi.cloudcover, wi.windspeed, wi.windDegrees);
+      bool sunUp = await getSunUp(latitude, longitude);
+      now.setsun_up(sunUp);
       return now;
       } 
       else {
