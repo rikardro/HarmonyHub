@@ -1,6 +1,9 @@
 import 'dart:developer';
 
+import 'package:syncfusion_flutter_gauges/gauges.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -19,15 +22,15 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Caffeine"),
-        backgroundColor: Colors.purple,
+        title: const Text(""),
+        backgroundColor: Color(0xFF8D3786),
       ),
-      backgroundColor: Color(0xFF8D3786),
+      backgroundColor: const Color(0xFF8D3786),
       body: Center(
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 25),
+              margin: const EdgeInsets.only(top: 25),
               child: Column(
                 children: const [
                   Text(
@@ -55,14 +58,16 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                 ],
               ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
-                log("Adding caffeine");
                 //TODO: Why does this not work?
-                context.read<CaffeineBloc>().add(
-                      AddCaffeine(amount: 50.0, drinkType: "Kaffe"),
-                    );
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AddCaffeinePopup();
+                  },
+                );
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -72,18 +77,18 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                   ),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
+              child: const Padding(
+                padding: EdgeInsets.all(18.0),
                 child: Text("Add consumed drink",
                     style: TextStyle(color: Colors.black)),
               ),
             ),
-            SizedBox(height: 30),
-            Text(
+            const SizedBox(height: 50),
+            const Text(
               "Consumption history",
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
-            Expanded(child: CaffeineList())
+            const Expanded(child: CaffeineList())
           ],
         ),
       ),
@@ -128,7 +133,7 @@ class CaffeineList extends StatelessWidget {
               timeConsumed.minute.toString().padLeft(2, '0');
         }
         return Card(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -137,20 +142,151 @@ class CaffeineList extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(listCards[index].product),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text('${listCards[index].caffeineAmount} mg'),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(dateText),
                 ],
               ),
               IconButton(
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
                 onPressed: () {},
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class AddCaffeinePopup extends StatefulWidget {
+  const AddCaffeinePopup({Key? key}) : super(key: key);
+
+  @override
+  _AddCaffeinePopupState createState() => _AddCaffeinePopupState();
+}
+
+class _AddCaffeinePopupState extends State<AddCaffeinePopup> {
+  final Map<int, Widget> _tabs = {
+    0: Text('Quick add'),
+    1: Text('Custom add'),
+  };
+
+  int _selectedTab = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color(0xFFEFECEC),
+      height: MediaQuery.of(context).size.height * 0.8,
+      child: Column(
+        children: [
+          SizedBox(height: 16.0),
+          CupertinoSlidingSegmentedControl(
+            groupValue: _selectedTab,
+            children: _tabs,
+            onValueChanged: (value) {
+              setState(() {
+                _selectedTab = value!;
+              });
+            },
+            backgroundColor: Colors.grey,
+            thumbColor: Colors.white,
+          ),
+          SizedBox(height: 16.0),
+          Expanded(
+            child: IndexedStack(
+              index: _selectedTab,
+              children: [
+                // Drink tab
+                QuickAddGrid(),
+                // Food tab
+                CustomAddSliders(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomAddSliders extends StatefulWidget {
+  @override
+  _CustomAddSlidersState createState() => _CustomAddSlidersState();
+}
+
+class _CustomAddSlidersState extends State<CustomAddSliders> {
+  double _sliderValue1 = 0;
+  double _sliderValue2 = 0;
+  double _sliderValue3 = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Slider(
+          value: _sliderValue1,
+          onChanged: (newValue) {
+            setState(() {
+              _sliderValue1 = newValue;
+            });
+          },
+          min: 0,
+          max: 100,
+          divisions: 10,
+          label: 'Slider 1: $_sliderValue1',
+        ),
+        Slider(
+          value: _sliderValue2,
+          onChanged: (newValue) {
+            setState(() {
+              _sliderValue2 = newValue;
+            });
+          },
+          min: 0,
+          max: 100,
+          divisions: 10,
+          label: 'Slider 2: $_sliderValue2',
+        ),
+        Slider(
+          value: _sliderValue3,
+          onChanged: (newValue) {
+            setState(() {
+              _sliderValue3 = newValue;
+            });
+          },
+          min: 0,
+          max: 100,
+          divisions: 10,
+          label: 'Slider 3: $_sliderValue3',
+        ),
+      ],
+    );
+  }
+}
+
+class QuickAddGrid extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: GridView.count(
+        crossAxisCount: 3,
+        children: List.generate(6, (index) {
+          return Card(
+            color: Colors.white,
+            child: Center(
+              child: Text(
+                'Card ${index + 1}',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+          );
+        }),
+      ),
     );
   }
 }
@@ -173,3 +309,62 @@ class CaffeineRecord {
     required this.timeConsumed,
   });
 }
+
+/* class _AddCaffeinePopupState extends State<AddCaffeinePopup> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.5,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: "Snabbval"),
+              Tab(text: "Avancerat"),
+            ],
+            indicatorColor: Colors.blue,
+            labelColor: Colors.blue,
+            unselectedLabelColor: Colors.grey,
+            labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            unselectedLabelStyle: TextStyle(fontSize: 16),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Add Drink page
+                Center(
+                  child: Text("Add consumed drink"),
+                ),
+                // History page
+                Center(
+                  child: Text("Caffeine intake history"),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+} */
+

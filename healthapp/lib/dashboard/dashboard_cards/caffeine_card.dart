@@ -18,7 +18,6 @@ class CaffeineCard extends StatelessWidget {
       color: Color(0xFFEB7D7A),
       child:
           BlocBuilder<CaffeineBloc, CaffeineState>(builder: (context, state) {
-        //log(state.status.toString() + "hej");
         if (state.status == CaffeineStatus.loading) {
           return CircularProgressIndicator();
         } else {
