@@ -26,7 +26,7 @@ class ApiParser{
   }
 
   // returns weather for the current hour, switching to next on :45 minutes+
-  Future<WeatherInformation> requestCurrentWeather(double latitude, double longitude) async{
+  Future<WeatherInformationCurrent> requestCurrentWeather(double latitude, double longitude) async{
     String request = "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&windspeed_unit=ms&timezone=Europe%2FBerlin";
     var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
     var response = await http.get(url);

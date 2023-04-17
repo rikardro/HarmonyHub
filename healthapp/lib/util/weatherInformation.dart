@@ -66,13 +66,15 @@ class WeatherInformation {
 }
 
 class WeatherInformationCurrent extends WeatherInformation{
-  bool sun_up = false;
+  bool _sun_up = false;
 
   WeatherInformationCurrent(super.time, super.temperature, super.precipitation, super.snowfall, 
   super.snow_depth, super.weather, super.cloudcover, super.windspeed, super.windDegrees);
   
+  bool get sun_up => _sun_up;
+
   void setsun_up(bool up){
-    this.sun_up = up;
+    this._sun_up = up;
   }
 
 }
