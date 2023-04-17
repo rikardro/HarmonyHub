@@ -37,7 +37,7 @@ class AirQualityCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Air quality", style: TextStyle(shadows: [textShadow], color: Colors.white, fontSize: 15)),
-            const Image(image: AssetImage('assets/images/Air.png')),
+            const Image(image: AssetImage('assets/images/wind_white.png'), width: 60,),
             ShaderMask(
               shaderCallback: (bounds) => LinearGradient(
                 colors: qualityColor(),
