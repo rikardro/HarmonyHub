@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator_platform_interface/src/models/position.dart';
+import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/backend/weather/weather.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
@@ -20,7 +22,9 @@ class DashboardView extends StatelessWidget {
 
   Future<WeatherInformation> fetchWeatherData() async {
     ApiParser apiParser = ApiParser();
-    WeatherInformation wi = await apiParser.requestCurrentWeather(57.71, 11.97);
+    Location location = Location();
+    Position position = await location.determinePosition();
+    WeatherInformation wi = await apiParser.requestCurrentWeather(position.latitude, position.longitude);
     return wi;
   }
 
