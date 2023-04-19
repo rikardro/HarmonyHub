@@ -532,6 +532,10 @@ class _QuickAddGridState extends State<QuickAddGrid> {
                   ),
                 );
           },
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Color(0xFF8D3786)),
+          ),
           child: const Text("Add"),
         ),
       ],
