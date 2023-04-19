@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthapp/util/cardinalDirections.dart';
 import 'package:healthapp/util/weatherType.dart';
 import '../../util/weatherInformation.dart';
 import '../dashboard_card.dart';
@@ -7,9 +8,12 @@ class WeatherCard extends StatelessWidget {
   bool isDay = true;
   AssetImage weatherImage = const AssetImage('assets/images/clear_day.png');
   Color weatherColor = const Color(0xFFFF9900);
+
   String weather = "";
+
   double temperature = 0;
-  double windSpeed = 0;
+  double windSpeed = 0; 
+  String windDirection = "";
 
   WeatherCard(AsyncSnapshot<WeatherInformationCurrent> weatherData, {Key? key})
       : super(key: key) {
@@ -18,6 +22,7 @@ class WeatherCard extends StatelessWidget {
       temperature = weatherData.data!.temperature;
       windSpeed = weatherData.data!.windspeed;
       isDay = weatherData.data!.sun_up;
+      windDirection = weatherData.data!.windDirectionCardinal.value;
       init(w, isDay);
     }
   }
@@ -43,9 +48,8 @@ class WeatherCard extends StatelessWidget {
           weatherImage = const AssetImage('assets/images/cloudy.png');
           if (isDay) {
             weatherColor = const Color.fromARGB(255, 152, 166, 182);
-          }
-          else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);            
+          } else {
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
           }
           break;
         }
@@ -54,10 +58,9 @@ class WeatherCard extends StatelessWidget {
           this.weather = "Foggy";
           weatherImage = const AssetImage('assets/images/foggy.png');
           if (isDay) {
-          weatherColor = const Color.fromARGB(255, 194, 223, 255);
-          }
-          else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);            
+            weatherColor = const Color.fromARGB(255, 194, 223, 255);
+          } else {
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
           }
           break;
         }
@@ -66,10 +69,9 @@ class WeatherCard extends StatelessWidget {
           this.weather = "Snowing";
           weatherImage = const AssetImage('assets/images/snowing.png');
           if (isDay) {
-          weatherColor = const Color.fromARGB(255, 203, 210, 255);
-          }
-          else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);            
+            weatherColor = const Color.fromARGB(255, 203, 210, 255);
+          } else {
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
           }
           break;
         }
@@ -78,10 +80,9 @@ class WeatherCard extends StatelessWidget {
           this.weather = "Raining";
           weatherImage = const AssetImage('assets/images/raining.png');
           if (isDay) {
-          weatherColor = const Color.fromARGB(255, 137, 192, 255);
-          }
-          else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);            
+            weatherColor = const Color.fromARGB(255, 137, 192, 255);
+          } else {
+            weatherColor = const Color.fromARGB(255, 115, 22, 255);
           }
           break;
         }
@@ -152,7 +153,7 @@ class WeatherCard extends StatelessWidget {
                               color: baseTextStyle.color,
                               fontFamily: baseTextStyle.fontFamily,
                               shadows: baseTextStyle.shadows)),
-                      Text("$windSpeed m/s",
+                      Text("$windSpeed m/s $windDirection",
                           style: TextStyle(
                               fontSize: 16,
                               color: baseTextStyle.color,
