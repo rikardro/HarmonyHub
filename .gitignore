@@ -10,3 +10,4 @@ healthapp/pubspec.lock
 healthapp/windows/flutter/generated_plugin_registrant.cc
 healthapp/windows/flutter/generated_plugin_registrant.h
 healthapp/windows/flutter/generated_plugins.cmake
+healthapp/macos/Flutter/GeneratedPluginRegistrant.swift
