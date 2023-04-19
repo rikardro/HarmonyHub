@@ -302,7 +302,7 @@ class CustomAddSliders extends StatefulWidget {
 
 class _CustomAddSlidersState extends State<CustomAddSliders> {
   double _sliderValue1 = 0;
-  double _sliderValue2 = 0;
+  double _sliderValue2 = 100;
   double _sliderValue3 = 0;
 
   @override
@@ -310,6 +310,30 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Container(
+              margin: const EdgeInsets.only(left: 16.0),
+              child: const Text(
+                '0 mg/ml ',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+            const Text(
+              'Caffeine content',
+              style: TextStyle(fontSize: 24.0),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 16.0),
+              child: const Text(
+                '50 mg/ml',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+          ],
+        ),
         Slider(
           value: _sliderValue1,
           onChanged: (newValue) {
@@ -318,9 +342,33 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             });
           },
           min: 0,
-          max: 100,
+          max: 50,
           divisions: 10,
-          label: 'Slider 1: $_sliderValue1',
+          label: '$_sliderValue1 mg/ml',
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Container(
+              margin: const EdgeInsets.only(left: 16.0),
+              child: const Text(
+                '100 ml',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+            const Text(
+              'Volume of drink',
+              style: TextStyle(fontSize: 24.0),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 16.0),
+              child: const Text(
+                '500 ml',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+          ],
         ),
         Slider(
           value: _sliderValue2,
@@ -329,10 +377,34 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
               _sliderValue2 = newValue;
             });
           },
-          min: 0,
-          max: 100,
-          divisions: 10,
-          label: 'Slider 2: $_sliderValue2',
+          min: 100,
+          max: 500,
+          divisions: 8,
+          label: '$_sliderValue2 ml',
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Container(
+              margin: const EdgeInsets.only(left: 16.0),
+              child: const Text(
+                'Now      ',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+            const Text(
+              'Hours since ingested',
+              style: TextStyle(fontSize: 24.0),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 16.0),
+              child: const Text(
+                '10 hours',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+          ],
         ),
         Slider(
           value: _sliderValue3,
@@ -342,9 +414,9 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             });
           },
           min: 0,
-          max: 100,
+          max: 10,
           divisions: 10,
-          label: 'Slider 3: $_sliderValue3',
+          label: '$_sliderValue3 hour(s)',
         ),
       ],
     );
