@@ -32,7 +32,10 @@ class CaffeineDetailedBloc
       (event, emit) async {
         emit(state.copyWith(status: CaffeineDetailedStatus.loading));
         try {
-          await repository.addConsumedCaffeine(event.amount, event.drinkType, event.timeSince);
+          emit(state.copyWith(
+              status: CaffeineDetailedStatus.loading, caffeineList: null));
+          await repository.addConsumedCaffeine(
+              event.amount, event.drinkType, event.timeSince);
           emit(state.copyWith(
               status: CaffeineDetailedStatus.success, caffeineList: null));
         } catch (_) {
@@ -56,7 +59,8 @@ class AddCaffeine extends CaffeineDetailedEvent {
   final double amount;
   final String drinkType;
   final double timeSince;
-  AddCaffeine({required this.timeSince, required this.amount, required this.drinkType});
+  AddCaffeine(
+      {required this.timeSince, required this.amount, required this.drinkType});
 }
 
 class DeleteCaffeine extends CaffeineDetailedEvent {

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:healthapp/util/dialogs/error_dialog.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +27,6 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
     context.read<CaffeineBloc>().add(const FetchCaffeine());
     context.read<CaffeineDetailedBloc>().add(const FetchAllCaffeine());
     final bloc = BlocProvider.of<CaffeineDetailedBloc>(context);
-    log(bloc.toString());
     return BlocBuilder<CaffeineDetailedBloc, CaffeineDetailedState>(
       builder: (context, state) {
         if (state.status == CaffeineDetailedStatus.success) {
@@ -57,13 +57,14 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                             final String caffeineStatus =
                                 state.caffeineStatus ?? "";
                             final double caffeineAmount = state.caffeine ?? 0;
+                            final roundedAmount = caffeineAmount.round();
                             if (state.status == CaffeineStatus.loading) {
                               return const CircularProgressIndicator();
                             } else {
                               return Column(
                                 children: [
                                   Text(
-                                    "$caffeineAmount mg",
+                                    "$roundedAmount mg",
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 25,
@@ -136,6 +137,7 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
             ),
           );
         } else {
+          log("got here");
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
@@ -229,8 +231,9 @@ class CaffeineRecordCard extends StatelessWidget {
               Text(dateText),
             ],
           ),
+          //TODO: implement next sprint!
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(Icons.delete, color: Colors.transparent),
             onPressed: () {},
           ),
         ],
@@ -285,7 +288,10 @@ class _AddCaffeinePopupState extends State<AddCaffeinePopup> {
                   child: QuickAddGrid(),
                 ),
                 // Food tab
-                CustomAddSliders(),
+                BlocProvider<CaffeineDetailedBloc>.value(
+                  value: bloc,
+                  child: CustomAddSliders(),
+                ),
               ],
             ),
           ),
@@ -317,7 +323,7 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             Container(
               margin: const EdgeInsets.only(left: 16.0),
               child: const Text(
-                '0 mg/ml ',
+                '0 mg/100ml',
                 style: TextStyle(fontSize: 14.0),
               ),
             ),
@@ -328,7 +334,7 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             Container(
               margin: const EdgeInsets.only(right: 16.0),
               child: const Text(
-                '50 mg/ml',
+                '60 mg/100ml',
                 style: TextStyle(fontSize: 14.0),
               ),
             ),
@@ -342,8 +348,8 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             });
           },
           min: 0,
-          max: 50,
-          divisions: 10,
+          max: 60,
+          divisions: 12,
           label: '$_sliderValue1 mg/ml',
         ),
         Row(
@@ -418,6 +424,19 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           divisions: 10,
           label: '$_sliderValue3 hour(s)',
         ),
+        ElevatedButton(
+          onPressed: () {
+            BlocProvider.of<CaffeineDetailedBloc>(context).add(
+              AddCaffeine(
+                drinkType: "Custom drink",
+                amount: _sliderValue1 * _sliderValue2 / 100,
+                timeSince: _sliderValue3,
+              ),
+            );
+            Navigator.pop(context);
+          },
+          child: Text("Add drink"),
+        )
       ],
     );
   }
@@ -453,7 +472,7 @@ class _QuickAddGridState extends State<QuickAddGrid> {
 
   @override
   Widget build(BuildContext context) {
-    log(_selectedCardIndex.toString());
+    //log(_selectedCardIndex.toString());
     return Column(
       children: [
         Container(
@@ -494,6 +513,30 @@ class _QuickAddGridState extends State<QuickAddGrid> {
             ),
           ),
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Container(
+              margin: const EdgeInsets.only(left: 16.0),
+              child: const Text(
+                'Now      ',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+            const Text(
+              'Hours since ingested',
+              style: TextStyle(fontSize: 24.0),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 16.0),
+              child: const Text(
+                '10 hours',
+                style: TextStyle(fontSize: 14.0),
+              ),
+            ),
+          ],
+        ),
         Container(
           color: Colors.transparent,
           height: 50,
@@ -524,6 +567,9 @@ class _QuickAddGridState extends State<QuickAddGrid> {
         ),
         ElevatedButton(
           onPressed: () {
+            if (_selectedCardIndex == -1) {
+              showErrorDialog(context, "Please select a drink");
+            }
             context.read<CaffeineDetailedBloc>().add(
                   AddCaffeine(
                     amount: drinks[_selectedCardIndex].caffeineAmount,
@@ -531,6 +577,7 @@ class _QuickAddGridState extends State<QuickAddGrid> {
                     timeSince: _sliderValue,
                   ),
                 );
+            Navigator.pop(context);
           },
           style: ButtonStyle(
             backgroundColor:
