@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +13,9 @@ import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 
 import '../bloc/caffeine_bloc.dart';
+import '../caffeine_detailed_view.dart';
+import '../services/auth/auth/bloc/auth_bloc.dart';
+import '../services/auth/auth/bloc/auth_event.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -88,11 +93,7 @@ class DashboardView extends StatelessWidget {
                 iconColor: Colors.grey[600],
                 topPadding: 24,
               ),
-              BlocProvider(
-                create: (context) => CaffeineBloc(CaffeineRepository())
-                  ..add(const FetchCaffeine()),
-                child: CaffeineCard(),
-              )
+              CaffeineCard(),
             ],
           ),
           Container(
@@ -105,7 +106,23 @@ class DashboardView extends StatelessWidget {
           ),
           Column(
             children: [SuggestedRunningCard(), SuggestedRunningCard()],
-          )
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
+            child: ElevatedButton(
+              style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: BorderSide(color: Colors.red))),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.red)),
+              onPressed: () {
+                context.read<AuthBloc>().add(const AuthEventLogOut());
+              },
+              child: Text("Log out"),
+            ),
+          ),
         ],
       ),
     );

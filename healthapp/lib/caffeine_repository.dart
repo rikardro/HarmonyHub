@@ -1,15 +1,21 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:healthapp/caffeine_detailed_view.dart';
+import 'package:healthapp/services/auth/auth/firebase_auth_provider.dart';
 import 'dart:math' as math;
 import 'caffeine.dart';
 
-
 class CaffeineRepository {
+  //TODO: should be in constructor instead?
+  final FirebaseAuthProvider provider = FirebaseAuthProvider();
+
+  //TODO: this should be broken out into DataSource with its interface!
   final CollectionReference instance =
       FirebaseFirestore.instance.collection('ConsumptionHistory');
 
   /// Returns the current caffeine level
   Future<Caffeine> fetchCurrentCaffeine() async {
-
     final today = DateTime.now();
     final startOfToday = Timestamp.fromDate(
         DateTime(today.year, today.month, today.day, 0, 0, 0, 0, 0));
@@ -17,11 +23,24 @@ class CaffeineRepository {
     final endOfToday = Timestamp.fromDate(
         DateTime(today.year, today.month, today.day, 23, 59, 59, 999, 999));
 
+    final currentUserId = provider.currentUser?.id;
+    if (currentUserId == null) {
+      // Handle the case where the user is not logged in
+      //TODO: is there a better way to handle this?
+      return Caffeine(amount: 0, status: "Low");
+    }
+
+    log(currentUserId.toString() + " is the current user id");
+
     /// Get all the caffeine consumed today
     final QuerySnapshot querySnapshot = await instance
+        .where('userId', isEqualTo: currentUserId)
         .where('timeConsumed', isGreaterThanOrEqualTo: startOfToday)
         .where('timeConsumed', isLessThanOrEqualTo: endOfToday)
         .get();
+
+    log(querySnapshot.docs.length.toString());
+    log("got here hej");
 
     final total = getTotalCaffeine(querySnapshot);
     final status = _getStatus(total);
@@ -75,16 +94,39 @@ class CaffeineRepository {
   }
 
   /// Adds a new caffeine consumption to the database
-  Future<void> addConsumedCaffeine(String userId, int caffeineLevel) async {
+  Future<void> addConsumedCaffeine(
+      double caffeineLevel, String drinkType) async {
     try {
+      //TODO: needs null check?
       await FirebaseFirestore.instance.collection('ConsumptionHistory').add({
-        'userId': userId,
+        'userId': provider.currentUser?.id,
         'amountConsumed': caffeineLevel,
         'timeConsumed': FieldValue.serverTimestamp(),
+        'drinkType': drinkType,
       });
       print('Document added successfully!');
     } catch (e) {
       print('Error adding document: $e');
     }
+  }
+
+  Future<List<CaffeineRecord>> fetchAllCaffeine() async {
+    final currentUserId = provider.currentUser?.id;
+    final QuerySnapshot querySnapshot =
+        await instance.where('userId', isEqualTo: currentUserId).get();
+
+    List<CaffeineRecord> caffeineList = [];
+
+    for (QueryDocumentSnapshot<Object?> doc in querySnapshot.docs) {
+      CaffeineRecord caffeine = CaffeineRecord(
+        id: doc.id,
+        product: doc['drinkType'],
+        caffeineAmount: doc['amountConsumed'],
+        timeConsumed: doc['timeConsumed'],
+      );
+      caffeineList.add(caffeine);
+    }
+
+    return caffeineList;
   }
 }
