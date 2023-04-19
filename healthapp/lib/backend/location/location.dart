@@ -1,4 +1,7 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:healthapp/backend/location/apiConstants.dart';
+import 'package:healthapp/backend/weather/apiConstants.dart';
+import 'package:http/http.dart' as http;
 
 
 
@@ -42,13 +45,24 @@ Future<Position> determinePosition() async {
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition();
-}
+
+  }
+
+  Future<String> getLocationFromCoords(double latitude, double longitude) async{
+    String request = "at=$latitude%2C$longitude&lang=en-US&YOUR_API_KEY";
+    var url = Uri.parse(ApiConstantsGeo.revGeoCodeBaseUrl + ApiConstantsGeo.revGeoCodeEndpoint 
+    + request + ApiConstantsGeo.revGeoCodeApiKey);
+    var response = await http.get(url);
+    print(response);
+    return "hi";
+  }
+
 }
 
 Future<void> main(List<String> args) async {
   Location locationObject = Location();
-  print("hej1");
-  Position position = await locationObject.determinePosition();
-  print("hej");
-  print(position);
+  //print("hej1");
+  //Position position = await locationObject.determinePosition();
+  locationObject.getLocationFromCoords(57.71, 11.97);
+  //print(position);
 }
