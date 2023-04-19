@@ -37,12 +37,6 @@ class FetchCaffeine extends CaffeineEvent {
   const FetchCaffeine();
 }
 
-class AddCaffeine extends CaffeineEvent {
-  final double amount;
-  final String drinkType;
-  const AddCaffeine({required this.amount, required this.drinkType});
-}
-
 enum CaffeineStatus { loading, success, error }
 
 class CaffeineState {

@@ -95,13 +95,14 @@ class CaffeineRepository {
 
   /// Adds a new caffeine consumption to the database
   Future<void> addConsumedCaffeine(
-      double caffeineLevel, String drinkType) async {
+      double caffeineLevel, String drinkType, double timeSince) async {
     try {
-      //TODO: needs null check?
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final timeConsumed = currentTime - (timeSince * 3600000).floor();
       await FirebaseFirestore.instance.collection('ConsumptionHistory').add({
         'userId': provider.currentUser?.id,
         'amountConsumed': caffeineLevel,
-        'timeConsumed': FieldValue.serverTimestamp(),
+        'timeConsumed': Timestamp.fromMillisecondsSinceEpoch(timeConsumed),
         'drinkType': drinkType,
       });
       print('Document added successfully!');

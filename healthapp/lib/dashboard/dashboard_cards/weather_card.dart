@@ -7,7 +7,7 @@ class WeatherCard extends StatelessWidget {
   bool isDay = true;
   AssetImage weatherImage = const AssetImage('assets/images/clear_day.png');
   Color weatherColor = const Color(0xFFFF9900);
-  String weather = "Kunde inte ladda vädret";
+  String weather = "";
   double temperature = 0;
   double windSpeed = 0;
 

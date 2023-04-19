@@ -9,6 +9,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/bloc/caffeine_bloc.dart';
+import 'package:healthapp/bloc/caffeine_detailed_bloc.dart';
 
 import 'bloc/caffeine_detailed_bloc.dart';
 
@@ -24,6 +25,8 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
   Widget build(BuildContext context) {
     context.read<CaffeineBloc>().add(const FetchCaffeine());
     context.read<CaffeineDetailedBloc>().add(const FetchAllCaffeine());
+    final bloc = BlocProvider.of<CaffeineDetailedBloc>(context);
+    log(bloc.toString());
     return BlocBuilder<CaffeineDetailedBloc, CaffeineDetailedState>(
       builder: (context, state) {
         if (state.status == CaffeineDetailedStatus.success) {
@@ -86,7 +89,7 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                   ),
                   const SizedBox(height: 50),
                   ElevatedButton(
-                    onPressed: () {
+                    /* onPressed: () {
                       //TODO: Why does this not work?
                       showModalBottomSheet(
                         context: context,
@@ -94,6 +97,17 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                           return const AddCaffeinePopup();
                         },
                       );
+                    }, */
+                    onPressed: () {
+                      showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          context: context,
+                          builder: (context) {
+                            return BlocProvider<CaffeineDetailedBloc>.value(
+                                value: bloc, child: const AddCaffeinePopup());
+                          });
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -242,6 +256,7 @@ class _AddCaffeinePopupState extends State<AddCaffeinePopup> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = BlocProvider.of<CaffeineDetailedBloc>(context);
     return Container(
       color: const Color(0xFFEFECEC),
       height: MediaQuery.of(context).size.height * 0.8,
@@ -265,7 +280,10 @@ class _AddCaffeinePopupState extends State<AddCaffeinePopup> {
               index: _selectedTab,
               children: [
                 // Drink tab
-                QuickAddGrid(),
+                BlocProvider<CaffeineDetailedBloc>.value(
+                  value: bloc,
+                  child: QuickAddGrid(),
+                ),
                 // Food tab
                 CustomAddSliders(),
               ],
@@ -333,36 +351,250 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
   }
 }
 
-class QuickAddGrid extends StatelessWidget {
+List<CaffeineCardOptions> drinks = [
+  CaffeineCardOptions(product: "Small Coffee", caffeineAmount: 80),
+  CaffeineCardOptions(product: "Large Coffee", caffeineAmount: 120),
+  CaffeineCardOptions(product: "Espresso", caffeineAmount: 50),
+  CaffeineCardOptions(product: "Red Bull", caffeineAmount: 150),
+  CaffeineCardOptions(product: "Nocco", caffeineAmount: 180),
+  CaffeineCardOptions(product: "Celsius", caffeineAmount: 200),
+];
+
+class CaffeineCardOptions {
+  final String product;
+  final double caffeineAmount;
+
+  CaffeineCardOptions({
+    required this.product,
+    required this.caffeineAmount,
+  });
+}
+
+class QuickAddGrid extends StatefulWidget {
+  @override
+  _QuickAddGridState createState() => _QuickAddGridState();
+}
+
+class _QuickAddGridState extends State<QuickAddGrid> {
+  double _sliderValue = 0.0;
+  int _selectedCardIndex = -1;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: GridView.count(
-        crossAxisCount: 3,
-        children: List.generate(6, (index) {
-          return Card(
-            color: Colors.white,
-            child: Center(
-              child: Text(
-                'Card ${index + 1}',
-                style: Theme.of(context).textTheme.headline6,
+    log(_selectedCardIndex.toString());
+    return Column(
+      children: [
+        Container(
+          color: Colors.transparent,
+          height: 300,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: GridView.count(
+              physics: NeverScrollableScrollPhysics(),
+              crossAxisCount: 3,
+              children: List.generate(6, (index) {
+                final product = drinks[index].product;
+                final amount = drinks[index].caffeineAmount;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedCardIndex = index;
+                    });
+                  },
+                  child: Card(
+                    color: _selectedCardIndex == index
+                        ? Colors.blue
+                        : Colors.white,
+                    child: Center(
+                      child: Text(
+                        '$product\n$amount mg',
+                        style: TextStyle(
+                          color: _selectedCardIndex == index
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ),
+        Container(
+          color: Colors.transparent,
+          height: 50,
+          child: Center(
+            child: SliderTheme(
+              data: SliderThemeData(
+                showValueIndicator: ShowValueIndicator.always,
+                valueIndicatorTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              child: Slider(
+                value: _sliderValue,
+                min: 0,
+                max: 10,
+                divisions: 20,
+                onChanged: (newValue) {
+                  setState(() {
+                    _sliderValue = newValue;
+                  });
+                },
+                label: '$_sliderValue',
               ),
             ),
-          );
-        }),
-      ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            context.read<CaffeineDetailedBloc>().add(
+                  AddCaffeine(
+                    amount: drinks[_selectedCardIndex].caffeineAmount,
+                    drinkType: drinks[_selectedCardIndex].product,
+                    timeSince: _sliderValue,
+                  ),
+                );
+          },
+          child: const Text("Add"),
+        ),
+      ],
     );
   }
 }
 
-List<CaffeineRecord> listCards = [
+/* class QuickAddGrid extends StatefulWidget {
+  @override
+  _QuickAddGridState createState() => _QuickAddGridState();
+}
+
+class _QuickAddGridState extends State<QuickAddGrid> {
+  double _sliderValue = 0.0;
+  Card? _selectedCard;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          color: Colors.red,
+          height: 300,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: GridView.count(
+              physics: NeverScrollableScrollPhysics(),
+              crossAxisCount: 3,
+              children: List.generate(6, (index) {
+                final product = drinks[index].product;
+                final amount = drinks[index].caffeineAmount;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedCard = Card(
+                        color: Colors.blue,
+                        child: Center(
+                          child: Text(
+                            '$product\n$amount mg',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+                  },
+                  child: Card(
+                    color: _selectedCard == null
+                        ? Colors.white
+                        : _selectedCard?.color,
+                    child: Center(
+                      child: Text(
+                        '$product\n$amount mg',
+                        style: TextStyle(
+                          color: _selectedCard == null
+                              ? Colors.black
+                              : Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ),
+        Container(
+          color: Colors.yellow,
+          height: 80,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("0", style: TextStyle(fontSize: 18)),
+                    Text("Hours since consumption",
+                        style: TextStyle(fontSize: 22)),
+                    Text("10", style: TextStyle(fontSize: 18)),
+                  ],
+                ),
+              ),
+              SliderTheme(
+                data: SliderThemeData(
+                  showValueIndicator: ShowValueIndicator.always,
+                  valueIndicatorTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: Slider(
+                  value: _sliderValue,
+                  min: 0,
+                  max: 10,
+                  divisions: 20,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _sliderValue = newValue;
+                    });
+                  },
+                  label: '$_sliderValue',
+                ),
+              ),
+            ],
+          ),
+        ),
+        ElevatedButton(
+            onPressed: () {
+              if (_selectedCard == null) {
+                // No card selected
+                return;
+              }
+
+              context.read<CaffeineDetailedBloc>().add(
+                    AddCaffeine(amount: 50, drinkType: "Coffee"),
+                  );
+            },
+            child: Text("Add drink"))
+      ],
+    );
+  }
+} */
+
+/* List<CaffeineRecord> listCards = [
   CaffeineRecord(
       id: "XXX",
       product: "Kaffe",
       caffeineAmount: 50,
       timeConsumed: Timestamp.fromDate(DateTime.now())),
-];
+]; */
 
 class CaffeineRecord {
   final String id;
