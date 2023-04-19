@@ -7,7 +7,8 @@ import 'package:healthapp/caffeine_repository.dart';
 
 import '../caffeine_detailed_view.dart';
 
-class CaffeineDetailedBloc extends Bloc<CaffeineDetailedEvent, CaffeineDetailedState> {
+class CaffeineDetailedBloc
+    extends Bloc<CaffeineDetailedEvent, CaffeineDetailedState> {
   CaffeineDetailedBloc(
     CaffeineRepository repository,
   ) : super(CaffeineDetailedState()) {
@@ -31,10 +32,12 @@ class CaffeineDetailedBloc extends Bloc<CaffeineDetailedEvent, CaffeineDetailedS
       (event, emit) async {
         emit(state.copyWith(status: CaffeineDetailedStatus.loading));
         try {
-          await repository.addConsumedCaffeine(event.amount, event.drinkType);
           emit(state.copyWith(
-              status: CaffeineDetailedStatus.success,
-              caffeineList: null));
+              status: CaffeineDetailedStatus.loading, caffeineList: null));
+          await repository.addConsumedCaffeine(
+              event.amount, event.drinkType, event.timeSince);
+          emit(state.copyWith(
+              status: CaffeineDetailedStatus.success, caffeineList: null));
         } catch (_) {
           emit(state.copyWith(status: CaffeineDetailedStatus.error));
         }
@@ -55,7 +58,9 @@ class FetchAllCaffeine extends CaffeineDetailedEvent {
 class AddCaffeine extends CaffeineDetailedEvent {
   final double amount;
   final String drinkType;
-  const AddCaffeine({required this.amount, required this.drinkType});
+  final double timeSince;
+  AddCaffeine(
+      {required this.timeSince, required this.amount, required this.drinkType});
 }
 
 class DeleteCaffeine extends CaffeineDetailedEvent {
