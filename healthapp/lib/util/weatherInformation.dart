@@ -27,10 +27,16 @@ class WeatherInformation {
         _windDegrees = windDegrees,
         _windDirection = _convertDegreesToCardinal(windDegrees);
 
+  String get time => _time;
+  WeatherType get weather => _weather;
   double get temperature => _temperature;
   double get windspeed => _windspeed;
+  double get snowfall => _snowfall;
+  double get snow_depth => _snow_depth;
+  int get cloudcover => _cloudcover;
   double get precipitation => _precipitation;
   WeatherType get weatherType => _weather;
+  int get windDegrees => _windDegrees;
   CardinalDirection get windDirectionCardinal => _windDirection;
   int get windDirectionDegrees => _windDegrees;
 
@@ -57,4 +63,18 @@ class WeatherInformation {
     }
     return CardinalDirection.north;
   }
+}
+
+class WeatherInformationCurrent extends WeatherInformation{
+  bool _sun_up = false;
+
+  WeatherInformationCurrent(super.time, super.temperature, super.precipitation, super.snowfall, 
+  super.snow_depth, super.weather, super.cloudcover, super.windspeed, super.windDegrees);
+  
+  bool get sun_up => _sun_up;
+
+  void setsun_up(bool up){
+    this._sun_up = up;
+  }
+
 }

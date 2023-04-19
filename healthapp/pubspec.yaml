@@ -78,6 +78,8 @@ flutter:
     - assets/images/halfcloudy_night.png
     - assets/images/raining.png
     - assets/images/snowing.png
+    - assets/images/wind.png
+    - assets/images/wind_white.png
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
