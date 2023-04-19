@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:healthapp/caffeine_detailed_view.dart';
 import 'package:healthapp/services/auth/auth/firebase_auth_provider.dart';
 import 'dart:math' as math;
 import 'caffeine.dart';
@@ -93,7 +94,8 @@ class CaffeineRepository {
   }
 
   /// Adds a new caffeine consumption to the database
-  Future<void> addConsumedCaffeine(double caffeineLevel, String drinkType) async {
+  Future<void> addConsumedCaffeine(
+      double caffeineLevel, String drinkType) async {
     try {
       //TODO: needs null check?
       await FirebaseFirestore.instance.collection('ConsumptionHistory').add({
@@ -106,5 +108,25 @@ class CaffeineRepository {
     } catch (e) {
       print('Error adding document: $e');
     }
+  }
+
+  Future<List<CaffeineRecord>> fetchAllCaffeine() async {
+    final currentUserId = provider.currentUser?.id;
+    final QuerySnapshot querySnapshot =
+        await instance.where('userId', isEqualTo: currentUserId).get();
+
+    List<CaffeineRecord> caffeineList = [];
+
+    for (QueryDocumentSnapshot<Object?> doc in querySnapshot.docs) {
+      CaffeineRecord caffeine = CaffeineRecord(
+        id: doc.id,
+        product: doc['drinkType'],
+        caffeineAmount: doc['amountConsumed'],
+        timeConsumed: doc['timeConsumed'],
+      );
+      caffeineList.add(caffeine);
+    }
+
+    return caffeineList;
   }
 }

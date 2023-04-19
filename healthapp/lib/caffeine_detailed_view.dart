@@ -10,6 +10,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/bloc/caffeine_bloc.dart';
 
+import 'bloc/caffeine_detailed_bloc.dart';
+
 class CaffeineDetailedView extends StatefulWidget {
   const CaffeineDetailedView({super.key});
 
@@ -20,93 +22,131 @@ class CaffeineDetailedView extends StatefulWidget {
 class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(""),
-        backgroundColor: Color(0xFF8D3786),
-      ),
-      backgroundColor: const Color(0xFF8D3786),
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 25),
+    context.read<CaffeineBloc>().add(const FetchCaffeine());
+    context.read<CaffeineDetailedBloc>().add(const FetchAllCaffeine());
+    return BlocBuilder<CaffeineDetailedBloc, CaffeineDetailedState>(
+      builder: (context, state) {
+        if (state.status == CaffeineDetailedStatus.success) {
+          final List<CaffeineRecord> listOfCaffeine = state.caffeineList ?? [];
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(""),
+              backgroundColor: const Color(0xFF8D3786),
+            ),
+            backgroundColor: const Color(0xFF8D3786),
+            body: Center(
               child: Column(
-                children: const [
-                  Text(
-                    "Your caffeine level",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                        color: Colors.white),
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 35),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Your caffeine level",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                              color: Colors.white),
+                        ),
+                        const SizedBox(height: 30),
+                        BlocBuilder<CaffeineBloc, CaffeineState>(
+                          builder: (context, state) {
+                            final String caffeineStatus =
+                                state.caffeineStatus ?? "";
+                            final double caffeineAmount = state.caffeine ?? 0;
+                            if (state.status == CaffeineStatus.loading) {
+                              return const CircularProgressIndicator();
+                            } else {
+                              return Column(
+                                children: [
+                                  Text(
+                                    "$caffeineAmount mg",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 25,
+                                        color: Colors.white),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    caffeineStatus,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white),
+                                  ),
+                                ],
+                              );
+                            }
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 20),
-                  Text(
-                    "250 mg",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.white),
+                  const SizedBox(height: 50),
+                  ElevatedButton(
+                    onPressed: () {
+                      //TODO: Why does this not work?
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AddCaffeinePopup();
+                        },
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                      ),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(18.0),
+                      child: Text("Add consumed drink",
+                          style: TextStyle(color: Colors.black)),
+                    ),
                   ),
-                  Text(
-                    "High",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.white),
+                  const SizedBox(height: 50),
+                  const Text(
+                    "Consumption history",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  Expanded(
+                    child: CaffeineList(caffeineList: listOfCaffeine),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 50),
-            ElevatedButton(
-              onPressed: () {
-                //TODO: Why does this not work?
-                showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AddCaffeinePopup();
-                  },
-                );
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.white),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                ),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(18.0),
-                child: Text("Add consumed drink",
-                    style: TextStyle(color: Colors.black)),
-              ),
+          );
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
-            const SizedBox(height: 50),
-            const Text(
-              "Consumption history",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            const Expanded(child: CaffeineList())
-          ],
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 }
 
 class CaffeineList extends StatelessWidget {
+  final List<CaffeineRecord> caffeineList;
+
   const CaffeineList({
     Key? key,
-  }) : super(key: key);
+    required this.caffeineList,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: listCards.length,
+      itemCount: caffeineList.length,
       itemBuilder: (BuildContext context, int index) {
-        final timeConsumed = listCards[index].timeConsumed.toDate();
+        final timeConsumed = caffeineList[index].timeConsumed.toDate();
         final now = DateTime.now();
         final today = DateTime(now.year, now.month, now.day);
         final yesterday = DateTime(now.year, now.month, now.day - 1);
@@ -132,30 +172,55 @@ class CaffeineList extends StatelessWidget {
               ":" +
               timeConsumed.minute.toString().padLeft(2, '0');
         }
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(listCards[index].product),
-                  const SizedBox(width: 10),
-                  Text('${listCards[index].caffeineAmount} mg'),
-                  const SizedBox(width: 10),
-                  Text(dateText),
-                ],
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {},
-              ),
-            ],
-          ),
+        return CaffeineRecordCard(
+          id: caffeineList[index].id,
+          dateText: dateText,
+          product: caffeineList[index].product,
+          caffeineAmount: caffeineList[index].caffeineAmount,
         );
       },
+    );
+  }
+}
+
+class CaffeineRecordCard extends StatelessWidget {
+  const CaffeineRecordCard({
+    super.key,
+    required this.dateText,
+    required this.id,
+    required this.product,
+    required this.caffeineAmount,
+  });
+
+  final String dateText;
+  final String id;
+  final String product;
+  final double caffeineAmount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(product),
+              const SizedBox(width: 10),
+              Text('$caffeineAmount mg'),
+              const SizedBox(width: 10),
+              Text(dateText),
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {},
+          ),
+        ],
+      ),
     );
   }
 }
@@ -169,8 +234,8 @@ class AddCaffeinePopup extends StatefulWidget {
 
 class _AddCaffeinePopupState extends State<AddCaffeinePopup> {
   final Map<int, Widget> _tabs = {
-    0: Text('Quick add'),
-    1: Text('Custom add'),
+    0: const Text('Quick add'),
+    1: const Text('Custom add'),
   };
 
   int _selectedTab = 0;
@@ -178,11 +243,11 @@ class _AddCaffeinePopupState extends State<AddCaffeinePopup> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFFEFECEC),
+      color: const Color(0xFFEFECEC),
       height: MediaQuery.of(context).size.height * 0.8,
       child: Column(
         children: [
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           CupertinoSlidingSegmentedControl(
             groupValue: _selectedTab,
             children: _tabs,
@@ -194,7 +259,7 @@ class _AddCaffeinePopupState extends State<AddCaffeinePopup> {
             backgroundColor: Colors.grey,
             thumbColor: Colors.white,
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Expanded(
             child: IndexedStack(
               index: _selectedTab,
@@ -272,7 +337,7 @@ class QuickAddGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: GridView.count(
         crossAxisCount: 3,
         children: List.generate(6, (index) {
@@ -293,17 +358,20 @@ class QuickAddGrid extends StatelessWidget {
 
 List<CaffeineRecord> listCards = [
   CaffeineRecord(
+      id: "XXX",
       product: "Kaffe",
       caffeineAmount: 50,
       timeConsumed: Timestamp.fromDate(DateTime.now())),
 ];
 
 class CaffeineRecord {
+  final String id;
   final String product;
-  final int caffeineAmount;
+  final double caffeineAmount;
   final Timestamp timeConsumed;
 
   CaffeineRecord({
+    required this.id,
     required this.product,
     required this.caffeineAmount,
     required this.timeConsumed,

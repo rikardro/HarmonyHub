@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/bloc/caffeine_bloc.dart';
-import 'package:healthapp/bloc/caffeine_bloc.dart';
+import 'package:healthapp/caffeine_repository.dart';
+import '../../bloc/caffeine_detailed_bloc.dart';
 import '../../caffeine_detailed_view.dart';
 import '../dashboard_card.dart';
 
@@ -28,7 +29,10 @@ class CaffeineCard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CaffeineDetailedView(),
+                  builder: (context) => BlocProvider(
+                    create: (context) => CaffeineDetailedBloc(CaffeineRepository()),
+                    child: CaffeineDetailedView(),
+                  ),
                 ),
               );
               /* context.read<CaffeineBloc>().add(const AddCaffeine(
