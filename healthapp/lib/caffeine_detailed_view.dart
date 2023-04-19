@@ -299,12 +299,12 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             Container(
               margin: const EdgeInsets.only(left: 16.0),
               child: const Text(
-                '0 mg/ml',
+                '0 mg/ml ',
                 style: TextStyle(fontSize: 14.0),
               ),
             ),
             const Text(
-              'caffeine content',
+              'Caffeine content',
               style: TextStyle(fontSize: 24.0),
             ),
             Container(
@@ -340,7 +340,7 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
               ),
             ),
             const Text(
-              'volume of drink',
+              'Volume of drink',
               style: TextStyle(fontSize: 24.0),
             ),
             Container(
@@ -361,7 +361,7 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           },
           min: 100,
           max: 500,
-          divisions: 10,
+          divisions: 8,
           label: '$_sliderValue2 ml',
         ),
         Row(
@@ -371,12 +371,12 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             Container(
               margin: const EdgeInsets.only(left: 16.0),
               child: const Text(
-                'now',
+                'Now      ',
                 style: TextStyle(fontSize: 14.0),
               ),
             ),
             const Text(
-              'hours since ingested',
+              'Hours since ingested',
               style: TextStyle(fontSize: 24.0),
             ),
             Container(
