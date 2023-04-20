@@ -23,9 +23,7 @@ class Location{
 
   Future _init() async{
     await determinePosition();
-    print("location fungerar");
     await setLocationNameFromCoords();
-    print("location name fungerar");
   }
 
   /// Determine the current position of the device.
@@ -73,19 +71,9 @@ class Location{
       String request = "at=${position.latitude}%2C${position.longitude}&lang=en-US";
       var url = Uri.parse(ApiConstantsGeo.revGeoCodeBaseUrl + ApiConstantsGeo.revGeoCodeEndpoint 
       + request + ApiConstantsGeo.revGeoCodeApiKey);
-      print(url);
       var response = await http.get(url);
-      print(response.body);
       Map<String, dynamic> valueMap = json.decode(utf8.decode(response.bodyBytes));
-      print(valueMap['items']);
       locationName = valueMap['items'][0]['address']['city'];
-      print(locationName);
     }
-
-}
-
-Future<void> main(List<String> args) async {
-  Location locationObject = await Location.create();
-  print(locationObject.locationName);
 
 }
