@@ -24,12 +24,12 @@ class CaffeineDetailedView extends StatefulWidget {
 class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
   @override
   Widget build(BuildContext context) {
-    context.read<CaffeineBloc>().add(const FetchCaffeine());
     context.read<CaffeineDetailedBloc>().add(const FetchAllCaffeine());
     final bloc = BlocProvider.of<CaffeineDetailedBloc>(context);
     return BlocBuilder<CaffeineDetailedBloc, CaffeineDetailedState>(
       builder: (context, state) {
         if (state.status == CaffeineDetailedStatus.success) {
+          context.read<CaffeineBloc>().add(const FetchCaffeine());
           final List<CaffeineRecord> listOfCaffeine = state.caffeineList ?? [];
           return Scaffold(
             appBar: AppBar(
@@ -433,6 +433,9 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
                 timeSince: _sliderValue3,
               ),
             );
+            BlocProvider.of<CaffeineDetailedBloc>(context).add(
+              FetchAllCaffeine(),
+            );
             Navigator.pop(context);
           },
           child: Text("Add drink"),
@@ -577,6 +580,9 @@ class _QuickAddGridState extends State<QuickAddGrid> {
                     timeSince: _sliderValue,
                   ),
                 );
+            BlocProvider.of<CaffeineDetailedBloc>(context).add(
+              FetchAllCaffeine(),
+            );
             Navigator.pop(context);
           },
           style: ButtonStyle(
