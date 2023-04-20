@@ -122,7 +122,7 @@ class DashboardView extends StatelessWidget {
           ),
         );
       }else{
-        return Container(color: Colors.red, child: const Text("You fucked up"));
+        return Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()));
       }
     });
   }
