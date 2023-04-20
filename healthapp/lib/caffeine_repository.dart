@@ -128,6 +128,9 @@ class CaffeineRepository {
       caffeineList.add(caffeine);
     }
 
+    // Sort the caffeineList based on the timeConsumed field
+    caffeineList.sort((a, b) => b.timeConsumed.compareTo(a.timeConsumed));
+
     return caffeineList;
   }
 }
