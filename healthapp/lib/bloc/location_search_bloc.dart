@@ -7,26 +7,25 @@ import 'package:healthapp/caffeine_repository.dart';
 
 import '../backend/location/location.dart';
 
-class LocationBloc extends Bloc<LocationEvent, LocationState> {
-  LocationBloc(
-  ) : super(LocationState()) {
+class LocationSearchBloc extends Bloc<LocationSearchEvent, LocationSearchState> {
+  LocationSearchBloc() : super(LocationSearchState()) {
     // fetch data
 
-    on<LocationChanged>(
+    on<LocationsSearchFetch>(
       (event, emit) async {
         emit(state.copyWith(status: LocationStatus.loading));
         try {
           //final caffeine = await repository.fetchCurrentCaffeine();
-          var location = await Location.getInstance();
+          /* var location = await Location.getInstance();
           if (event.useCurrentLocation) {
             await location.setCurrentPosition();
           } else {
             await location.setCustomPosition(event.latitude!, event.longitude!);
-          }
+          } */
           emit(
             state.copyWith(
               status: LocationStatus.success,
-              locationName: location.locationName,
+              locations: locations,
             ),
           );
         } catch (_) {
@@ -35,7 +34,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       },
     );
 
-    on<FetchLocation>(
+    /* on<FetchLocation>(
       (event, emit) async {
         emit(state.copyWith(status: LocationStatus.loading));
         try {
@@ -50,38 +49,34 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
           emit(state.copyWith(status: LocationStatus.error));
         }
       },
-    );
+    ); */
   }
 }
 
 @immutable
-abstract class LocationEvent {
-  const LocationEvent();
+abstract class LocationSearchEvent {
+  const LocationSearchEvent();
 }
 
-class FetchLocation extends LocationEvent {}
-
-class LocationChanged extends LocationEvent {
-  final bool useCurrentLocation;
-  final double? latitude;
-  final double? longitude;
-  const LocationChanged(
-      {required this.useCurrentLocation, this.latitude, this.longitude});
+class LocationsSearchFetch extends LocationSearchEvent {
+  final String searchQuery;
+  const LocationsSearchFetch(
+      {required this.searchQuery});
 }
 
 enum LocationStatus { loading, success, error }
 
-class LocationState {
-  const LocationState({this.status = LocationStatus.loading, this.locationName});
+class LocationSearchState {
+  const LocationSearchState(
+      {this.status = LocationStatus.loading, this.locations});
 
   final LocationStatus status;
-  final String? locationName;
+  final List<LocationData>? locations;
 
-  LocationState copyWith(
-      {LocationStatus? status, String? locationName}) {
-    return LocationState(
+  LocationSearchState copyWith({LocationStatus? status, List<LocationData>? locations}) {
+    return LocationSearchState(
       status: status ?? this.status,
-      locationName: locationName ?? this.locationName,
+      locations: locations ?? this.locations,
     );
   }
 }
