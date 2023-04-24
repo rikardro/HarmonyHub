@@ -94,15 +94,22 @@ class WeatherInformationCurrent extends WeatherInformation {
 }
 
 class WeatherInformationWeekly {
+  final WeatherType _weather;
   final double _maxTemperature;
   final double _minTemperature;
   final String _time;
   final double _precipitation;
   final double _maxWindspeed;
 
-  WeatherInformationWeekly(this._maxTemperature, this._minTemperature,
-      this._time, this._precipitation, this._maxWindspeed);
+  WeatherInformationWeekly(
+      this._weather,
+      this._maxTemperature,
+      this._minTemperature,
+      this._time,
+      this._precipitation,
+      this._maxWindspeed);
 
+  WeatherType get weather => _weather;
   double get maxTemperature => _maxTemperature;
   double get minTemperature => _minTemperature;
   String get time => _time;
