@@ -53,6 +53,8 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
                         ],
                       )
                     ]));
+          }else{
+            return Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()));
           }
         });
   }
