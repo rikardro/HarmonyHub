@@ -26,8 +26,11 @@ class WeatherDetailedView extends StatefulWidget {
 }
 
 class _WeatherDetailedViewState extends State<WeatherDetailedView> {
-  Future<Location> fetchLocation() async {
-    return await Location.create();
+  Future<List<WeatherInformationWeekly>> fetchLocation() async {
+    Location location = await Location.create();
+    List<WeatherInformationWeekly> wi =
+        await fetchWeatherData(location.position);
+    return wi;
   }
 
   Future<List<WeatherInformationWeekly>> fetchWeatherData(
@@ -42,27 +45,26 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: fetchLocation(),
-        builder: (context, AsyncSnapshot<Location> location) {
-          if (location.hasData) {
+        builder:
+            (context, AsyncSnapshot<List<WeatherInformationWeekly>> weather) {
+          if (weather.hasData) {
             return Container(
-                child:
-                    ListView(physics: BouncingScrollPhysics(), children: [
-                      Column(
-                        children: [
-                          generateWeatherCards(location.data!.position)
-                        ],
-                      )
-                    ]));
-          }else{
-            return Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()));
+                child: ListView(physics: BouncingScrollPhysics(), children: [
+              Column(children: generateWeatherCards(weather.data!))
+            ]));
+          } else {
+            return Container(
+                color: Colors.white,
+                child: const Center(child: CircularProgressIndicator()));
           }
         });
   }
 
-  
-  
-  generateWeatherCards(Position position) async {
-    List<WeatherInformationWeekly> wi = await fetchWeatherData(position);
-    WeeklyWeatherCard(wi[0]);
+  generateWeatherCards(List<WeatherInformationWeekly> weather) {
+    List<WeeklyWeatherCard> weeklyWeather = [];
+    for (int i = 0; i < weather.length; i++) {
+      weeklyWeather.add(WeeklyWeatherCard(weather[i]));
+    }
+    return weeklyWeather;
   }
 }
