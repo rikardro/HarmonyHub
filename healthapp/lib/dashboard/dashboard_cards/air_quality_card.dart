@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/air_quality_bloc.dart';
 import '../dashboard_card.dart';
 
+const Color lightBlue = Color(0xFF7EC9FF);
+
 class AirQualityCard extends StatelessWidget {
   AirQualityCard({Key? key}) : super(key: key);
 
@@ -48,7 +50,8 @@ class AirQualityCard extends StatelessWidget {
       //final quality = getQualityColor(state.airQualityStatus ?? "");
       if (state.status == AirQualityStatus.success) {
         return DashboardCard(
-          flex: 5, color: const Color(0xFF7EC9FF),
+          flex: 5,
+          color: lightBlue,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -81,7 +84,10 @@ class AirQualityCard extends StatelessWidget {
           ), // CONTENT HERE
         );
       } else {
-        return CircularProgressIndicator();
+        return DashboardCard(
+            flex: 5,
+            color: lightBlue,
+            child: Center(child: CircularProgressIndicator()));
       }
     });
   }
