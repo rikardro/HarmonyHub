@@ -13,9 +13,11 @@ class CaffeineBloc extends Bloc<CaffeineEvent, CaffeineState> {
 
     on<FetchCaffeine>(
       (event, emit) async {
+        print("EMITTING");
         emit(state.copyWith(status: CaffeineStatus.loading));
         try {
           final caffeine = await repository.fetchCurrentCaffeine();
+          print(caffeine.amount);
           emit(state.copyWith(
               status: CaffeineStatus.success,
               caffeine: caffeine.amount,

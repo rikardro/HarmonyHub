@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<CaffeineBloc>(
           create: (context) => CaffeineBloc(
             CaffeineRepository(),
-          ),
+          )..add(FetchCaffeine()),
         ),
       ],
       child: MaterialApp(

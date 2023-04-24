@@ -73,7 +73,8 @@ class DashboardView extends StatelessWidget {
                             return WeatherCard(weatherData);
                           }),
                       BlocProvider(
-                        create: (context) => AirQualityBloc()..add(FetchAirQuality()),
+                        create: (context) =>
+                            AirQualityBloc()..add(FetchAirQuality()),
                         child: AirQualityCard(),
                       ),
                     ],
@@ -104,11 +105,7 @@ class DashboardView extends StatelessWidget {
                         iconColor: Colors.grey[600],
                         topPadding: 24,
                       ),
-                      BlocProvider(
-                        create: (context) => CaffeineBloc(CaffeineRepository())
-                          ..add(const FetchCaffeine()),
-                        child: CaffeineCard(),
-                      )
+                      CaffeineCard()
                     ],
                   ),
                   Container(
