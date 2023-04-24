@@ -254,37 +254,6 @@ class _LocationPopupState extends State<LocationPopup> {
                   },
                 ),
               ),
-              /* SizedBox(height: 16.0),
-              Container(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () {
-                    // TODO: Implement save logic
-                    Navigator.pop(context);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.blue),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10.0),
-                    child: Text(
-                      "Save",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ) */
             ],
           ),
         );
