@@ -12,10 +12,17 @@ class WeatherInformation {
   final double _windspeed;
   final int _windDegrees;
   final CardinalDirection _windDirection;
-  
 
-  WeatherInformation(String time, double temperature, double precipitation, double snowfall, 
-  double snow_depth, WeatherType weather, int cloudcover, double windspeed, int windDegrees)
+  WeatherInformation(
+      String time,
+      double temperature,
+      double precipitation,
+      double snowfall,
+      double snow_depth,
+      WeatherType weather,
+      int cloudcover,
+      double windspeed,
+      int windDegrees)
       : _time = time,
         _temperature = temperature,
         _precipitation = precipitation,
@@ -65,16 +72,40 @@ class WeatherInformation {
   }
 }
 
-class WeatherInformationCurrent extends WeatherInformation{
+class WeatherInformationCurrent extends WeatherInformation {
   bool _sun_up = false;
 
-  WeatherInformationCurrent(super.time, super.temperature, super.precipitation, super.snowfall, 
-  super.snow_depth, super.weather, super.cloudcover, super.windspeed, super.windDegrees);
-  
+  WeatherInformationCurrent(
+      super.time,
+      super.temperature,
+      super.precipitation,
+      super.snowfall,
+      super.snow_depth,
+      super.weather,
+      super.cloudcover,
+      super.windspeed,
+      super.windDegrees);
+
   bool get sun_up => _sun_up;
 
-  void setsun_up(bool up){
+  void setsun_up(bool up) {
     this._sun_up = up;
   }
+}
 
+class WeatherInformationWeekly {
+  final double _maxTemperature;
+  final double _minTemperature;
+  final String _time;
+  final double _precipitation;
+  final double _maxWindspeed;
+
+  WeatherInformationWeekly(this._maxTemperature, this._minTemperature,
+      this._time, this._precipitation, this._maxWindspeed);
+
+  double get maxTemperature => _maxTemperature;
+  double get minTemperature => _minTemperature;
+  String get time => _time;
+  double get precipitation => _precipitation;
+  double get maxWindspeed => _maxWindspeed;
 }
