@@ -17,6 +17,7 @@ class AirQualityBloc extends Bloc<AirQualityEvent, AirQualityState> {
           final AirQualityData data = await AirQuality.fetchAirQualityData();
           log(data.airQuality.toString());
           log(data.airQualityStatus);
+          log(data.city);
           emit(state.copyWith(
               status: AirQualityStatus.success,
               airQuality: data.aqi.toDouble(),

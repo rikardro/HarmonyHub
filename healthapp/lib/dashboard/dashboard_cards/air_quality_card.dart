@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/air_quality_bloc.dart';
@@ -13,25 +15,27 @@ class AirQualityCard extends StatelessWidget {
   );
 
   List<Color> getQualityColor(String quality) {
+    quality = quality.toLowerCase();
     switch (quality) {
-      case ("Good"):
+      case ("good"):
         {
           return const [Color(0xFF05FF00), Color(0xFF00FFFF)];
         }
-      case ("Poor"):
+      case ("poor"):
         {
           return const [
             Color.fromARGB(255, 252, 94, 94),
             Color.fromARGB(255, 255, 141, 89)
           ];
         }
-      case ("Okey"):
+      case ("okey"):
         {
           return const [
             Color.fromARGB(255, 255, 184, 78),
             Color.fromARGB(255, 255, 237, 73)
           ];
         }
+
       default:
         return const [Color(0xFF05FF00), Color(0xFF00FFFF)];
     }
