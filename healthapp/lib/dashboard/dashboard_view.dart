@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart';
@@ -13,6 +15,7 @@ import 'package:healthapp/util/weatherInformation.dart';
 
 import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
+import '../bloc/location_bloc.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -24,109 +27,249 @@ class DashboardView extends StatelessWidget {
     return await Location.getInstance();
   }
 
-  Future<WeatherInformationCurrent> fetchWeatherData(double latitude, double longitude) async {
+  Future<WeatherInformationCurrent> fetchWeatherData() async {
     ApiParser apiParser = ApiParser();
-    WeatherInformationCurrent wi = await apiParser.requestCurrentWeather(
-        latitude, longitude);
+    WeatherInformationCurrent wi = await apiParser.requestCurrentWeather();
     return wi;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: fetchLocation(),
-        builder: (context, AsyncSnapshot<Location> location) {
-          if (location.hasData) {
-            return Container(
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Välkommen!",
-                          style: topTextStyle,
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.grey[600],
-                            ),
-                            Text(location.data!.locationName,
-                                style: topTextStyle)
-                          ],
-                        )
-                      ],
+    return Container(
+      child: ListView(
+        physics: BouncingScrollPhysics(),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Välkommen!",
+                  style: topTextStyle,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.grey[600],
                     ),
-                  ),
-                  Row(
-                    children: [
-                      FutureBuilder(
-                          future: fetchWeatherData(location.data!.latitude, location.data!.longitude),
-                          builder: (context,
-                              AsyncSnapshot<WeatherInformationCurrent>
-                                  weatherData) {
-                            return WeatherCard(weatherData);
-                          }),
-                      BlocProvider(
-                        create: (context) =>
-                            AirQualityBloc()..add(FetchAirQuality()),
-                        child: AirQualityCard(),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      HealthCard(
-                        title: "Steps",
-                        value: "3457",
-                        icon: Icons.directions_walk,
-                        iconColor: Colors.grey[600],
-                      ),
-                      const HealthCard(
-                          title: "Heart",
-                          value: "69",
-                          icon: Icons.favorite,
-                          iconColor: Colors.red)
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      HealthCard(
-                        flex: 5,
-                        height: 120,
-                        title: "Flights",
-                        value: "13",
-                        icon: Icons.stairs,
-                        iconColor: Colors.grey[600],
-                        topPadding: 24,
-                      ),
-                      CaffeineCard()
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Suggested running days",
-                      style: topTextStyle,
-                    ),
-                  ),
-                  Column(
-                    children: [SuggestedRunningCard(), SuggestedRunningCard()],
-                  )
-                ],
+                    BlocBuilder<LocationBloc, LocationState>(
+                      builder: (context, state) {
+                        if (state.status == LocationStatus.loading) {
+                          return Text("");
+                        } else {
+                          return Text(state.locationName ?? "",
+                              style: topTextStyle);
+                        }
+                      },
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              FutureBuilder(
+                  future: fetchWeatherData(),
+                  builder: (context,
+                      AsyncSnapshot<WeatherInformationCurrent> weatherData) {
+                    return WeatherCard(weatherData);
+                  }),
+              BlocProvider(
+                create: (context) => AirQualityBloc()..add(FetchAirQuality()),
+                child: AirQualityCard(),
               ),
-            );
-          } else {
-            return Container(
-                color: Colors.white,
-                child: const Center(child: CircularProgressIndicator()));
-          }
-        });
+            ],
+          ),
+          Row(
+            children: [
+              HealthCard(
+                title: "Steps",
+                value: "3457",
+                icon: Icons.directions_walk,
+                iconColor: Colors.grey[600],
+              ),
+              const HealthCard(
+                  title: "Heart",
+                  value: "69",
+                  icon: Icons.favorite,
+                  iconColor: Colors.red)
+            ],
+          ),
+          Row(
+            children: [
+              HealthCard(
+                flex: 5,
+                height: 120,
+                title: "Flights",
+                value: "13",
+                icon: Icons.stairs,
+                iconColor: Colors.grey[600],
+                topPadding: 24,
+              ),
+              CaffeineCard()
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Suggested running days",
+              style: topTextStyle,
+            ),
+          ),
+          Column(
+            children: [SuggestedRunningCard(), SuggestedRunningCard()],
+          ),
+          TextButton(
+            onPressed: () {
+              // change location
+              /* BlocProvider.of<LocationBloc>(context).add(
+                LocationChanged(
+                  latitude: 57.70,
+                  longitude: 11.97,
+                  useCurrentLocation: false,
+                ),
+              ); */
+
+              showModalBottomSheet(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                context: context,
+                builder: (context) {
+                  return LocationPopup();
+                },
+              );
+            },
+            child: Text("Byt plats"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+const Color lightBlack = Color(0xFF3A3A3A);
+
+class LocationPopup extends StatefulWidget {
+  const LocationPopup({Key? key}) : super(key: key);
+
+  @override
+  _LocationPopupState createState() => _LocationPopupState();
+}
+
+class _LocationPopupState extends State<LocationPopup> {
+  TextEditingController _searchController = TextEditingController();
+  List<String> _searchResults = [];
+
+  Future<void> addLocation(
+      bool useCurrentLocation, double latitude, double longitude) async {
+    if (useCurrentLocation) {
+      context.read<LocationBloc>().add(
+            const LocationChanged(
+              latitude: null,
+              longitude: null,
+              useCurrentLocation: true,
+            ),
+          );
+    } else {
+      context.read<LocationBloc>().add(
+            LocationChanged(
+              latitude: latitude,
+              longitude: longitude,
+              useCurrentLocation: false,
+            ),
+          );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    log("hej");
+    return BlocBuilder<LocationSearchBloc, LocationSearchState>(
+      builder: (context, state) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search for a location',
+                ),
+                onChanged: (value) {
+                  setState(() {});
+                  // TODO: Implement search logic
+                },
+              ),
+              SizedBox(height: 16.0),
+              Expanded(
+                child: ListView(
+                  children: _searchController.text.isEmpty
+                      ? [
+                          GestureDetector(
+                            onTap: () {
+                              log("current location");
+                              addLocation(false, 13.37, 13.37);
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.my_location),
+                              iconColor: lightBlack,
+                              title: Text('Current location'),
+                            ),
+                          ),
+                        ]
+                      : _searchResults
+                          .map(
+                            (result) => Card(
+                              child: ListTile(
+                                title: Text(result),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                ),
+              ),
+              /* SizedBox(height: 16.0),
+              Container(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () {
+                    // TODO: Implement save logic
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.blue),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      "Save",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ) */
+            ],
+          ),
+        );
+      },
+    );
   }
 }
