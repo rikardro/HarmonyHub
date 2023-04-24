@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:healthapp/backend/location/location.dart';
+import 'package:healthapp/backend/location/location_search.dart';
 import 'package:healthapp/backend/weather/weather.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
@@ -16,6 +17,7 @@ import 'package:healthapp/util/weatherInformation.dart';
 import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
+import '../bloc/location_search_bloc.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -140,7 +142,10 @@ class DashboardView extends StatelessWidget {
                 ),
                 context: context,
                 builder: (context) {
-                  return LocationPopup();
+                  return BlocProvider(
+                    create: (context) => LocationSearchBloc(),
+                    child: LocationPopup(),
+                  );
                 },
               );
             },
@@ -163,10 +168,10 @@ class LocationPopup extends StatefulWidget {
 
 class _LocationPopupState extends State<LocationPopup> {
   TextEditingController _searchController = TextEditingController();
-  List<String> _searchResults = [];
+  List<LocationData> _searchResults = [];
 
   Future<void> addLocation(
-      bool useCurrentLocation, double latitude, double longitude) async {
+      bool useCurrentLocation, double? latitude, double? longitude) async {
     if (useCurrentLocation) {
       context.read<LocationBloc>().add(
             const LocationChanged(
@@ -184,13 +189,16 @@ class _LocationPopupState extends State<LocationPopup> {
             ),
           );
     }
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    log("hej");
     return BlocBuilder<LocationSearchBloc, LocationSearchState>(
       builder: (context, state) {
+        if (state.status == LocationSearchStatus.success) {
+          _searchResults = state.locations!;
+        }
         return Container(
           padding: EdgeInsets.all(16.0),
           child: Column(
@@ -202,37 +210,48 @@ class _LocationPopupState extends State<LocationPopup> {
                 decoration: InputDecoration(
                   hintText: 'Search for a location',
                 ),
-                onChanged: (value) {
-                  setState(() {});
-                  // TODO: Implement search logic
+                onChanged: (value) async {
+                  await Future.delayed(Duration(milliseconds: 500));
+                  setState(() {
+                    context.read<LocationSearchBloc>().add(
+                          LocationsSearchFetch(
+                            searchQuery: value,
+                          ),
+                        );
+                  });
                 },
               ),
               SizedBox(height: 16.0),
               Expanded(
-                child: ListView(
-                  children: _searchController.text.isEmpty
-                      ? [
-                          GestureDetector(
-                            onTap: () {
-                              log("current location");
-                              addLocation(false, 13.37, 13.37);
-                            },
-                            child: ListTile(
-                              leading: Icon(Icons.my_location),
-                              iconColor: lightBlack,
-                              title: Text('Current location'),
-                            ),
+                child: ListView.builder(
+                  itemCount: _searchController.text.isEmpty
+                      ? 1
+                      : _searchResults.length,
+                  itemBuilder: (context, index) {
+                    if (_searchController.text.isEmpty) {
+                      return GestureDetector(
+                        onTap: () {
+                          addLocation(true, null, null);
+                        },
+                        child: ListTile(
+                          leading: Icon(Icons.my_location),
+                          title: Text('Current location'),
+                        ),
+                      );
+                    } else {
+                      final result = _searchResults[index];
+                      return GestureDetector(
+                        onTap: () {
+                          addLocation(false, result.latitude, result.longitude);
+                        },
+                        child: Card(
+                          child: ListTile(
+                            title: Text(result.name),
                           ),
-                        ]
-                      : _searchResults
-                          .map(
-                            (result) => Card(
-                              child: ListTile(
-                                title: Text(result),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
               /* SizedBox(height: 16.0),
