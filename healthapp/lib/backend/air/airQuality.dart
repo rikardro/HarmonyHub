@@ -37,12 +37,12 @@ class AirQuality {
 
   static Future<AirQualityData> fetchAirQualityData() async {
 
-    Location location = await Location.create();
+    Location location = await Location.getInstance();
 
-    log(location.position.latitude.toString());
-    log(location.position.longitude.toString());
+    log(location.latitude.toString());
+    log(location.longitude.toString());
 
-    final String apiUrlWithKey = '$apiUrl${location.position.latitude};${location.position.longitude}/?token=$apiKey';
+    final String apiUrlWithKey = '$apiUrl${location.latitude};${location.longitude}/?token=$apiKey';
 
     final response = await http.get(Uri.parse(apiUrlWithKey));
 
