@@ -50,23 +50,39 @@ class DashboardView extends StatelessWidget {
                   "Välkommen!",
                   style: topTextStyle,
                 ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      color: Colors.grey[600],
-                    ),
-                    BlocBuilder<LocationBloc, LocationState>(
-                      builder: (context, state) {
-                        if (state.status == LocationStatus.loading) {
-                          return Text("");
-                        } else {
-                          return Text(state.locationName ?? "",
-                              style: topTextStyle);
-                        }
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      context: context,
+                      builder: (context) {
+                        return BlocProvider(
+                          create: (context) => LocationSearchBloc(),
+                          child: LocationPopup(),
+                        );
                       },
-                    )
-                  ],
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        color: Colors.grey[600],
+                      ),
+                      BlocBuilder<LocationBloc, LocationState>(
+                        builder: (context, state) {
+                          if (state.status == LocationStatus.loading) {
+                            return Text("");
+                          } else {
+                            return Text(state.locationName ?? "",
+                                style: topTextStyle);
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 )
               ],
             ),
@@ -124,32 +140,6 @@ class DashboardView extends StatelessWidget {
           ),
           Column(
             children: [SuggestedRunningCard(), SuggestedRunningCard()],
-          ),
-          TextButton(
-            onPressed: () {
-              // change location
-              /* BlocProvider.of<LocationBloc>(context).add(
-                LocationChanged(
-                  latitude: 57.70,
-                  longitude: 11.97,
-                  useCurrentLocation: false,
-                ),
-              ); */
-
-              showModalBottomSheet(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                context: context,
-                builder: (context) {
-                  return BlocProvider(
-                    create: (context) => LocationSearchBloc(),
-                    child: LocationPopup(),
-                  );
-                },
-              );
-            },
-            child: Text("Byt plats"),
           ),
         ],
       ),
