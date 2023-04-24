@@ -26,7 +26,7 @@ class WeeklyWeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseTextStyle = TextStyle(
       color: Colors.white,
-      fontSize: 30,
+      fontSize: 17,
       fontFamily: 'Inter',
       shadows: [
         Shadow(
@@ -46,31 +46,33 @@ class WeeklyWeatherCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(wi.time, style: TextStyle(fontSize: 15, color: Colors.black, fontFamily: 'Inter')),
+                Text(wi.time, style: baseTextStyle),
                 Image(image: weatherImage, width: 80),
               ],
             ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(wi.maxTemperature.toString(), style: baseTextStyle),
-                Text(wi.minTemperature.toString(), style: baseTextStyle)
-              ],
-            ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Image(image: AssetImage('assets/images/degrees.png'), width: 50, height: 50,),
+                    Text("${wi.maxTemperature} / ${wi.minTemperature} °C", style: baseTextStyle),
+                  ],
+                ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(wi.precipitation.toString(), style: baseTextStyle)
-              ],
-            ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Image(image: AssetImage('assets/images/precipitation.png'), width: 50, height: 50,),
+                    Text("${wi.precipitation} mm", style: baseTextStyle)
+                  ],
+                ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(wi.maxWindspeed.toString(), style: baseTextStyle)
-              ],
-            )
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Image(image: AssetImage('assets/images/wind_white.png'), width: 50, height: 50,),
+                    Text("${wi.maxWindspeed} m/s", style: baseTextStyle)
+                  ],
+                ),
           ],
         ),
       ), // CONTENT HERE
