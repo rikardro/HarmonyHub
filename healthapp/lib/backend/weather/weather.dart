@@ -54,7 +54,7 @@ class ApiParser{
   }
 
   void requestDailyWeather(double latitude, double longitude) async{
-    String request = "?latitude=$latitude&longitude=$longitude&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&timezone=Europe%2FBerlin";
+    String request = "?latitude=$latitude&longitude=$longitude&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&windspeed_unit=ms&timezone=Europe%2FBerlin";
     var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
     var response = await http.get(url);
     print(response.body);
