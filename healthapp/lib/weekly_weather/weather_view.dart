@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:geolocator/geolocator.dart';
 import 'package:healthapp/util/dialogs/error_dialog.dart';
 import 'package:healthapp/util/weatherInformation.dart';
+import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -55,8 +56,11 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
           }
         });
   }
+
+  
   
   generateWeatherCards(Position position) async {
     List<WeatherInformationWeekly> wi = await fetchWeatherData(position);
+    WeeklyWeatherCard(wi[0]);
   }
 }
