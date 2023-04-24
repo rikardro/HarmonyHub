@@ -86,7 +86,7 @@ class Location {
   Future setLocationNameFromCoords(double latitude, double longitude) async{
     String request = "at=$latitude%2C$longitude&lang=en-US";
     var url = Uri.parse(ApiConstantsGeo.revGeoCodeBaseUrl + ApiConstantsGeo.revGeoCodeEndpoint 
-    + request + ApiConstantsGeo.revGeoCodeApiKey);
+    + request + ApiConstantsGeo.apiKey);
     var response = await http.get(url);
     Map<String, dynamic> valueMap = json.decode(utf8.decode(response.bodyBytes));
     locationName = valueMap['items'][0]['address']['city'];
