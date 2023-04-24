@@ -84,7 +84,7 @@ class AirQualityCard extends StatelessWidget {
           ), // CONTENT HERE
         );
       } else {
-        return DashboardCard(
+        return const DashboardCard(
             flex: 5,
             color: lightBlue,
             child: Center(child: CircularProgressIndicator()));

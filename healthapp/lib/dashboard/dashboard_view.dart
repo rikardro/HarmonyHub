@@ -21,13 +21,13 @@ class DashboardView extends StatelessWidget {
       fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
 
   Future<Location> fetchLocation() async {
-    return await Location.create();
+    return await Location.getInstance();
   }
 
-  Future<WeatherInformationCurrent> fetchWeatherData(Position position) async {
+  Future<WeatherInformationCurrent> fetchWeatherData(double latitude, double longitude) async {
     ApiParser apiParser = ApiParser();
     WeatherInformationCurrent wi = await apiParser.requestCurrentWeather(
-        position.latitude, position.longitude);
+        latitude, longitude);
     return wi;
   }
 
@@ -66,7 +66,7 @@ class DashboardView extends StatelessWidget {
                   Row(
                     children: [
                       FutureBuilder(
-                          future: fetchWeatherData(location.data!.position),
+                          future: fetchWeatherData(location.data!.latitude, location.data!.longitude),
                           builder: (context,
                               AsyncSnapshot<WeatherInformationCurrent>
                                   weatherData) {

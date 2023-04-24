@@ -5,31 +5,42 @@ import 'package:healthapp/backend/location/apiConstants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show utf8;
 
-
-
-class Location{
-  late Position position;
+class Location {
+  late double longitude;
+  late double latitude;
   late String locationName;
+  
+  // Static instance variable
+  static Location? _instance;
 
-
-
+  // Private constructor
   Location._create();
 
-  static Future<Location> create() async{
-    Location location = Location._create();
-    await location._init();
-    return location;
+  // Static method to access the singleton instance
+  static Future<Location> getInstance() async {
+    if (_instance == null) {
+      _instance = Location._create();
+      await _instance!._init();
+    }
+    return _instance!;
+  }
+
+  void setCustomPosition(double latitude, double longitude){
+    this.latitude = latitude;
+    this.longitude = longitude;
+    setLocationNameFromCoords(latitude, longitude);
+  }
+
+  void setCurrentPosition(){
+    _init();
   }
 
   Future _init() async{
     await determinePosition();
-    await setLocationNameFromCoords();
+    await setLocationNameFromCoords(latitude, longitude);
   }
 
-  /// Determine the current position of the device.
-  ///
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
+  // Determine the current position of the device.
   Future determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -64,16 +75,20 @@ class Location{
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    position = await Geolocator.getCurrentPosition();
-    }
+    Position position = await Geolocator.getCurrentPosition();
 
-    Future setLocationNameFromCoords() async{
-      String request = "at=${position.latitude}%2C${position.longitude}&lang=en-US";
-      var url = Uri.parse(ApiConstantsGeo.revGeoCodeBaseUrl + ApiConstantsGeo.revGeoCodeEndpoint 
-      + request + ApiConstantsGeo.revGeoCodeApiKey);
-      var response = await http.get(url);
-      Map<String, dynamic> valueMap = json.decode(utf8.decode(response.bodyBytes));
-      locationName = valueMap['items'][0]['address']['city'];
-    }
+    latitude = position.latitude;
+    longitude = position.longitude;
 
+  }
+
+  // Set the location name from the current position.
+  Future setLocationNameFromCoords(double latitude, double longitude) async{
+    String request = "at=$latitude%2C$longitude&lang=en-US";
+    var url = Uri.parse(ApiConstantsGeo.revGeoCodeBaseUrl + ApiConstantsGeo.revGeoCodeEndpoint 
+    + request + ApiConstantsGeo.revGeoCodeApiKey);
+    var response = await http.get(url);
+    Map<String, dynamic> valueMap = json.decode(utf8.decode(response.bodyBytes));
+    locationName = valueMap['items'][0]['address']['city'];
+  }
 }
