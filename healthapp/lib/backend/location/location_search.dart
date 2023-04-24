@@ -24,15 +24,14 @@ class LocationSearch{
     var url = Uri.parse(ApiConstantsGeo.autosuggestBaseUrl + ApiConstantsGeo.autosuggestCodeEndpoint 
     + request + ApiConstantsGeo.autosuggestType + ApiConstantsGeo.apiKey);
 
-    print(url);
-
     var response = await http.get(url);
     Map<String, dynamic> valueMap = json.decode(utf8.decode(response.bodyBytes));
 
     List<dynamic> items = valueMap['items'];
 
     for (final item in items){
-      locations.add(LocationData(item['position']['lat'], item['position']['lng'], item['address']['label'].split(",")[0].trim()));
+      String city = item['address']['label'].split(",")[0].trim();
+      locations.add(LocationData(item['position']['lat'], item['position']['lng'], city));
     }
     return locations;
 
