@@ -5,24 +5,25 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:healthapp/caffeine_repository.dart';
 
-class CaffeineBloc extends Bloc<CaffeineEvent, CaffeineState> {
+class CaffeineBloc extends Bloc<CaffeineEvent, LocationState> {
   CaffeineBloc(
     CaffeineRepository repository,
-  ) : super(CaffeineState()) {
+  ) : super(LocationState()) {
     // fetch data
 
     on<FetchCaffeine>(
       (event, emit) async {
-        emit(state.copyWith(status: CaffeineStatus.loading));
+        print("EMITTING");
+        emit(state.copyWith(status: LocationStatus.loading));
         try {
           final caffeine = await repository.fetchCurrentCaffeine();
           print(caffeine.amount);
           emit(state.copyWith(
-              status: CaffeineStatus.success,
+              status: LocationStatus.success,
               caffeine: caffeine.amount,
               caffeineStatus: caffeine.status));
         } catch (_) {
-          emit(state.copyWith(status: CaffeineStatus.error));
+          emit(state.copyWith(status: LocationStatus.error));
         }
       },
     );
@@ -38,30 +39,24 @@ class FetchCaffeine extends CaffeineEvent {
   const FetchCaffeine();
 }
 
-enum CaffeineStatus { loading, success, error }
+enum LocationStatus { loading, success, error }
 
-class CaffeineState {
-  const CaffeineState(
-      {this.status = CaffeineStatus.loading,
+class LocationState {
+  const LocationState(
+      {this.status = LocationStatus.loading,
       this.caffeine,
       this.caffeineStatus});
 
-  final CaffeineStatus status;
+  final LocationStatus status;
   final double? caffeine;
   final String? caffeineStatus;
 
-  CaffeineState copyWith(
-      {CaffeineStatus? status, double? caffeine, String? caffeineStatus}) {
-    return CaffeineState(
+  LocationState copyWith(
+      {LocationStatus? status, double? caffeine, String? caffeineStatus}) {
+    return LocationState(
         status: status ?? this.status,
         caffeine: caffeine ?? this.caffeine,
         caffeineStatus: caffeineStatus ?? this.caffeineStatus);
   }
 }
-
-/* class PostStateLoaded extends CaffeineState {
-  final List<Post> posts;
-  final Uint8List? image;
-  const PostStateLoaded({required this.posts, required this.image});
-} */
 
