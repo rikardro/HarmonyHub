@@ -4,6 +4,7 @@ import 'package:healthapp/backend/weather/weather.dart';
 
 import '../../util/weatherInformation.dart';
 import '../../util/weatherType.dart';
+import 'package:intl/intl.dart';
 
 class PointsData{
   final double windPoints;
@@ -116,14 +117,16 @@ class RecommendedDaysRepo {
 
     List<List<RecommendedTime>> topClusters = clusters.take(amount).toList();
     List<RecommendedIntervals> recommendedIntervals = [];
+    final DateFormat format = DateFormat('EEEE');
     for (List<RecommendedTime> cluster in topClusters) {
+      final start = DateTime.parse(cluster.first.weather.time);
+      final end = DateTime.parse(cluster.last.weather.time);
       recommendedIntervals.add(RecommendedIntervals(
-        DateTime.parse(cluster.first.weather.time),
-        DateTime.parse(cluster.last.weather.time),
-        // Get average temperature
-        cluster.fold(0.0, (sum, e) => sum + e.weather.temperature) / cluster.length,
-        cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length,
-        cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length,
+        format.format(DateTime.parse(cluster.first.weather.time)),
+        start.hour != end.hour ? "${start.hour}:00 - ${end.hour}:00" : "${start.hour}:00",
+        "${cluster.fold(0.0, (sum, e) => sum + e.weather.temperature) / cluster.length}°C",
+        "${cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length} m/s",
+          "${cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length}mm",
         cluster.map((x) => x.points).toList(),
         cluster.map((x) => x.weather.weather).toSet()
       ));
@@ -135,8 +138,8 @@ class RecommendedDaysRepo {
   void printIntervals(List<RecommendedIntervals> intervals){
     // print out the recommended intervals
     for (RecommendedIntervals interval in intervals) {
-      print('Start time: ${interval.startTime}');
-      print('End time: ${interval.endTime}');
+      print('Day name: ${interval.dayName}');
+      print('Interval: ${interval.interval}');
       print('Temperature: ${interval.temperature}');
       print('Windspeed: ${interval.windspeed}');
       print('Precipitation: ${interval.precipitation}');
@@ -164,13 +167,13 @@ class RecommendedTime{
 
 // For the frontend
 class RecommendedIntervals{
-  final DateTime startTime;
-  final DateTime endTime;
-  final double temperature;
-  final double windspeed;
-  final double precipitation;
+  final String dayName;
+  final String interval;
+  final String temperature;
+  final String windspeed;
+  final String precipitation;
   final List<PointsData> points;
   final Set<WeatherType> weatherTypes;
 
-  RecommendedIntervals(this.startTime, this.endTime, this.temperature, this.windspeed, this.precipitation, this.points, this.weatherTypes);
+  RecommendedIntervals(this.dayName, this.interval, this.temperature, this.windspeed, this.precipitation, this.points, this.weatherTypes);
 }
