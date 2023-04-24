@@ -75,6 +75,59 @@ class RecommendedDaysRepo {
     return PointsData(windPoints: windPoints, temperaturePoints: tempPoints, snowPoints: snowPoints, weatherTypePoints: weatherPoints, precipitationPoints: precipitationPoints);
   }
 
+  Future<List<RecommendedIntervals>> getRecommended(int amount) async{
+    List<WeatherInformation> weatherList = await apiClient.requestWeather(57.7085865,11.9684324);
+    List<RecommendedTime> recommended = [];
+    for (WeatherInformation weather in weatherList) {
+      PointsData points = calculatePoints(weather);
+      recommended.add(RecommendedTime(weather, points));
+    }
+
+    final List<List<RecommendedTime>> clusters = clusterTimes(recommended);
+
+    // Sort clusters by the average points
+    clusters.sort((a, b) => (b.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) / b.length
+                  - a.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) / a.length).toInt());
+
+    List<List<RecommendedTime>> topClusters = clusters.take(amount).toList();
+    topClusters.sort((a, b) {
+      final startTimeA = DateTime.parse(a.first.weather.time);
+      final startTimeB = DateTime.parse(b.first.weather.time);
+      return startTimeA.compareTo(startTimeB);
+    });
+
+    List<RecommendedIntervals> recommendedIntervals = [];
+    final DateFormat format = DateFormat('EEEE');
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    for (List<RecommendedTime> cluster in topClusters) {
+      final start = DateTime.parse(cluster.first.weather.time);
+      final end = DateTime.parse(cluster.last.weather.time);
+
+      String dayName;
+      if (start.day == now.day && start.month == now.month && start.year == now.year) {
+        dayName = "Today";
+      } else if (start.day == tomorrow.day && start.month == tomorrow.month && start.year == tomorrow.year) {
+        dayName = "Tomorrow";
+      } else {
+        final date = DateTime.parse(cluster.first.weather.time);
+        dayName = "${format.format(date)} (${DateFormat('d/M').format(date)})";
+      }
+
+      recommendedIntervals.add(RecommendedIntervals(
+          dayName,
+          start.hour != end.hour ? "${start.hour}:00 - ${end.hour}:00" : "${start.hour}:00",
+          "${(cluster.fold(0.0, (sum, e) => sum + e.weather.temperature) / cluster.length).toStringAsFixed(1)}°C",
+          "${(cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length).toStringAsFixed(1)} m/s",
+          "${(cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length).toStringAsFixed(1)}mm",
+          cluster.map((x) => x.points).toList(),
+          cluster.map((x) => x.weather.weather).toSet()
+      ));
+    }
+
+    return recommendedIntervals;
+  }
+
   // Cluster times into intervals
   List<List<RecommendedTime>> clusterTimes(List<RecommendedTime> recommendedTimes){
     List<List<RecommendedTime>> clusters = [];
@@ -97,42 +150,8 @@ class RecommendedDaysRepo {
         }
       }
     }
-    
+
     return clusters;
-  }
-
-  Future<List<RecommendedIntervals>> getRecommended(int amount) async{
-    List<WeatherInformation> weatherList = await apiClient.requestWeather(57.7085865,11.9684324);
-    List<RecommendedTime> recommended = [];
-    for (WeatherInformation weather in weatherList) {
-      PointsData points = calculatePoints(weather);
-      recommended.add(RecommendedTime(weather, points));
-    }
-
-    final List<List<RecommendedTime>> clusters = clusterTimes(recommended);
-
-    // Sort clusters by the average points
-    clusters.sort((a, b) => (b.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) / b.length
-                  - a.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) / a.length).toInt());
-
-    List<List<RecommendedTime>> topClusters = clusters.take(amount).toList();
-    List<RecommendedIntervals> recommendedIntervals = [];
-    final DateFormat format = DateFormat('EEEE');
-    for (List<RecommendedTime> cluster in topClusters) {
-      final start = DateTime.parse(cluster.first.weather.time);
-      final end = DateTime.parse(cluster.last.weather.time);
-      recommendedIntervals.add(RecommendedIntervals(
-        format.format(DateTime.parse(cluster.first.weather.time)),
-        start.hour != end.hour ? "${start.hour}:00 - ${end.hour}:00" : "${start.hour}:00",
-        "${(cluster.fold(0.0, (sum, e) => sum + e.weather.temperature) / cluster.length).toStringAsFixed(1)}°C",
-        "${(cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length).toStringAsFixed(1)} m/s",
-        "${(cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length).toStringAsFixed(1)}mm",
-        cluster.map((x) => x.points).toList(),
-        cluster.map((x) => x.weather.weather).toSet()
-      ));
-    }
-
-    return recommendedIntervals;
   }
 
   void printIntervals(List<RecommendedIntervals> intervals){
@@ -149,7 +168,7 @@ class RecommendedDaysRepo {
       
       // print all points in interval
       for (PointsData points in interval.points) {
-        points.printPoints();
+        //points.printPoints();
       }
 
       print("=====================================");
