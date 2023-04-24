@@ -124,9 +124,9 @@ class RecommendedDaysRepo {
       recommendedIntervals.add(RecommendedIntervals(
         format.format(DateTime.parse(cluster.first.weather.time)),
         start.hour != end.hour ? "${start.hour}:00 - ${end.hour}:00" : "${start.hour}:00",
-        "${cluster.fold(0.0, (sum, e) => sum + e.weather.temperature) / cluster.length}°C",
-        "${cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length} m/s",
-          "${cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length}mm",
+        "${(cluster.fold(0.0, (sum, e) => sum + e.weather.temperature) / cluster.length).toStringAsFixed(1)}°C",
+        "${(cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length).toStringAsFixed(1)} m/s",
+        "${(cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length).toStringAsFixed(1)}mm",
         cluster.map((x) => x.points).toList(),
         cluster.map((x) => x.weather.weather).toSet()
       ));
