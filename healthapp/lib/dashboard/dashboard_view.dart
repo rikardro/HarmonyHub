@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:healthapp/backend/location/location.dart';
+import 'package:healthapp/backend/weather/recommended_days_repo.dart';
 import 'package:healthapp/backend/weather/weather.dart';
+import 'package:healthapp/bloc/running_bloc.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
@@ -115,9 +117,26 @@ class DashboardView extends StatelessWidget {
                   style: topTextStyle,
                 ),
               ),
-              Column(
-                children: [SuggestedRunningCard(), SuggestedRunningCard()],
+              BlocProvider(
+                  create: (context) => RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
+                    ..add(const FetchRecommended()),
+                  child: BlocBuilder<RunningBloc, RunningState>(
+                    builder: (context, state){
+                      if(state.status == RunningStatus.loading){
+                        return CircularProgressIndicator();
+                      } else{
+                        final recommended = state.intervals ?? [];
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: recommended.length,
+                          itemBuilder: (BuildContext context, int index){
+                            return SuggestedRunningCard(interval: recommended[index]);
+                          });
+                      }
+                    },
+                  )
               )
+              
             ],
           ),
         );
