@@ -10,6 +10,7 @@ import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/util/weatherInformation.dart';
+import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
 import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
 
@@ -118,7 +119,7 @@ class DashboardView extends StatelessWidget {
                 ),
               ),
               Column(
-                children: [SuggestedRunningCard(), SuggestedRunningCard(), WeatherDetailedView()],
+                children: [SuggestedRunningCard(), SuggestedRunningCard(), WeeklyWeatherCard(WeatherInformationWeekly(WeatherType.raining, 10.1, 10.0, "2", 0.8, 0.4))],
               )
             ],
           ),

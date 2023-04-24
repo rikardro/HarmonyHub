@@ -10,7 +10,7 @@ class WeeklyWeatherCard extends StatelessWidget {
   late Color weatherColor;
   late String weather;
 
-  WeeklyWeatherCard(WeatherInformationWeekly wi, {Key? key}) : super(key: key) {
+  WeeklyWeatherCard(this.wi, {Key? key}) : super(key: key) {
     init(wi.weather.toShortString());
   }
 
@@ -24,34 +24,51 @@ class WeeklyWeatherCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseTextStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 30,
+      fontFamily: 'Inter',
+      shadows: [
+        Shadow(
+          blurRadius: 10,
+          offset: const Offset(2, 2),
+          color: Colors.black.withOpacity(0.3),
+        ),
+      ],
+    );
+
     return DashboardCard(
       flex: 0,
-      color: Colors.white,
+      color: weatherColor,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(wi.time, style: TextStyle(fontSize: 15, color: Colors.black, fontFamily: 'Inter')),
                 Image(image: weatherImage, width: 80),
-                Text(weather),
               ],
             ),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(wi.maxTemperature.toString(), style: TextStyle(color: Colors.black)),
-                Text(wi.minTemperature.toString(), style: TextStyle(color: Colors.grey))
+                Text(wi.maxTemperature.toString(), style: baseTextStyle),
+                Text(wi.minTemperature.toString(), style: baseTextStyle)
               ],
             ),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(wi.precipitation.toString())
+                Text(wi.precipitation.toString(), style: baseTextStyle)
               ],
             ),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(wi.maxWindspeed.toString())
+                Text(wi.maxWindspeed.toString(), style: baseTextStyle)
               ],
             )
           ],
