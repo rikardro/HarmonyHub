@@ -9,9 +9,27 @@ import '../location/location.dart';
 class AirQualityData {
   final int aqi;
   final String city;
+  late String airQualityStatus;
 
-  AirQualityData({required this.city, required this.aqi});
+  AirQualityData({required this.city, required this.aqi}) {
+    if (aqi < 50) {
+      airQualityStatus = "Good";
+    } else if (aqi <= 100) {
+      airQualityStatus = "Moderate";
+    } else {
+      airQualityStatus = "Poor";
+    }
+  }
+
+  String get status {
+    return airQualityStatus;
+  }
+
+  int get airQuality {
+    return aqi;
+  }
 }
+
 
 class AirQuality {
   static const String apiKey = 'fab479720ebc047005d9cf2d23fac7ae68a4798d';
