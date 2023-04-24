@@ -123,7 +123,9 @@ class WeatherCard extends StatelessWidget {
     return DashboardCard(
         flex: 12,
         color: weatherColor,
-        child: Row(
+        child: GestureDetector(onTap: () => print("hej"),
+          behavior: HitTestBehavior.opaque,
+          child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
@@ -165,6 +167,6 @@ class WeatherCard extends StatelessWidget {
               ],
             ),
           ],
-        ));
+        )));
   }
 }
