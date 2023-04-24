@@ -25,14 +25,14 @@ class Location {
     return _instance!;
   }
 
-  void setCustomPosition(double latitude, double longitude){
+  setCustomPosition(double latitude, double longitude) async{
     this.latitude = latitude;
     this.longitude = longitude;
-    setLocationNameFromCoords(latitude, longitude);
+    await setLocationNameFromCoords(latitude, longitude);
   }
 
-  void setCurrentPosition(){
-    _init();
+  setCurrentPosition() async{
+    await _init();
   }
 
   Future _init() async{

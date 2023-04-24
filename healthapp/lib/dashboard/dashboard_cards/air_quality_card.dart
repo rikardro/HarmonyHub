@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthapp/backend/location/location.dart';
 import '../../bloc/air_quality_bloc.dart';
 import '../dashboard_card.dart';
 
