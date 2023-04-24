@@ -52,6 +52,13 @@ class ApiParser{
         throw APIException('could not load data from Meteo weather API');
     }
   }
+
+  void requestDailyWeather(double latitude, double longitude) async{
+    String request = "?latitude=$latitude&longitude=$longitude&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&windspeed_unit=ms&timezone=Europe%2FBerlin";
+    var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
+    var response = await http.get(url);
+    print(response.body);
+  }
   
   Future<bool> getSunUp(double latitude, double longitude) async{
     String request = "lat=$latitude&lng=$longitude&timezone=EET&date=today";
@@ -81,6 +88,6 @@ class ApiParser{
 
   void main(){
     ApiParser api = new ApiParser();
-    var sun = api.getSunUp(57.71, 11.97);
+    var sun = api.requestDailyWeather(57.71, 11.97);
   }
 
