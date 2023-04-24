@@ -7,8 +7,7 @@ import 'package:healthapp/backend/air/airQuality.dart';
 import 'package:healthapp/caffeine_repository.dart';
 
 class AirQualityBloc extends Bloc<AirQualityEvent, AirQualityState> {
-  AirQualityBloc(
-  ) : super(AirQualityState()) {
+  AirQualityBloc() : super(AirQualityState()) {
     // fetch data
 
     on<FetchAirQuality>(
@@ -16,6 +15,8 @@ class AirQualityBloc extends Bloc<AirQualityEvent, AirQualityState> {
         emit(state.copyWith(status: AirQualityStatus.loading));
         try {
           final AirQualityData data = await AirQuality.fetchAirQualityData();
+          log(data.airQuality.toString());
+          log(data.airQualityStatus);
           emit(state.copyWith(
               status: AirQualityStatus.success,
               airQuality: data.aqi.toDouble(),
@@ -50,7 +51,9 @@ class AirQualityState {
   final String? airQualityStatus;
 
   AirQualityState copyWith(
-      {AirQualityStatus? status, double? airQuality, String? airQualityStatus}) {
+      {AirQualityStatus? status,
+      double? airQuality,
+      String? airQualityStatus}) {
     return AirQualityState(
         status: status ?? this.status,
         airQuality: airQuality ?? this.airQuality,

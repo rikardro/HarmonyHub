@@ -73,9 +73,9 @@ class DashboardView extends StatelessWidget {
                             return WeatherCard(weatherData);
                           }),
                       BlocProvider(
-                        create: (context) => AirQualityBloc(),
-                        child: AirQualityCard(quality: "Good"),
-                      )
+                        create: (context) => AirQualityBloc()..add(FetchAirQuality()),
+                        child: AirQualityCard(),
+                      ),
                     ],
                   ),
                   Row(
