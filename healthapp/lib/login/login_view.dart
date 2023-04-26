@@ -20,7 +20,7 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   
-  final snackBar = SnackBar(content: Text('${GreetingPhrase.get()} \n', style: const TextStyle(fontSize: 18),),
+  final snackBar = SnackBar(content: Text('${GreetingPhrase.get()} 👋', style: const TextStyle(fontSize: 18),),
   duration: const Duration(seconds: 3),
   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
   behavior: SnackBarBehavior.floating,

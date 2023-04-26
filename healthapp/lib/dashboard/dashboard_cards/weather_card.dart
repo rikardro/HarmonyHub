@@ -107,8 +107,12 @@ class WeatherCard extends StatelessWidget {
   }
 
   void changePage(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const WeatherDetailedView()));
+    Navigator.of(context).push(PageRouteBuilder(pageBuilder: 
+    (context, animation, ignored){
+      return WeatherDetailedView();
+    }, opaque: false
+    ))
+    ;
   }
 
   @override
