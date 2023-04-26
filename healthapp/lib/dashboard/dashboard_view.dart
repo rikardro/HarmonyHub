@@ -95,7 +95,10 @@ class DashboardView extends StatelessWidget {
                     future: fetchWeatherData(),
                     builder:
                         (context, AsyncSnapshot<WeatherInformationCurrent> weatherData) {
-                        return WeatherCard(weatherData);
+                          if(weatherData.hasData){
+                            return WeatherCard(weatherData: weatherData);
+                          }
+                          return CircularProgressIndicator();
                     }),
                 BlocProvider(create: (context) => AirQualityBloc()..add(FetchAirQuality()),
                 child: AirQualityCard())

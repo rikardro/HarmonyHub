@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:healthapp/util/cardinalDirections.dart';
 import 'package:healthapp/util/weatherType.dart';
+import 'package:healthapp/util/weatherVisualizationInfo.dart';
 import 'package:healthapp/util/weatherVisuals.dart';
 import '../../util/weatherInformation.dart';
 import '../dashboard_card.dart';
 
-class WeatherCard extends StatelessWidget {
+class WeatherCard extends StatefulWidget {
+  const WeatherCard({super.key, required this.weatherData});
+  final AsyncSnapshot<WeatherInformationCurrent> weatherData;
+
+  @override
+  State<WeatherCard> createState() => _WeatherCardState();
+}
+
+class _WeatherCardState extends State<WeatherCard> {
   bool isDay = true;
   AssetImage weatherImage = const AssetImage('assets/images/clear_day.png');
   Color weatherColor = const Color(0xFFFF9900);
@@ -16,19 +25,28 @@ class WeatherCard extends StatelessWidget {
   double windSpeed = 0; 
   String windDirection = "";
 
-  WeatherCard(AsyncSnapshot<WeatherInformationCurrent> weatherData, {Key? key})
-      : super(key: key) {
-    if (weatherData.hasData) {
-      String w = weatherData.data!.weatherType.toShortString();
-      temperature = weatherData.data!.temperature;
-      windSpeed = weatherData.data!.windspeed;
-      //isDay = weatherData.data!.sun_up;
-      windDirection = weatherData.data!.windDirectionCardinal.value;
-      WeatherVisuals.getWeatherVisuals(w);
-    }
+  @override
+  void initState() {
+    super.initState();
+    String w = widget.weatherData.data!.weatherType.toShortString();
+    temperature = widget.weatherData.data!.temperature;
+    windSpeed = widget.weatherData.data!.windspeed;
+    //isDay = weatherData.data!.sun_up;
+    windDirection = widget.weatherData.data!.windDirectionCardinal.value;
+    swag(w);
   }
 
-  @override
+  swag(String w) async{
+    WeatherVisualizationInfo wvi = await WeatherVisuals.getWeatherVisuals(w);
+    weather = wvi.weatherName;
+    weatherColor = wvi.color;
+    weatherImage = wvi.image;
+    setState(() {
+      
+    });
+  }
+
+   @override
   Widget build(BuildContext context) {
     final baseTextStyle = TextStyle(
       color: Colors.white,
@@ -91,3 +109,4 @@ class WeatherCard extends StatelessWidget {
         ));
   }
 }
+

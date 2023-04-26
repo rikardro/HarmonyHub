@@ -6,14 +6,24 @@ import 'package:flutter/material.dart';
 import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/backend/weather/sunUp.dart';
 import 'package:healthapp/backend/weather/weather.dart';
+import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/util/weatherVisualizationInfo.dart';
 
 class WeatherVisuals{
   static Future<WeatherVisualizationInfo> getWeatherVisuals(String weather) async{
     Location loc = await Location.getInstance();
-    SunUp SunInfo = await ApiParser().getSunUp(loc.latitude, loc.longitude);
-    bool isDay = SunInfo.currentSunIsUp();
+    SunUp sunInfo = await ApiParser().getSunUp(loc.latitude, loc.longitude);
+    bool isDay = sunInfo.currentSunIsUp();
     return _getData(weather, isDay);
+  }
+
+  static Future<Set<AssetImage>> getWeatherIcons(Set<WeatherType> weatherSet) async {
+    Set<AssetImage> images = {};
+    for (var weather in weatherSet) {
+      WeatherVisualizationInfo wvi = _getData(weather.toShortString(), true);
+      images.add(wvi.image);
+    }
+    return images;
   }
 
   static WeatherVisualizationInfo _getData(String weather, bool isDay) {
