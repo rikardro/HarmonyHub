@@ -26,10 +26,13 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
   Widget build(BuildContext context) {
     context.read<CaffeineDetailedBloc>().add(const FetchAllCaffeine());
     final bloc = BlocProvider.of<CaffeineDetailedBloc>(context);
-    return BlocBuilder<CaffeineDetailedBloc, CaffeineDetailedState>(
+    return BlocConsumer<CaffeineDetailedBloc, CaffeineDetailedState>(
+      listener: (context, state) {
+        print("LISTENER");
+        context.read<CaffeineBloc>().add(const FetchCaffeine());
+      },
       builder: (context, state) {
         if (state.status == CaffeineDetailedStatus.success) {
-          context.read<CaffeineBloc>().add(const FetchCaffeine());
           final List<CaffeineRecord> listOfCaffeine = state.caffeineList ?? [];
           return Scaffold(
             appBar: AppBar(

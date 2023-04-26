@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/bloc/caffeine_bloc.dart';
+import 'package:healthapp/bloc/location_bloc.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_view.dart';
 import 'package:healthapp/services/auth/auth/bloc/auth_bloc.dart';
@@ -39,7 +40,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<CaffeineBloc>(
           create: (context) => CaffeineBloc(
             CaffeineRepository(),
-          ),
+          )..add(FetchCaffeine()),
+        ),
+        BlocProvider<LocationBloc>(
+          create: (context) => LocationBloc()..add(FetchLocation()),
         ),
       ],
       child: MaterialApp(
@@ -69,7 +73,17 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
           return Material(
-            child: SafeArea(child: DashboardView()),
+            child: SafeArea(child: BlocBuilder<LocationBloc, LocationState>(
+              builder: (context, state) {
+                if (state.status == LocationStatus.success) {
+                  return DashboardView();
+                } else {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+              },
+            )),
           );
         } else if (state is AuthStateNeedsVerification) {
           return const VerifyEmailView();

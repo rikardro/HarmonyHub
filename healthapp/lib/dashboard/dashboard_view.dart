@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/backend/weather/recommended_days_repo.dart';
+import 'package:healthapp/backend/location/location_search.dart';
 import 'package:healthapp/backend/weather/weather.dart';
 import 'package:healthapp/bloc/running_bloc.dart';
 import 'package:healthapp/caffeine_repository.dart';
@@ -13,7 +16,10 @@ import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart'
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 
+import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
+import '../bloc/location_bloc.dart';
+import '../bloc/location_search_bloc.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -22,60 +28,79 @@ class DashboardView extends StatelessWidget {
       fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
 
   Future<Location> fetchLocation() async {
-    return await Location.create();
+    return await Location.getInstance();
   }
 
-  Future<WeatherInformationCurrent> fetchWeatherData(Position position) async {
+  Future<WeatherInformationCurrent> fetchWeatherData() async {
     ApiParser apiParser = ApiParser();
-    WeatherInformationCurrent wi = await apiParser.requestCurrentWeather(position.latitude, position.longitude);
+    WeatherInformationCurrent wi = await apiParser.requestCurrentWeather();
     return wi;
   }
 
-  
-
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: fetchLocation(),
-      builder: (context, AsyncSnapshot<Location> location) {
-      if(location.hasData){
-        return Container(
-          child: ListView(
-            physics: BouncingScrollPhysics(),
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Välkommen!",
-                      style: topTextStyle,
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          color: Colors.grey[600],
-                        ),
-                        Text(location.data!.locationName, style: topTextStyle)
-                      ],
-                    )
-                  ],
+    return Container(
+      child: ListView(
+        physics: BouncingScrollPhysics(),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Välkommen!",
+                  style: topTextStyle,
                 ),
-              ),
-              Row(
-                children: [
-                  FutureBuilder(
-                      future: fetchWeatherData(location.data!.position),
-                      builder:
-                          (context, AsyncSnapshot<WeatherInformationCurrent> weatherData) {
-                          return WeatherCard(weatherData);
-                      }),
-                  AirQualityCard(quality: "Good")
-                ],
-              ),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      context: context,
+                      builder: (context) {
+                        return BlocProvider(
+                          create: (context) => LocationSearchBloc(),
+                          child: LocationPopup(),
+                        );
+                      },
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        color: Colors.grey[600],
+                      ),
+                      BlocBuilder<LocationBloc, LocationState>(
+                        builder: (context, state) {
+                          if (state.status == LocationStatus.loading) {
+                            return Text("");
+                          } else {
+                            return Text(state.locationName ?? "",
+                                style: topTextStyle);
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Row(
+              children: [
+                FutureBuilder(
+                    future: fetchWeatherData(),
+                    builder:
+                        (context, AsyncSnapshot<WeatherInformationCurrent> weatherData) {
+                        return WeatherCard(weatherData);
+                    }),
+                BlocProvider(create: (context) => AirQualityBloc()..add(FetchAirQuality()),
+                child: AirQualityCard())
+              ],
+            ),
               Row(
                 children: [
                   HealthCard(
@@ -118,7 +143,7 @@ class DashboardView extends StatelessWidget {
                 ),
               ),
               BlocProvider(
-                  create: (context) => RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
+             create: (context) => RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
                     ..add(const FetchRecommended()),
                   child: BlocBuilder<RunningBloc, RunningState>(
                     builder: (context, state){
@@ -134,12 +159,114 @@ class DashboardView extends StatelessWidget {
                     },
                   )
               )
+        ],
+      ),
+    );
+  }
+}
+
+const Color lightBlack = Color(0xFF3A3A3A);
+
+class LocationPopup extends StatefulWidget {
+  const LocationPopup({Key? key}) : super(key: key);
+
+  @override
+  _LocationPopupState createState() => _LocationPopupState();
+}
+
+class _LocationPopupState extends State<LocationPopup> {
+  TextEditingController _searchController = TextEditingController();
+  List<LocationData> _searchResults = [];
+
+  Future<void> addLocation(
+      bool useCurrentLocation, double? latitude, double? longitude) async {
+    if (useCurrentLocation) {
+      context.read<LocationBloc>().add(
+            const LocationChanged(
+              latitude: null,
+              longitude: null,
+              useCurrentLocation: true,
+            ),
+          );
+    } else {
+      context.read<LocationBloc>().add(
+            LocationChanged(
+              latitude: latitude,
+              longitude: longitude,
+              useCurrentLocation: false,
+            ),
+          );
+    }
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LocationSearchBloc, LocationSearchState>(
+      builder: (context, state) {
+        if (state.status == LocationSearchStatus.success) {
+          _searchResults = state.locations!;
+        }
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search for a location',
+                ),
+                onChanged: (value) async {
+                  await Future.delayed(Duration(milliseconds: 500));
+                  setState(() {
+                    context.read<LocationSearchBloc>().add(
+                          LocationsSearchFetch(
+                            searchQuery: value,
+                          ),
+                        );
+                  });
+                },
+              ),
+              SizedBox(height: 16.0),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _searchController.text.isEmpty
+                      ? 1
+                      : _searchResults.length,
+                  itemBuilder: (context, index) {
+                    if (_searchController.text.isEmpty) {
+                      return GestureDetector(
+                        onTap: () {
+                          addLocation(true, null, null);
+                        },
+                        child: ListTile(
+                          leading: Icon(Icons.my_location),
+                          title: Text('Current location'),
+                        ),
+                      );
+                    } else {
+                      final result = _searchResults[index];
+                      return GestureDetector(
+                        onTap: () {
+                          addLocation(false, result.latitude, result.longitude);
+                        },
+                        child: Card(
+                          child: ListTile(
+                            title: Text(result.name),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+             
             ],
           ),
         );
-      }else{
-        return Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()));
-      }
-    });
+      },
+    );
   }
 }
