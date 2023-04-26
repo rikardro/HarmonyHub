@@ -65,18 +65,6 @@ class _DashboardCardState extends State<DashboardCard> {
           //child: widget.child!,
           child: Stack(
             children: [
-              widget.color != Colors.white ?
-              Positioned(
-                left: -20,
-                bottom: -20,
-                child: circle(80, 1)
-              ) : Container(),
-              widget.color != Colors.white ?
-              Positioned(
-                  right: -40,
-                  top: -40,
-                  child: circle(170, 0)
-              ) : Container(),
               Positioned.fill(child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: widget.child!,
