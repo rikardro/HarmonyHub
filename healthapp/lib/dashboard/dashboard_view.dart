@@ -17,6 +17,7 @@ import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
 import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
 
+import '../backend/greetingPhrase.dart';
 import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
@@ -27,6 +28,10 @@ class DashboardView extends StatelessWidget {
 
   final topTextStyle = TextStyle(
       fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600]);
+
+  final snackBar = SnackBar(content: Text(GreetingPhrase.get()),
+    duration: const Duration(seconds: 3),
+  );
 
   Future<Location> fetchLocation() async {
     return await Location.getInstance();
@@ -50,7 +55,7 @@ class DashboardView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Välkommen!",
+                  GreetingPhrase.get(),
                   style: topTextStyle,
                 ),
                 GestureDetector(
@@ -144,9 +149,11 @@ class DashboardView extends StatelessWidget {
           Column(
             children: [SuggestedRunningCard(), SuggestedRunningCard()],
           ),
+          snackBar,
         ],
       ),
     );
+    
   }
 }
 
