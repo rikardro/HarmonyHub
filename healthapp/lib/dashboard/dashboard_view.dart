@@ -12,12 +12,14 @@ import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
+import 'package:healthapp/profile_view.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 
 import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
+import '../bloc/user_bloc.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -39,16 +41,46 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: ListView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Välkommen!",
-                  style: topTextStyle,
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfileView()));
+                      },
+                      child: BlocBuilder<UserBloc, UserState>(
+                        builder: (context, state) {
+                          return CircleAvatar(
+                            backgroundColor: Colors.blueGrey,
+                            radius: 25,
+                            child: Text(
+                              state.initals!.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Välkommen!",
+                      style: topTextStyle,
+                    ),
+                  ],
                 ),
                 GestureDetector(
                   onTap: () {
@@ -60,7 +92,7 @@ class DashboardView extends StatelessWidget {
                       builder: (context) {
                         return BlocProvider(
                           create: (context) => LocationSearchBloc(),
-                          child: LocationPopup(),
+                          child: const LocationPopup(),
                         );
                       },
                     );
@@ -74,7 +106,7 @@ class DashboardView extends StatelessWidget {
                       BlocBuilder<LocationBloc, LocationState>(
                         builder: (context, state) {
                           if (state.status == LocationStatus.loading) {
-                            return Text("");
+                            return const Text("");
                           } else {
                             return Text(state.locationName ?? "",
                                 style: topTextStyle);
@@ -96,7 +128,8 @@ class DashboardView extends StatelessWidget {
                     return WeatherCard(weatherData);
                   }),
               BlocProvider(
-                create: (context) => AirQualityBloc()..add(FetchAirQuality()),
+                create: (context) =>
+                    AirQualityBloc()..add(const FetchAirQuality()),
                 child: AirQualityCard(),
               ),
             ],
@@ -127,11 +160,11 @@ class DashboardView extends StatelessWidget {
                 iconColor: Colors.grey[600],
                 topPadding: 24,
               ),
-              CaffeineCard()
+              const CaffeineCard()
             ],
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
+            margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
             alignment: Alignment.centerLeft,
             child: Text(
               "Suggested running days",
@@ -190,18 +223,18 @@ class _LocationPopupState extends State<LocationPopup> {
           _searchResults = state.locations!;
         }
         return Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: _searchController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search for a location',
                 ),
                 onChanged: (value) async {
-                  await Future.delayed(Duration(milliseconds: 500));
+                  await Future.delayed(const Duration(milliseconds: 500));
                   setState(() {
                     context.read<LocationSearchBloc>().add(
                           LocationsSearchFetch(
@@ -211,7 +244,7 @@ class _LocationPopupState extends State<LocationPopup> {
                   });
                 },
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Expanded(
                 child: ListView.builder(
                   itemCount: _searchController.text.isEmpty
@@ -223,7 +256,7 @@ class _LocationPopupState extends State<LocationPopup> {
                         onTap: () {
                           addLocation(true, null, null);
                         },
-                        child: ListTile(
+                        child: const ListTile(
                           leading: Icon(Icons.my_location),
                           title: Text('Current location'),
                         ),
