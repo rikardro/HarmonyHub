@@ -7,11 +7,11 @@ class GreetingPhrase{
     } else if(hour >= 10 && hour < 14){
         return "Good Day!";
     }else if(hour >= 14 && hour < 17){
-        return "Good Afternoon";
+        return "Good Afternoon!";
     } else if(hour >= 17 && hour < 23){
-        return "Good Evening";
+        return "Good Evening!";
     } else{
-        return "Good Night";
+        return "Good Night!";
     }
   }
 }
