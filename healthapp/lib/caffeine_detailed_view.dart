@@ -140,7 +140,6 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
             ),
           );
         } else {
-          log("got here");
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
@@ -478,7 +477,6 @@ class _QuickAddGridState extends State<QuickAddGrid> {
 
   @override
   Widget build(BuildContext context) {
-    //log(_selectedCardIndex.toString());
     return Column(
       children: [
         Container(
