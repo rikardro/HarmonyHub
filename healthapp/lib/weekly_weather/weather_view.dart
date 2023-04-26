@@ -27,17 +27,17 @@ class WeatherDetailedView extends StatefulWidget {
 
 class _WeatherDetailedViewState extends State<WeatherDetailedView> {
   Future<List<WeatherInformationWeekly>> fetchLocation() async {
-    Location location = await Location.create();
+    Location location = await Location.getInstance();
     List<WeatherInformationWeekly> wi =
-        await fetchWeatherData(location.position);
+        await fetchWeatherData(location.latitude, location.longitude);
     return wi;
   }
 
   Future<List<WeatherInformationWeekly>> fetchWeatherData(
-      Position position) async {
+      double latitude, double longitude) async {
     ApiParser apiParser = ApiParser();
     List<WeatherInformationWeekly> wi = await apiParser.requestWeeklyWeather(
-        position.latitude, position.longitude);
+        latitude, longitude);
     return wi;
   }
 
