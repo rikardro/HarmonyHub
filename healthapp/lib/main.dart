@@ -102,7 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   } else if (state.status == UserStatus.needsFirstLastName) {
                     return AddUserInformationView();
                   } else {
-                    log("Andreas mangler at lave en loading screen");
                     return const Scaffold(
                       body: Center(child: CircularProgressIndicator()),
                     );

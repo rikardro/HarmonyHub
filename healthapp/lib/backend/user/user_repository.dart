@@ -44,7 +44,6 @@ class UserRepository {
     if (snapshot.docs.isNotEmpty) {
       final Map<String, dynamic> data =
           snapshot.docs.first.data() as Map<String, dynamic>;
-      log(data.toString());
       if (data.isNotEmpty) {
         return FirebaseUser.fromMap(data);
       } else {

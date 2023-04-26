@@ -41,6 +41,7 @@ class ProfileView extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     context.read<AuthBloc>().add(const AuthEventLogOut());
+                    Navigator.pop(context);
                   },
                   child: const Text('Log Out'),
                 ),

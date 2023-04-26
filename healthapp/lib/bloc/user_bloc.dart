@@ -17,11 +17,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           event.firstName,
           event.lastName,
         );
-        emit(
-          state.copyWith(
-            status: UserStatus.success,
-          ),
-        );
+
+        add(FetchUser());
+        
       } catch (_) {
         emit(state.copyWith(status: UserStatus.error));
       }
@@ -32,7 +30,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(state.copyWith(status: UserStatus.loading));
         try {
           FirebaseUser? user = await repository.getCurrentUser();
-          log(user.toString());
           if (user == null) {
             emit(
               state.copyWith(

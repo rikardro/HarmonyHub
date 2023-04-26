@@ -59,11 +59,13 @@ class DashboardView extends StatelessWidget {
                       },
                       child: BlocBuilder<UserBloc, UserState>(
                         builder: (context, state) {
+                          String initials = state.initals ?? "";
+                          initials = initials.toUpperCase();
                           return CircleAvatar(
                             backgroundColor: Colors.blueGrey,
                             radius: 25,
                             child: Text(
-                              state.initals!.toUpperCase(),
+                              initials,
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
