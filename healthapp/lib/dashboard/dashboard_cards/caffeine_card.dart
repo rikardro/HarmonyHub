@@ -24,6 +24,7 @@ class CaffeineCard extends StatelessWidget {
           final caffeine = state.caffeine!.toInt();
           final status = state.caffeineStatus;
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               Navigator.push(
                 context,
