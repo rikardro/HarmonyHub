@@ -6,11 +6,12 @@ import 'package:healthapp/util/weatherType.dart';
 
 class WeeklyWeatherCard extends StatelessWidget {
   late WeatherInformationWeekly wi;
+  late String day;
   late AssetImage weatherImage;
   late Color weatherColor;
   late String weather;
 
-  WeeklyWeatherCard(this.wi, {Key? key}) : super(key: key) {
+  WeeklyWeatherCard(this.wi, this.day, {Key? key}) : super(key: key) {
     init(wi.weather.toShortString());
   }
 
@@ -48,7 +49,7 @@ class WeeklyWeatherCard extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(wi.time, style: baseTextStyle),
+                Text(day, style: baseTextStyle),
                 Image(image: weatherImage, width: 80),
               ],
             ),
