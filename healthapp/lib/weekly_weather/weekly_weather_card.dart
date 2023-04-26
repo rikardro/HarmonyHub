@@ -27,7 +27,21 @@ class WeeklyWeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseTextStyle = TextStyle(
       color: Colors.white,
-      fontSize: 17,
+      fontSize: 15,
+      fontFamily: 'Inter',
+      shadows: [
+        Shadow(
+          blurRadius: 10,
+          offset: const Offset(2, 2),
+          color: Colors.black.withOpacity(0.3),
+        ),
+      ],
+    );
+
+    final dayTextStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 17  ,
+      fontWeight: FontWeight.bold,
       fontFamily: 'Inter',
       shadows: [
         Shadow(
@@ -46,40 +60,66 @@ class WeeklyWeatherCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(day, style: baseTextStyle),
-                Image(image: weatherImage, width: 80),
-              ],
+            SizedBox(
+              width: 80,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(day, style: dayTextStyle),
+                  Image(image: weatherImage, width: 70,),
+                ],
+              ),
             ),
-            Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Image(image: AssetImage('assets/images/degrees.png'), width: 50, height: 50,),
-                    Text("${wi.maxTemperature} / ${wi.minTemperature} °C", style: baseTextStyle),
-                  ],
-                ),
-            Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Image(image: AssetImage('assets/images/precipitation.png'), width: 50, height: 50,),
-                    Text("${wi.precipitation} mm", style: baseTextStyle)
-                  ],
-                ),
-            Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Image(image: AssetImage('assets/images/wind_white.png'), width: 50, height: 50,),
-                    Text("${wi.maxWindspeed} m/s", style: baseTextStyle)
-                  ],
-                ),
+            SizedBox(
+              width: 90,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Image(
+                    image: AssetImage('assets/images/degrees.png'),
+                    width: 50,
+                    height: 50,
+                  ),
+                  Text("${wi.maxTemperature} / ${wi.minTemperature} °",
+                      style: baseTextStyle),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 75,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Image(
+                    image: AssetImage('assets/images/precipitation.png'),
+                    width: 50,
+                    height: 50,
+                  ),
+                  Text("${wi.precipitation} mm", style: baseTextStyle)
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 75,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Image(
+                    image: AssetImage('assets/images/wind_white.png'),
+                    width: 50,
+                    height: 50,
+                  ),
+                  Text("${wi.maxWindspeed} m/s", style: baseTextStyle)
+                ],
+              ),
+            ),
           ],
         ),
       ), // CONTENT HERE
     );
   }
-  
+
   init(String weather) {
     switch (weather) {
       case ("clear"):
