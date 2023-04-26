@@ -5,6 +5,7 @@ import 'package:healthapp/backend/weather/parseJson.dart';
 import 'package:healthapp/backend/weather/sunUp.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 import 'package:healthapp/util/weatherType.dart';
+import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthapp/backend/weather/apiConstants.dart';
 
@@ -103,7 +104,7 @@ class ApiParser {
   }
 }
 
-void main() {
+void main() async{
   ApiParser api = new ApiParser();
-  var sun = api.requestWeeklyWeather(57.71, 11.97);
+  List<WeatherInformationWeekly> weather = await api.requestWeeklyWeather(57.71, 11.97);
 }
