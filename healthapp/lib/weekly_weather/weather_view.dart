@@ -49,10 +49,32 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
             (context, AsyncSnapshot<List<WeatherInformationWeekly>> weather) {
           if (weather.hasData) {
             return Scaffold(
-              appBar: AppBar(),
-              body: ListView(physics: const BouncingScrollPhysics(), children: [
-                Column(children: generateWeatherCards(weather.data!))
-              ]),
+              appBar: AppBar(
+                title: const Text("Weather forecast"),
+                flexibleSpace: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: <Color>[Color.fromARGB(255, 123, 183, 225), Color.fromARGB(255, 183, 201, 214)])
+                  ),
+                )
+              ),
+              backgroundColor: Color.fromARGB(255, 111, 178, 226),
+              
+              body: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: <Color>[Color.fromARGB(255, 123, 183, 225), Color.fromARGB(255, 183, 201, 214)])
+                  ),
+                child: ListView(
+                  physics: const BouncingScrollPhysics(), 
+                  children: [
+                  Column(children: generateWeatherCards(weather.data!))
+                  ]),
+              ),
             );
           } else {
             return Container(
