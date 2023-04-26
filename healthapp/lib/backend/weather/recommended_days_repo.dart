@@ -6,6 +6,8 @@ import '../../util/weatherInformation.dart';
 import '../../util/weatherType.dart';
 import 'package:intl/intl.dart';
 
+import '../location/location.dart';
+
 class PointsData{
   final double windPoints;
   final double temperaturePoints;
@@ -76,7 +78,8 @@ class RecommendedDaysRepo {
   }
 
   Future<List<RecommendedIntervals>> getRecommended(int amount) async{
-    List<WeatherInformation> weatherList = await apiClient.requestWeather(57.7085865,11.9684324);
+    Location loc = await Location.getInstance();
+    List<WeatherInformation> weatherList = await apiClient.requestWeather(loc.latitude, loc.longitude);
     List<RecommendedTime> recommended = [];
     for (WeatherInformation weather in weatherList) {
       PointsData points = calculatePoints(weather);
