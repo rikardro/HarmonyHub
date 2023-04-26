@@ -48,10 +48,12 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
         builder:
             (context, AsyncSnapshot<List<WeatherInformationWeekly>> weather) {
           if (weather.hasData) {
-            return Container(
-                child: ListView(physics: BouncingScrollPhysics(), children: [
-              Column(children: generateWeatherCards(weather.data!))
-            ]));
+            return Scaffold(
+              appBar: AppBar(),
+              body: ListView(physics: const BouncingScrollPhysics(), children: [
+                Column(children: generateWeatherCards(weather.data!))
+              ]),
+            );
           } else {
             return Container(
                 color: Colors.white,

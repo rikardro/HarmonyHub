@@ -119,7 +119,7 @@ class DashboardView extends StatelessWidget {
                 ),
               ),
               Column(
-                children: [SuggestedRunningCard(), SuggestedRunningCard(), WeeklyWeatherCard(WeatherInformationWeekly(WeatherType.raining, 10.1, 10.0, "2", 0.8, 0.4))],
+                children: [SuggestedRunningCard(), SuggestedRunningCard()],
               )
             ],
           ),
