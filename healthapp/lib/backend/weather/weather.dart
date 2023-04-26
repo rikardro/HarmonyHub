@@ -1,5 +1,6 @@
 // Gets the information from the api in json format and parses it to a dart object
 import 'dart:convert';
+import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/backend/weather/customExceptions.dart';
 import 'package:healthapp/backend/weather/parseJson.dart';
 import 'package:healthapp/backend/weather/sunUp.dart';
@@ -28,8 +29,11 @@ class ApiParser {
   }
 
   // returns weather for the current hour, switching to next on :45 minutes+
-  Future<WeatherInformationCurrent> requestCurrentWeather(
-      double latitude, double longitude) async {
+  Future<WeatherInformationCurrent> requestCurrentWeather() async {
+    Location location = await Location.getInstance();
+    double latitude = location.latitude;
+    double longitude = location.longitude;
+
     String request =
         "?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,precipitation,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,winddirection_10m&windspeed_unit=ms&timezone=Europe%2FBerlin";
     var url =
