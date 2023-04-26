@@ -86,8 +86,16 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
 
   generateWeatherCards(List<WeatherInformationWeekly> weather) {
     List<WeeklyWeatherCard> weeklyWeather = [];
+    String day;
     for (int i = 0; i < weather.length; i++) {
-      weeklyWeather.add(WeeklyWeatherCard(weather[i]));
+      if (i == 0){
+        day = "Today";
+      }else if(i == 1){
+        day = "Tomorrow";
+      }else{
+        day = weather[i].getWeekday();
+      }
+      weeklyWeather.add(WeeklyWeatherCard(weather[i], day));
     }
     return weeklyWeather;
   }

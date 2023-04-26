@@ -1,5 +1,6 @@
 import 'package:healthapp/util/cardinalDirections.dart';
 import 'package:healthapp/util/weatherType.dart';
+import 'package:intl/intl.dart';
 
 class WeatherInformation {
   final String _time;
@@ -115,4 +116,9 @@ class WeatherInformationWeekly {
   String get time => _time;
   double get precipitation => _precipitation;
   double get maxWindspeed => _maxWindspeed;
+
+  String getWeekday(){
+    DateTime time = DateTime.parse(this.time);
+    return DateFormat('EEEE').format(time);
+  }
 }
