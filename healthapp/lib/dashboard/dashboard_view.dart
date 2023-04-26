@@ -126,17 +126,14 @@ class DashboardView extends StatelessWidget {
                         return CircularProgressIndicator();
                       } else{
                         final recommended = state.intervals ?? [];
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: recommended.length,
-                          itemBuilder: (BuildContext context, int index){
-                            return SuggestedRunningCard(interval: recommended[index]);
-                          });
+                        return Column(
+                          children: recommended.map((e) => SuggestedRunningCard(interval: e)).toList()
+                        );
+                       
                       }
                     },
                   )
               )
-              
             ],
           ),
         );
