@@ -7,14 +7,6 @@ class SuggestedRunningCard extends StatelessWidget {
   SuggestedRunningCard({Key? key, required this.interval}) : super(key: key);
   final RecommendedIntervals interval;
 
-  final shadows = [
-    Shadow(
-      blurRadius: 15,
-      offset: const Offset(2, 2),
-      color: Colors.black.withOpacity(0.15),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return DashboardCard(
@@ -29,18 +21,18 @@ class SuggestedRunningCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(interval.dayName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18, color: Colors.grey[600], shadows: shadows)),
+                Text(interval.dayName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18, color: Colors.grey[600],)),
                  SizedBox(height: 5,),
-                Text(interval.interval, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600], shadows: shadows)),
+                Text(interval.interval, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600],)),
                 SizedBox(height: 10,),
-                Text(interval.temperature, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20, color: Colors.orangeAccent, shadows: shadows)),
+                Text(interval.temperature, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20, color: Colors.orangeAccent,)),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text("Wind: ${interval.windspeed}", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600], shadows: shadows)),
-                Text("Rain: ${interval.precipitation}", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600], shadows: shadows)),
+                Text("Wind: ${interval.windspeed}", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600],)),
+                Text("Rain: ${interval.precipitation}", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600], )),
                 SizedBox(height: 10,),
                 Row(children: [
                   Icon(Icons.sunny, color: Colors.orangeAccent, size: 25,),
