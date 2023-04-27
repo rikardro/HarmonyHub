@@ -17,7 +17,7 @@ class WeatherVisuals{
     return _getData(weather, isDay);
   }
 
-  static Future<Set<AssetImage>> getWeatherIcons(Set<WeatherType> weatherSet) async {
+  static Set<AssetImage> getWeatherIcons(Set<WeatherType> weatherSet) {
     Set<AssetImage> images = {};
     for (var weather in weatherSet) {
       WeatherVisualizationInfo wvi = _getData(weather.toShortString(), true);

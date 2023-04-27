@@ -1,11 +1,13 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:healthapp/backend/weather/weather.dart';
 
 import '../../util/weatherInformation.dart';
 import '../../util/weatherType.dart';
 import 'package:intl/intl.dart';
 
+import '../../util/weatherVisuals.dart';
 import '../location/location.dart';
 
 class PointsData{
@@ -124,7 +126,7 @@ class RecommendedDaysRepo {
           "${(cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length).toStringAsFixed(1)} m/s",
           "${(cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length).toStringAsFixed(1)}mm",
           cluster.map((x) => x.points).toList(),
-          cluster.map((x) => x.weather.weather).toSet()
+          WeatherVisuals.getWeatherIcons(cluster.map((x) => x.weather.weather).toSet())
       ));
     }
 
@@ -165,7 +167,7 @@ class RecommendedDaysRepo {
       print('Temperature: ${interval.temperature}');
       print('Windspeed: ${interval.windspeed}');
       print('Precipitation: ${interval.precipitation}');
-      print('Weather types: ${interval.weatherTypes}');
+      print('Weather types: ${interval.weatherTypeIcons}');
 
       print('Total points: ${interval.points.fold(0.0, (sum, e) => sum + e.getTotalPoints())}');
       
@@ -195,7 +197,7 @@ class RecommendedIntervals{
   final String windspeed;
   final String precipitation;
   final List<PointsData> points;
-  final Set<WeatherType> weatherTypes;
+  final Set<AssetImage> weatherTypeIcons;
 
-  RecommendedIntervals(this.dayName, this.interval, this.temperature, this.windspeed, this.precipitation, this.points, this.weatherTypes);
+  RecommendedIntervals(this.dayName, this.interval, this.temperature, this.windspeed, this.precipitation, this.points, this.weatherTypeIcons);
 }

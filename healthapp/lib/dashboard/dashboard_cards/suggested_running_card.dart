@@ -34,10 +34,11 @@ class SuggestedRunningCard extends StatelessWidget {
                 Text("Wind: ${interval.windspeed}", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600],)),
                 Text("Rain: ${interval.precipitation}", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.grey[600], )),
                 SizedBox(height: 10,),
-                Row(children: [
-                  Icon(Icons.sunny, color: Colors.orangeAccent, size: 25,),
-                  Icon(Icons.sunny, color: Colors.orangeAccent, size: 25,)
-                ],)
+                
+                Row(children: interval.weatherTypeIcons.map((e) => Padding(
+                  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                  child: Image(image: e, width: 35),
+                  )).toList()),
               ],
             )
           ],
