@@ -6,6 +6,7 @@ import 'package:healthapp/backend/weather/parseJson.dart';
 import 'package:healthapp/backend/weather/sunUp.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 import 'package:healthapp/util/weatherType.dart';
+import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthapp/backend/weather/apiConstants.dart';
 
@@ -68,6 +69,20 @@ class ApiParser {
     }
   }
 
+  Future<List<WeatherInformationWeekly>> requestWeeklyWeather(
+      double latitude, double longitude) async {
+    String request =
+        "?latitude=$latitude&longitude=$longitude&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&windspeed_unit=ms&timezone=Europe%2FBerlin";
+    var url =
+        Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint + request);
+    var response = await http.get(url);
+    Map<String, dynamic> valueMap = json.decode(response.body);
+    JsonParserWeekly parser = JsonParserWeekly();
+    List<WeatherInformationWeekly> weatherInformation =
+        parser.jsonWeeklyDataConverter(valueMap);
+    return weatherInformation;
+  }
+
   Future<bool> getSunUp(double latitude, double longitude) async {
     String request = "lat=$latitude&lng=$longitude&timezone=EET&date=today";
     var url = Uri.parse(ApiConstants.sunsetSunrise + request);
@@ -93,7 +108,7 @@ class ApiParser {
   }
 }
 
-void main() {
+void main() async{
   ApiParser api = new ApiParser();
-  var sun = api.getSunUp(57.71, 11.97);
+  List<WeatherInformationWeekly> weather = await api.requestWeeklyWeather(57.71, 11.97);
 }

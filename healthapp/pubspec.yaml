@@ -83,7 +83,12 @@ flutter:
     - assets/images/snowing.png
     - assets/images/wind.png
     - assets/images/wind_white.png
+
     - assets/images/nature_image.png
+
+    - assets/images/precipitation.png
+    - assets/images/degrees.png
+
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
