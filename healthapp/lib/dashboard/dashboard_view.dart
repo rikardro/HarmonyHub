@@ -88,7 +88,7 @@ class DashboardView extends StatelessWidget {
                   style: topTextStyle,
                 ),
                   ],
-                
+                ),
                 GestureDetector(
                   onTap: () {
                     showModalBottomSheet(
