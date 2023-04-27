@@ -51,18 +51,10 @@ class ApiParser {
       JsonParser jsonParser = JsonParser(response.body.toString());
       List<WeatherInformation> wiList = jsonParser.jsonDataConverter();
       WeatherInformation wi = wiList[hour];
-      WeatherInformationCurrent now = WeatherInformationCurrent(
-          wi.time,
-          wi.temperature,
-          wi.precipitation,
-          wi.snowfall,
-          wi.snow_depth,
-          wi.weather,
-          wi.cloudcover,
-          wi.windspeed,
-          wi.windDegrees);
-      bool sunUp = await getSunUp(latitude, longitude);
-      now.setsun_up(sunUp);
+      WeatherInformationCurrent now = WeatherInformationCurrent(wi.time, wi.temperature, wi.precipitation, wi.snowfall, 
+      wi.snow_depth, wi.weather, wi.cloudcover, wi.windspeed, wi.windDegrees);
+      SunUp sunUp = await getSunUp(latitude, longitude);
+      now.setsun_up(sunUp.currentSunIsUp());
       return now;
     } else {
       throw APIException('could not load data from Meteo weather API');
@@ -82,18 +74,18 @@ class ApiParser {
         parser.jsonWeeklyDataConverter(valueMap);
     return weatherInformation;
   }
-
-  Future<bool> getSunUp(double latitude, double longitude) async {
+  
+  Future<SunUp> getSunUp(double latitude, double longitude) async{
     String request = "lat=$latitude&lng=$longitude&timezone=EET&date=today";
     var url = Uri.parse(ApiConstants.sunsetSunrise + request);
     var response = await http.get(url);
     SunUp sunUp = parseSunUpJson(response.body.toString());
-    var time = DateTime.now();
-    double currentTime = (time.hour + time.minute / 60);
-
-    if (response.statusCode == 200) {
-      return sunUp.sunIsUp(currentTime);
-    } else {
+    
+    
+    if (response.statusCode == 200){
+      return sunUp;
+    }
+    else{
       throw APIException('could not load data from sunrise api');
     }
   }

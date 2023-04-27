@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:healthapp/util/cardinalDirections.dart';
 import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
+import 'package:healthapp/util/weatherVisualizationInfo.dart';
+import 'package:healthapp/util/weatherVisuals.dart';
 import '../../util/weatherInformation.dart';
 import '../dashboard_card.dart';
 
-class WeatherCard extends StatelessWidget {
+class WeatherCard extends StatefulWidget {
+  const WeatherCard({super.key, required this.weatherData});
+  final AsyncSnapshot<WeatherInformationCurrent> weatherData;
+
+  @override
+  State<WeatherCard> createState() => _WeatherCardState();
+}
+
+class _WeatherCardState extends State<WeatherCard> {
   bool isDay = true;
   AssetImage weatherImage = const AssetImage('assets/images/clear_day.png');
   Color weatherColor = const Color(0xFFFF9900);
@@ -15,96 +25,6 @@ class WeatherCard extends StatelessWidget {
   double temperature = 0;
   double windSpeed = 0;
   String windDirection = "";
-
-  WeatherCard(AsyncSnapshot<WeatherInformationCurrent> weatherData, {Key? key})
-      : super(key: key) {
-    if (weatherData.hasData) {
-      String w = weatherData.data!.weatherType.toShortString();
-      temperature = weatherData.data!.temperature;
-      windSpeed = weatherData.data!.windspeed;
-      isDay = weatherData.data!.sun_up;
-      windDirection = weatherData.data!.windDirectionCardinal.value;
-      init(w, isDay);
-    }
-  }
-
-  init(String weather, bool isDay) {
-    switch (weather) {
-      case ("clear"):
-        {
-          if (isDay) {
-            this.weather = "Sunny";
-            weatherImage = const AssetImage('assets/images/clear_day.png');
-            weatherColor = const Color(0xFFFF9900);
-          } else {
-            this.weather = "Clear";
-            weatherImage = const AssetImage('assets/images/clear_night.png');
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);
-          }
-          break;
-        }
-      case ("cloudy"):
-        {
-          this.weather = "Cloudy";
-          weatherImage = const AssetImage('assets/images/cloudy.png');
-          if (isDay) {
-            weatherColor = const Color.fromARGB(255, 152, 166, 182);
-          } else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);
-          }
-          break;
-        }
-      case ("foggy"):
-        {
-          this.weather = "Foggy";
-          weatherImage = const AssetImage('assets/images/foggy.png');
-          if (isDay) {
-            weatherColor = const Color.fromARGB(255, 194, 223, 255);
-          } else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);
-          }
-          break;
-        }
-      case ("snowing"):
-        {
-          this.weather = "Snowing";
-          weatherImage = const AssetImage('assets/images/snowing.png');
-          if (isDay) {
-            weatherColor = const Color.fromARGB(255, 203, 210, 255);
-          } else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);
-          }
-          break;
-        }
-      case ("raining"):
-        {
-          this.weather = "Raining";
-          weatherImage = const AssetImage('assets/images/raining.png');
-          if (isDay) {
-            weatherColor = const Color.fromARGB(255, 137, 192, 255);
-          } else {
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);
-          }
-          break;
-        }
-      case ("halfCloudy"):
-        {
-          if (isDay) {
-            this.weather = "Half cloudy";
-            weatherImage = const AssetImage('assets/images/halfcloudy_day.png');
-            weatherColor = const Color.fromARGB(255, 255, 216, 143);
-          } else {
-            this.weather = "Half cloudy";
-            weatherImage =
-                const AssetImage('assets/images/halfcloudy_night.png');
-            weatherColor = const Color.fromARGB(255, 115, 22, 255);
-          }
-          break;
-        }
-      default:
-        this.weather = "Weather";
-    }
-  }
 
   void changePage(BuildContext context) {
     Navigator.of(context).push(PageRouteBuilder(pageBuilder: 
@@ -116,6 +36,27 @@ class WeatherCard extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    String w = widget.weatherData.data!.weatherType.toShortString();
+    temperature = widget.weatherData.data!.temperature;
+    windSpeed = widget.weatherData.data!.windspeed;
+    //isDay = weatherData.data!.sun_up;
+    windDirection = widget.weatherData.data!.windDirectionCardinal.value;
+    swag(w);
+  }
+
+  swag(String w) async{
+    WeatherVisualizationInfo wvi = await WeatherVisuals.getWeatherVisuals(w);
+    weather = wvi.weatherName;
+    weatherColor = wvi.color;
+    weatherImage = wvi.image;
+    setState(() {
+      
+    });
+  }
+
+   @override
   Widget build(BuildContext context) {
     final baseTextStyle = TextStyle(
       color: Colors.white,
@@ -181,3 +122,4 @@ class WeatherCard extends StatelessWidget {
             )));
   }
 }
+

@@ -20,14 +20,6 @@ class HealthCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shadows = [
-        Shadow(
-          blurRadius: 15,
-          offset: const Offset(2, 2),
-          color: Colors.black.withOpacity(0.15),
-        ),
-      ];
-
     return DashboardCard(
       height: height,
       flex: flex,
@@ -36,7 +28,7 @@ class HealthCard extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.topLeft,
-            child: Text(title, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.grey[600], shadows: shadows),)
+            child: Text(title, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.grey[600], ),)
           ),
           Center(
             child: Padding(
@@ -46,14 +38,14 @@ class HealthCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
-                    child: Icon(icon, color: iconColor, size: 30, shadows: shadows,),
+                    child: Icon(icon, color: iconColor, size: 30,),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
                     child: Text(value,
                       style: TextStyle(
                           fontSize: 30, fontWeight: FontWeight.w600,
-                          color: Colors.grey[700], shadows: shadows
+                          color: Colors.grey[700],
                       ),),
                   )
                 ],

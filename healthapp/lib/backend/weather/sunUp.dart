@@ -29,4 +29,10 @@ class SunUp{
     return false;
   }
 
+  bool currentSunIsUp() {
+    var time = DateTime.now();
+    double currentTime = (time.hour + time.minute/60);
+    return sunIsUp(currentTime);
+  }
+
 }
