@@ -18,6 +18,7 @@ import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
 import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
 
+import '../backend/greetingPhrase.dart';
 import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
@@ -33,6 +34,7 @@ class DashboardView extends StatelessWidget {
   Future<Location> fetchLocation() async {
     return await Location.getInstance();
   }
+  
 
   Future<WeatherInformationCurrent> fetchWeatherData() async {
     ApiParser apiParser = ApiParser();
@@ -82,11 +84,11 @@ class DashboardView extends StatelessWidget {
                       width: 10,
                     ),
                     Text(
-                      "Välkommen!",
-                      style: topTextStyle,
-                    ),
-                  ],
+                  '${GreetingPhrase.get()} 👋',
+                  style: topTextStyle,
                 ),
+                  ],
+                
                 GestureDetector(
                   onTap: () {
                     showModalBottomSheet(
@@ -182,6 +184,7 @@ class DashboardView extends StatelessWidget {
         ],
       ),
     );
+    
   }
 }
 
@@ -288,4 +291,5 @@ class _LocationPopupState extends State<LocationPopup> {
       },
     );
   }
+
 }

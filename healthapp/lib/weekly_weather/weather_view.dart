@@ -61,7 +61,6 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
                 )
               ),
               backgroundColor: Color.fromARGB(255, 111, 178, 226),
-              
               body: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -69,11 +68,24 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
                     end: Alignment.bottomRight,
                     colors: <Color>[Color.fromARGB(255, 123, 183, 225), Color.fromARGB(255, 183, 201, 214)])
                   ),
+                child: TweenAnimationBuilder(tween: Tween(begin: 0.0, end: 1.0), 
+                duration: const Duration(milliseconds: 800),
                 child: ListView(
                   physics: const BouncingScrollPhysics(), 
                   children: [
                   Column(children: generateWeatherCards(weather.data!))
-                  ]),
+                  ]), 
+                builder: (context, value, child){
+                  return ShaderMask(shaderCallback: (rect){
+                    return RadialGradient(
+                      radius: value * 5,
+                      colors: const [Colors.white, Colors.white, Colors.transparent, Colors.transparent],
+                      stops: const [0.0, 0.55, 0.6, 1.0],
+                      center: const FractionalOffset(0.95, 0.9)
+                    ).createShader(rect);
+                  },
+                child: child,);
+                }), 
               ),
             );
           } else {

@@ -14,11 +14,20 @@ class _AddUserInformationViewState extends State<AddUserInformationView> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
 
+  bool _isButtonEnabled = false;
+
   @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
     super.dispose();
+  }
+
+  void _checkButtonEnabled() {
+    setState(() {
+      _isButtonEnabled = _firstNameController.text.isNotEmpty &&
+          _lastNameController.text.isNotEmpty;
+    });
   }
 
   @override
@@ -28,36 +37,49 @@ class _AddUserInformationViewState extends State<AddUserInformationView> {
         title: const Text("Your information"),
       ),
       body: Container(
+        height: double.infinity,
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            Image.asset(
+              "assets/images/nature_image.png",
+              height: 300,
+            ),
             Text(
-              "You need to enter your first and last name to continue!",
-              style: TextStyle(fontSize: 30),
+              "Please enter your first and last name to keep using this application",
+              style: TextStyle(fontSize: 20),
             ),
             TextField(
               controller: _firstNameController,
               decoration: const InputDecoration(
                 hintText: "First Name",
               ),
+              onChanged: (text) {
+                _checkButtonEnabled();
+              },
             ),
             TextField(
               controller: _lastNameController,
               decoration: const InputDecoration(
                 hintText: "Last Name",
               ),
+              onChanged: (text) {
+                _checkButtonEnabled();
+              },
             ),
             ElevatedButton(
-              onPressed: () {
-                final firstName = _firstNameController.text;
-                final lastName = _lastNameController.text;
-                context.read<UserBloc>().add(
-                      UserAdded(
-                        firstName,
-                        lastName,
-                      ),
-                    );
-              },
+              onPressed: _isButtonEnabled
+                  ? () {
+                      final firstName = _firstNameController.text;
+                      final lastName = _lastNameController.text;
+                      context.read<UserBloc>().add(
+                            UserAdded(
+                              firstName,
+                              lastName,
+                            ),
+                          );
+                    }
+                  : null,
               child: const Text("Save"),
             ),
           ],
