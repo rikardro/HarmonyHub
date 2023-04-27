@@ -39,9 +39,6 @@ class AirQuality {
 
     Location location = await Location.getInstance();
 
-    log(location.latitude.toString());
-    log(location.longitude.toString());
-
     final String apiUrlWithKey = '$apiUrl${location.latitude};${location.longitude}/?token=$apiKey';
 
     final response = await http.get(Uri.parse(apiUrlWithKey));
