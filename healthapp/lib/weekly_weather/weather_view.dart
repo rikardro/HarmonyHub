@@ -26,8 +26,9 @@ class WeatherDetailedView extends StatefulWidget {
 }
 
 class _WeatherDetailedViewState extends State<WeatherDetailedView> {
+  late Location location;
   Future<List<WeatherInformationWeekly>> fetchLocation() async {
-    Location location = await Location.getInstance();
+    location = await Location.getInstance();
     List<WeatherInformationWeekly> wi =
         await fetchWeatherData(location.latitude, location.longitude);
     return wi;
@@ -36,8 +37,8 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
   Future<List<WeatherInformationWeekly>> fetchWeatherData(
       double latitude, double longitude) async {
     ApiParser apiParser = ApiParser();
-    List<WeatherInformationWeekly> wi = await apiParser.requestWeeklyWeather(
-        latitude, longitude);
+    List<WeatherInformationWeekly> wi =
+        await apiParser.requestWeeklyWeather(latitude, longitude);
     return wi;
   }
 
@@ -50,42 +51,53 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
           if (weather.hasData) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text("Weather forecast"),
-                flexibleSpace: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: <Color>[Color.fromARGB(255, 123, 183, 225), Color.fromARGB(255, 183, 201, 214)])
-                  ),
-                )
-              ),
+                  title: Text("Weather forecast for ${location.locationName}"),
+                  flexibleSpace: Container(
+                    decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: <Color>[
+                          Color.fromARGB(255, 123, 183, 225),
+                          Color.fromARGB(255, 183, 201, 214)
+                        ])),
+                  )),
               backgroundColor: Color.fromARGB(255, 111, 178, 226),
               body: Container(
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: <Color>[Color.fromARGB(255, 123, 183, 225), Color.fromARGB(255, 183, 201, 214)])
-                  ),
-                child: TweenAnimationBuilder(tween: Tween(begin: 0.0, end: 1.0), 
-                duration: const Duration(milliseconds: 800),
-                child: ListView(
-                  physics: const BouncingScrollPhysics(), 
-                  children: [
-                  Column(children: generateWeatherCards(weather.data!))
-                  ]), 
-                builder: (context, value, child){
-                  return ShaderMask(shaderCallback: (rect){
-                    return RadialGradient(
-                      radius: value * 5,
-                      colors: const [Colors.white, Colors.white, Colors.transparent, Colors.transparent],
-                      stops: const [0.0, 0.55, 0.6, 1.0],
-                      center: const FractionalOffset(0.95, 0.9)
-                    ).createShader(rect);
-                  },
-                child: child,);
-                }), 
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: <Color>[
+                      Color.fromARGB(255, 123, 183, 225),
+                      Color.fromARGB(255, 183, 201, 214)
+                    ])),
+                child: TweenAnimationBuilder(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 800),
+                    child: ListView(
+                        physics: const BouncingScrollPhysics(),
+                        children: [
+                          Column(children: generateWeatherCards(weather.data!))
+                        ]),
+                    builder: (context, value, child) {
+                      return ShaderMask(
+                        shaderCallback: (rect) {
+                          return RadialGradient(
+                                  radius: value * 5,
+                                  colors: const [
+                                    Colors.white,
+                                    Colors.white,
+                                    Colors.transparent,
+                                    Colors.transparent
+                                  ],
+                                  stops: const [0.0, 0.55, 0.6, 1.0],
+                                  center: const FractionalOffset(0.95, 0.9))
+                              .createShader(rect);
+                        },
+                        child: child,
+                      );
+                    }),
               ),
             );
           } else {
@@ -100,11 +112,11 @@ class _WeatherDetailedViewState extends State<WeatherDetailedView> {
     List<WeeklyWeatherCard> weeklyWeather = [];
     String day;
     for (int i = 0; i < weather.length; i++) {
-      if (i == 0){
+      if (i == 0) {
         day = "Today";
-      }else if(i == 1){
+      } else if (i == 1) {
         day = "Tomorrow";
-      }else{
+      } else {
         day = weather[i].getWeekday();
       }
       weeklyWeather.add(WeeklyWeatherCard(weather[i], day));
