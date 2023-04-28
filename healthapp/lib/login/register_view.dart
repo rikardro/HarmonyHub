@@ -57,7 +57,12 @@ class _RegisterViewState extends State<RegisterView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Enter your email and password to see your notes!'),
+              Image.asset(
+                'assets/images/nature_image.png',
+                height: 300,
+
+              ),
+              const Text('Welcome to Healthapp, enter your email and password to create an account!'),
               TextField(
                 controller: _email,
                 enableSuggestions: false,

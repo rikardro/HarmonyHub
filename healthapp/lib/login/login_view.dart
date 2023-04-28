@@ -68,8 +68,12 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Image.asset(
+                'assets/images/nature_image.png',
+                height: 300,
+              ),
               const Text(
-                'Please log in to your account in order to interact with and create notes!',
+                'Welcome to Healthapp, please log in to see all kinds of interesting things about your health!',
               ),
               TextField(
                 controller: _email,
