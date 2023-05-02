@@ -63,11 +63,11 @@ class WeeklyWeatherCard extends StatelessWidget {
             SizedBox(
               width: 90,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(day, style: dayTextStyle),
-                  Image(image: weatherImage, width: 70,),
+                  Image(image: weatherImage, width: 60,),
                 ],
               ),
             ),
