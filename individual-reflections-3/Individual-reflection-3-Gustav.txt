@@ -1,0 +1,13 @@
+1) I feel like I have a pretty good grasp on the dart language and the flutter framework at this point but there
+are some of the more advanced concepts like states that I would like to get better at implementing myself. As for
+the agile workprocess I hope to get better at estimating how much effort a task will take which will hopefully come 
+with experience.
+
+2) This week my contributions have been focused mostly on frontend development which is in line with what
+I wished for. I have been coding together with Rickard to put up a view for a weekly weatherreport complete
+with cards and an app bar. I also made a greeting popup that is displayed for a few seconds when you open the app.
+Along with this I worked on the backend to achive all the functionallity needed for these views, mainly gathering
+a weekly weather report and also translating the current time of day to an appropriate time-based greeting.
+
+3) Next week I hope that I can review some more of the other members code since others in the group have been nice 
+enough to provide me with that insurance.
