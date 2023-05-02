@@ -486,7 +486,7 @@ class _QuickAddGridState extends State<QuickAddGrid> {
             padding: const EdgeInsets.all(10),
             child: GridView.count(
               physics: NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
+              crossAxisCount: 3,  
               children: List.generate(6, (index) {
                 final product = drinks[index].product;
                 final amount = drinks[index].caffeineAmount;
