@@ -18,6 +18,7 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
         final stream = locationTracker.getStream();
         await emit.forEach(stream, onData: (RunSession runSession) {
           print("EMITTING");
+          print(runSession.distance);
           return state.copyWith(
             status: RunTrackerStatus.running,
             runSession: runSession,
@@ -52,11 +53,7 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
         emit(state.copyWith(status: RunTrackerStatus.error));
       }
     });
-
-
   }
-
-
 }
 
 @immutable
@@ -73,7 +70,8 @@ class WatchRunSession extends RunTrackerEvent {}
 enum RunTrackerStatus { running, stopped, error }
 
 class RunTrackerState {
-  const RunTrackerState({this.status = RunTrackerStatus.stopped, this.runSession});
+  const RunTrackerState(
+      {this.status = RunTrackerStatus.stopped, this.runSession});
 
   final RunTrackerStatus status;
   final RunSession? runSession;
