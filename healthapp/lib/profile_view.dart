@@ -8,7 +8,7 @@ import 'bloc/user_bloc.dart';
 class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RunningBloc, RunningState>(
+    return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         final firstName = state.firstName;
         final lastName = state.lastName;

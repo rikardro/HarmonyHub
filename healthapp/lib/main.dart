@@ -50,8 +50,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<LocationBloc>(
           create: (context) => LocationBloc()..add(FetchLocation()),
         ),
-        BlocProvider<RunningBloc>(
-          create: (context) => RunningBloc(UserRepository())..add(FetchUser()),
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc(UserRepository())..add(FetchUser()),
         ),
       ],
       child: MaterialApp(
@@ -80,11 +80,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
-          return BlocBuilder<RunningBloc, RunningState>(
+          return BlocBuilder<UserBloc, UserState>(
             builder: (context, state) {
-              return BlocBuilder<RunningBloc, RunningState>(
+              return BlocBuilder<UserBloc, UserState>(
                 builder: (context, state) {
-                  if (state.status == RunningStatus.success) {
+                  if (state.status == UserStatus.success) {
                     return Material(
                       child: SafeArea(
                           child: BlocBuilder<LocationBloc, LocationState>(
@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       )),
                     );
-                  } else if (state.status == RunningStatus.needsFirstLastName) {
+                  } else if (state.status == UserStatus.needsFirstLastName) {
                     return AddUserInformationView();
                   } else {
                     return const Scaffold(

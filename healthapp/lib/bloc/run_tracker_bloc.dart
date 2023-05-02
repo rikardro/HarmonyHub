@@ -3,12 +3,11 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:healthapp/backend/running/run_session.dart';
-import 'package:healthapp/backend/user/user_repository.dart';
 
 import '../backend/location/location.dart';
 
-class RunningBloc extends Bloc<RunningEvent, RunningState> {
-  RunningBloc(UserRepository repository) : super(RunningState()) {
+class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
+  RunTrackerBloc() : super(RunTrackerState()) {
     // fetch data
     add(WatchRunSession());
 
@@ -19,12 +18,12 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
         final stream = locationTracker.getStream();
         await emit.forEach(stream, onData: (RunSession runSession) {
           return state.copyWith(
-            status: RunningStatus.running,
+            status: RunTrackerStatus.running,
             runSession: runSession,
           );
         }, onError: (error, stackTrace) {
           log('Error in stream: $error');
-          return state.copyWith(status: RunningStatus.error);
+          return state.copyWith(status: RunTrackerStatus.error);
         });
       },
     );
@@ -34,7 +33,7 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
         try {
           await LocationTracker().startTracking();
         } catch (_) {
-          emit(state.copyWith(status: RunningStatus.error));
+          emit(state.copyWith(status: RunTrackerStatus.error));
         }
       },
     );
@@ -42,38 +41,38 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
     on<StopTracking>((event, emit) async {
       try {
         locationTracker.stopTracking();
-        emit(state.copyWith(status: RunningStatus.stopped));
+        emit(state.copyWith(status: RunTrackerStatus.stopped));
 
         final runSession = LocationTracker().getRunSession();
         //await repository.addRunSession(runSession);
       } catch (_) {
-        emit(state.copyWith(status: RunningStatus.error));
+        emit(state.copyWith(status: RunTrackerStatus.error));
       }
     });
   }
 }
 
 @immutable
-abstract class RunningEvent {
-  const RunningEvent();
+abstract class RunTrackerEvent {
+  const RunTrackerEvent();
 }
 
-class StartTracking extends RunningEvent {}
+class StartTracking extends RunTrackerEvent {}
 
-class StopTracking extends RunningEvent {}
+class StopTracking extends RunTrackerEvent {}
 
-class WatchRunSession extends RunningEvent {}
+class WatchRunSession extends RunTrackerEvent {}
 
-enum RunningStatus { running, stopped, error }
+enum RunTrackerStatus { running, stopped, error }
 
-class RunningState {
-  const RunningState({this.status = RunningStatus.stopped, this.runSession});
+class RunTrackerState {
+  const RunTrackerState({this.status = RunTrackerStatus.stopped, this.runSession});
 
-  final RunningStatus status;
+  final RunTrackerStatus status;
   final RunSession? runSession;
 
-  RunningState copyWith({RunningStatus? status, RunSession? runSession}) {
-    return RunningState(
+  RunTrackerState copyWith({RunTrackerStatus? status, RunSession? runSession}) {
+    return RunTrackerState(
       status: status ?? this.status,
       runSession: runSession ?? this.runSession,
     );
