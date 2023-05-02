@@ -8,10 +8,11 @@ class RunningPreferences extends StatefulWidget {
   _RunningPreferencesState createState() => _RunningPreferencesState();
 }
 
-class _RunningPreferencesState extends State<RunningPreferences>{
-  double _preferredTemperature = 0;
-  double  _preferredPrecipitation = 0;
-  
+
+class _RunningPreferencesState extends State<RunningPreferences> {
+  double _preferredTemperature = 20.0;
+  double _preferredPrecipitation = 50.0;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,29 +23,70 @@ class _RunningPreferencesState extends State<RunningPreferences>{
         children: [
           Text("Preferences", style: TextStyle(fontSize: 18.0)),
           SizedBox(height: 16.0),
-          Text("Preferred temperature"),
-          Slider(
-            value: _preferredTemperature,
-            min: 0,
-            max: 100,
-            onChanged: (value) {
-              setState(() {
-                _preferredTemperature = value;
-              });
-            },
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Preferred Temperature",
+                style: TextStyle(fontSize: 16.0),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Slider(
+                      value: _preferredTemperature,
+                      min: 0,
+                      max: 40,
+                      divisions: 40,
+                      label: _preferredTemperature.round().toString(),
+                      onChanged: (value) {
+                        setState(() {
+                          _preferredTemperature = value;
+                        });
+                      },
+                    ),
+                  ),
+                  Text(
+                    _preferredTemperature.round().toString() + "°C",
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ],
+              ),
+            ],
           ),
-          Text("Preferred precipitation"),
-          Slider(
-            value: _preferredPrecipitation,
-            min: 0,
-            max: 100,
-            onChanged: (value) {
-              setState(() {
-                _preferredPrecipitation = value;
-              });
-            },
+          SizedBox(height: 16.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Preferred Precipitation",
+                style: TextStyle(fontSize: 16.0),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Slider(
+                      value: _preferredPrecipitation,
+                      min: 0,
+                      max: 100,
+                      divisions: 100,
+                      label: _preferredPrecipitation.round().toString(),
+                      onChanged: (value) {
+                        setState(() {
+                          _preferredPrecipitation = value;
+                        });
+                      },
+                    ),
+                  ),
+                  Text(
+                    _preferredPrecipitation.round().toString() + "%",
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ],
+              ),
+            ],
           ),
-          // Add additional sliders or inputs for other preferences
+          SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
               // Save the preferences and close the bottom sheet
