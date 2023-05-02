@@ -12,6 +12,7 @@ import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/profile_view.dart';
@@ -161,19 +162,7 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-              GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RunTrackerPage()));
-                },
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  color: Colors.green,
-                ),
-              ),
+              RunTrackerCard(),
               BlocProvider(
                 create: (context) => CaffeineBloc(CaffeineRepository())
                   ..add(const FetchCaffeine()),
