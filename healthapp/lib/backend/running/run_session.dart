@@ -17,16 +17,20 @@ class RunSession {
         duration = Duration.zero,
         _path = [];
 
+  List<LocationData> get path => _path;
+
+  double get distance => _distance;
+
   void addToPath(LocationData data) {
     if (_path.isEmpty) {
       _path.add(data);
       return;
     }
-    _distance += distanceBetween(_path.last, data);
+    _distance += _distanceBetween(_path.last, data);
     _path.add(data);
   }
 
-  double distanceBetween(LocationData start, LocationData end) {
+  double _distanceBetween(LocationData start, LocationData end) {
     const int radius = 6371000; // Earth's radius in meters
     final double lat1 = start.latitude * math.pi / 180;
     final double lat2 = end.latitude * math.pi / 180;
