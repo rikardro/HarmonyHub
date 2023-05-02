@@ -65,6 +65,8 @@ class LocationTracker {
       final latitude = _location.latitude;
       final latLng = LocationData(latitude, longitude, '');
       _runSession.addToPath(latLng);
+      _controller.add(_runSession);
+      print("SWA");
     });
   }
 

@@ -9,14 +9,15 @@ import '../backend/location/location.dart';
 class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
   RunTrackerBloc() : super(RunTrackerState()) {
     // fetch data
-    add(WatchRunSession());
 
     final locationTracker = LocationTracker();
 
     on<WatchRunSession>(
       (event, emit) async {
+        print("TRYING");
         final stream = locationTracker.getStream();
         await emit.forEach(stream, onData: (RunSession runSession) {
+          print("EMITTING");
           return state.copyWith(
             status: RunTrackerStatus.running,
             runSession: runSession,
@@ -31,8 +32,10 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
     on<StartTracking>(
       (event, emit) async {
         try {
-          await LocationTracker().startTracking();
+          await locationTracker.startTracking();
+          add(WatchRunSession());
         } catch (_) {
+          print("Failed to start tracking");
           emit(state.copyWith(status: RunTrackerStatus.error));
         }
       },
@@ -49,7 +52,11 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
         emit(state.copyWith(status: RunTrackerStatus.error));
       }
     });
+
+
   }
+
+
 }
 
 @immutable
