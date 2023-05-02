@@ -14,11 +14,11 @@ class PointsData{
   final double windPoints;
   final double temperaturePoints;
   final double snowPoints;
-  final double weatherTypePoints;
+  final double cloudCoverPoints;
   final double precipitationPoints;
 
   double getTotalPoints(){
-    return windPoints + temperaturePoints + snowPoints + weatherTypePoints + precipitationPoints;
+    return windPoints + temperaturePoints + snowPoints + cloudCoverPoints + precipitationPoints;
   }
 
   void printPoints(){
@@ -26,12 +26,12 @@ class PointsData{
     print("Wind: $windPoints");
     print("Temperature: $temperaturePoints");
     print("Snow: $snowPoints");
-    print("Weather: $weatherTypePoints");
+    print("Cloud cover: $cloudCoverPoints");
     print("Precipitation: $precipitationPoints");
     print("--------------------");
   }
 
-  PointsData({required this.windPoints, required this.temperaturePoints, required this.snowPoints, required this.weatherTypePoints, required this.precipitationPoints});
+  PointsData({required this.windPoints, required this.temperaturePoints, required this.snowPoints, required this.cloudCoverPoints, required this.precipitationPoints});
 }
 
 class RecommendedDaysRepo {
@@ -60,23 +60,13 @@ class RecommendedDaysRepo {
       snowPoints = -10;
     }
 
-    // Weather type
-    Map<WeatherType, double> weatherTypePoints = {
-      WeatherType.clear: 10,
-      WeatherType.cloudy: 3,
-      WeatherType.foggy: -3,
-      WeatherType.halfCloudy: 6,
-      WeatherType.raining: -6,
-      WeatherType.snowing: -3
-    };
-    double weatherPoints = weatherTypePoints[weatherData.weather] ?? 0;
-
     // Precipitation
     double precipitationPoints = -(weatherData.precipitation * 30);
 
-    // TODO add humidity and air quality
+    // Cloud cover
+    double cloudPoints = -(weatherData.cloudcover) * 0.05;
 
-    return PointsData(windPoints: windPoints, temperaturePoints: tempPoints, snowPoints: snowPoints, weatherTypePoints: weatherPoints, precipitationPoints: precipitationPoints);
+    return PointsData(windPoints: windPoints, temperaturePoints: tempPoints, snowPoints: snowPoints, cloudCoverPoints: cloudPoints, precipitationPoints: precipitationPoints);
   }
 
   Future<List<RecommendedIntervals>> getRecommended(int amount) async{
