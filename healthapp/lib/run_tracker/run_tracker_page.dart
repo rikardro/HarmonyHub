@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthapp/bloc/run_history_bloc.dart';
 import 'package:healthapp/dashboard/gradientColor.dart';
 
 import '../bloc/run_tracker_bloc.dart';
@@ -75,7 +76,6 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                           height: height*0.6,
                           child: BlocBuilder<RunTrackerBloc, RunTrackerState>(
                             builder: (context, state) {
-                              print(state.runSession?.getDistance());
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
@@ -116,9 +116,10 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                                       state.runSession != null && state.status == RunTrackerStatus.paused ? Padding(
                                         padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
                                         child: InkWell(
-                                            onTap: (){
+                                            onTap: () {
                                               if(state.status == RunTrackerStatus.paused){
                                                 context.read<RunTrackerBloc>().add(StopTracking());
+                                                context.read<RunHistoryBloc>().add(FetchRunHistory());
                                                 Navigator.of(context).pop();
                                               }
                                             },
@@ -149,6 +150,21 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                           ),
                         ),
                       ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: InkWell(
+                            onTap: (){
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              child: Icon(Icons.arrow_back_ios_rounded, color: Colors.black45, size: 35,),
+                            ),
+                          ),
+                        )
+                      )
                     ],
                  );
               },

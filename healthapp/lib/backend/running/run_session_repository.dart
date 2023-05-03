@@ -15,15 +15,21 @@ class RunSessionRepository {
   final CollectionReference instance =
       FirebaseFirestore.instance.collection('RunSessions');
 
+  String twoDigits(int? n){
+    if(n == null) return "--";
+    return n.toString().padLeft(2, "0");
+  }
+
   /// Adds a new caffeine consumption to the database
   Future<void> addRunSession(RunSession session) async {
     try {
       await instance.add({
         'userId': provider.currentUser?.id,
-        'avgKmPerH': session.getAvgKmPerHour(),
-        'avgMinPerKm': session.getAvgMinPerKm(),
-        'distance': session.getDistance(),
-        'duration': session.duration.inSeconds,
+        'avgKmPerH': session.getAvgKmPerHour().toString(),
+        'avgMinPerKm': session.getAvgMinPerKm().toString(),
+        'distance': session.getDistance().toString(),
+        'duration': "${twoDigits(session.duration.inMinutes.remainder(60))}:${twoDigits(session.duration.inSeconds.remainder(60))}",
+        'startTime': DateTime.now()
       });
     } catch (e) {
       print(e);
@@ -31,13 +37,14 @@ class RunSessionRepository {
     }
   }
 
-  Future<List<RunSession>> fetchAllRunSessions() async {
+  Future<List<RunSessionHistory>> fetchAllRunSessions() async {
+    print("FETCH ALL RUN SESSIONS");
     // get the users id
     final currentUserId = provider.currentUser?.id;
     final QuerySnapshot querySnapshot =
         await instance.where('userId', isEqualTo: currentUserId).get();
 
-    List<RunSession> runSessions = [];
+    List<RunSessionHistory> runSessions = [];
 
     for (QueryDocumentSnapshot<Object?> doc in querySnapshot.docs) {
       final session = RunSessionHistory.fromFirestore(doc);

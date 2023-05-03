@@ -6,18 +6,16 @@ class RunSessionHistory {
   String? userId;
   String? id;
   DateTime startTime;
-  Duration duration;
-  List<LocationData> path;
-  double distance;
-  double avgMinPerKm;
-  double avgKmPerHour;
+  String duration;
+  String distance;
+  String avgMinPerKm;
+  String avgKmPerHour;
 
   RunSessionHistory({
     required this.userId,
     required this.id,
     required this.startTime,
     required this.duration,
-    required this.path,
     required this.distance,
     required this.avgMinPerKm,
     required this.avgKmPerHour
@@ -28,11 +26,10 @@ class RunSessionHistory {
       userId: doc['userId'],
       id: doc.id,
       startTime: doc['startTime'].toDate(),
-      duration: Duration(seconds: doc['duration']),
-      path: doc['path'].map<LocationData>((e) => LocationData.fromJson(e)).toList(),
+      duration: doc['duration'],
       distance: doc['distance'],
       avgMinPerKm: doc['avgMinPerKm'],
-      avgKmPerHour: doc['avgKmPerHour']
+      avgKmPerHour: doc['avgKmPerH']
     );
   }
 

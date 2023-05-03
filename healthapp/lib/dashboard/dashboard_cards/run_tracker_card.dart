@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthapp/run_tracker/run_history_page.dart';
 
 import '../../run_tracker/run_tracker_page.dart';
 import '../dashboard_card.dart';
@@ -17,7 +18,7 @@ class _RunTrackerCardState extends State<RunTrackerCard> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => RunTrackerPage()),
+          MaterialPageRoute(builder: (context) => RunHistoryPage()),
         );
       },
       flex: 5,
