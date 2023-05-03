@@ -37,9 +37,22 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
       }
     );
 
-    
+    on<FetchPreferences>(
+      (event, emit) async{
+        emit(state.copyWith(status: RunningStatus.loading));
+        try{
+          WeatherPreferences? preferences = await repository.getUserPreferences();
+          emit(state.copyWith(
+              status: RunningStatus.success,
+              preferences: preferences,));
+        }catch (_) {
+          emit(state.copyWith(status: RunningStatus.error));
+        }
+    }
+    );
   }
 }
+
 
 abstract class RunningEvent {
   const RunningEvent();
@@ -59,21 +72,28 @@ class SavePreferences extends RunningEvent{
   const SavePreferences(this.temp, this.snow, this.rain, this.cloud, this.wind);
 }
 
+class FetchPreferences extends RunningEvent{
+  const FetchPreferences();
+}
+
 enum RunningStatus { loading, success, error }
 
 class RunningState {
+
   const RunningState(
       {this.status = RunningStatus.loading,
-      this.intervals});
+      this.intervals, this.preferences});
 
   final RunningStatus status;
   final List<RecommendedIntervals>? intervals;
+  final WeatherPreferences? preferences;
 
   RunningState copyWith(
-      {RunningStatus? status, List<RecommendedIntervals>? intervals}) {
+      {RunningStatus? status, List<RecommendedIntervals>? intervals, WeatherPreferences? preferences}) {
     return RunningState(
         status: status ?? this.status,
-        intervals: intervals ?? this.intervals
+        intervals: intervals ?? this.intervals,
+        preferences: preferences ?? this.preferences,
     );
   }
 }
