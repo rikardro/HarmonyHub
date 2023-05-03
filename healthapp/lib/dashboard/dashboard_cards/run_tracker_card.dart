@@ -14,35 +14,41 @@ class _RunTrackerCardState extends State<RunTrackerCard> {
   @override
   Widget build(BuildContext context) {
     return DashboardCard(
-      onTap: (){
+      onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RunTrackerPage()));
+          context,
+          MaterialPageRoute(builder: (context) => RunTrackerPage()),
+        );
       },
-      height: 130,
       flex: 5,
-      color: Colors.white,
-      child: Stack(
+      color: Color(0xFF0C4C4D),
+      child: Column(
         children: [
-          Align(
-              alignment: Alignment.topLeft,
-              child: Text("Run tracker", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.grey[600], ),)
+          Text(
+            "Run Tracker",
+            style: TextStyle(color: Colors.white, fontSize: 15),
           ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
-                    child: Icon(Icons.directions_run, color: Colors.grey[600], size: 40,),
-                  ),
-                ],
+          SizedBox(
+            height: 10,
+          ),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
-          )
+              Icon(
+                Icons.directions_run,
+                color: Colors.white,
+                size: 30,
+              ),
+            ],
+          ),
         ],
       ),
     );

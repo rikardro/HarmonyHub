@@ -11,6 +11,8 @@ class RunSession {
   Duration duration;
   List<LocationData> _path;
   double _distance = 0;
+  double _avgMinPerKm = 0;
+  double _avgKmPerHour = 0;
 
   RunSession()
       : startTime = DateTime.now(),
@@ -19,7 +21,35 @@ class RunSession {
 
   List<LocationData> get path => _path;
 
-  double get distance => _distance;
+  double getDistance() {
+    return _distance;
+  }
+
+  double getAvgMinPerKm() {
+    return _avgMinPerKm;
+  }
+
+  double getAvgKmPerHour() {
+    return _avgKmPerHour;
+  }
+
+  void calculateAvgMinPerKm() {
+    if (duration.inMinutes == 0) {
+      _avgMinPerKm = 0;
+      return;
+    }
+    _avgMinPerKm = duration.inMinutes / (_distance / 1000);
+    _avgMinPerKm;
+  }
+
+  void calculateAvgKmPerHour() {
+    if (duration.inSeconds == 0) {
+      _avgKmPerHour = 0;
+      return;
+    }
+    _avgKmPerHour = (_distance / 1000) / (duration.inSeconds / 3600);
+    _avgKmPerHour;
+  }
 
   void addToPath(LocationData data) {
     if (_path.isEmpty) {
@@ -52,7 +82,8 @@ class RunSession {
 class LocationTracker {
   late Location _location;
   late RunSession _runSession;
-  late Timer _timer;
+  late Timer _locationTimer;
+  late Timer _timeTimer;
   late StreamController<RunSession> _controller;
 
   LocationTracker() {
@@ -62,15 +93,21 @@ class LocationTracker {
   Future<void> startTracking() async {
     _location = await Location.getInstance();
     _runSession = RunSession();
-    const Duration duration = Duration(seconds: 3);
-    _timer = Timer.periodic(duration, (Timer timer) async {
+    _locationTimer =
+        Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
       _location.determinePosition();
       final longitude = _location.longitude;
       final latitude = _location.latitude;
       final latLng = LocationData(latitude, longitude, '');
       _runSession.addToPath(latLng);
+      _runSession.calculateAvgKmPerHour();
+      _runSession.calculateAvgMinPerKm();
+    });
+
+    _timeTimer =
+        Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
+      _runSession.duration += const Duration(seconds: 1);
       _controller.add(_runSession);
-      print("SWA");
     });
   }
 
@@ -79,7 +116,7 @@ class LocationTracker {
   }
 
   void stopTracking() {
-    _timer.cancel();
+    _locationTimer.cancel();
     _controller.close();
   }
 
@@ -88,4 +125,6 @@ class LocationTracker {
     _runSession.duration = endTime.difference(_runSession.startTime);
     return _runSession;
   }
+
+  pauseTracking() {}
 }

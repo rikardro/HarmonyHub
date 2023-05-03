@@ -14,11 +14,12 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
 
     on<WatchRunSession>(
       (event, emit) async {
-        print("TRYING");
         final stream = locationTracker.getStream();
         await emit.forEach(stream, onData: (RunSession runSession) {
-          print("EMITTING");
-          print(runSession.distance);
+          print(runSession.getDistance().toString() + "m");
+          print(runSession.getAvgKmPerHour().toString() + "km/h");
+          print(runSession.getAvgMinPerKm().toString() + "min/km");
+          print(runSession.duration.inSeconds.toString() + "s");
           return state.copyWith(
             status: RunTrackerStatus.running,
             runSession: runSession,
@@ -37,6 +38,17 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
           add(WatchRunSession());
         } catch (_) {
           print("Failed to start tracking");
+          emit(state.copyWith(status: RunTrackerStatus.error));
+        }
+      },
+    );
+
+    on<PauseTracking>(
+      (event, emit) async {
+        try {
+          await locationTracker.pauseTracking();
+          emit(state.copyWith(status: RunTrackerStatus.paused));
+        } catch (_) {
           emit(state.copyWith(status: RunTrackerStatus.error));
         }
       },
@@ -65,9 +77,11 @@ class StartTracking extends RunTrackerEvent {}
 
 class StopTracking extends RunTrackerEvent {}
 
+class PauseTracking extends RunTrackerEvent {}
+
 class WatchRunSession extends RunTrackerEvent {}
 
-enum RunTrackerStatus { running, stopped, error }
+enum RunTrackerStatus { running, stopped, error, paused }
 
 class RunTrackerState {
   const RunTrackerState(
