@@ -177,48 +177,61 @@ class DashboardView extends StatelessWidget {
               )
             ],
           ),
-          Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Suggested running days",
-                      style: topTextStyle,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              context: context,
-                              builder: (context) {
-                                return const RunningPreferences();
-                              });
-                        },
-                        child: const Text("Preferences"))
-                  ],
-                ),
-              ),
-              BlocBuilder<RunningBloc, RunningState>(
-                  builder: (context, state) {
-                    if (state.status == RunningStatus.loading) {
-                      return const CircularProgressIndicator();
-                    } else {
-                      final recommended = state.intervals ?? [];
-                      return Column(
-                          children: recommended
-                              .map((e) => SuggestedRunningCard(interval: e))
-                              .toList()
-                        );
-                      }
-                    },
+          Column(children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Suggested running days",
+                    style: topTextStyle,
                   ),
-                ]
+                  ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            context: context,
+                            builder: (context) {
+                              context
+                                  .read<RunningBloc>()
+                                  .add(FetchPreferences());
+                              return BlocBuilder<RunningBloc, RunningState>(
+                                builder: (context, state) {
+                                  if (state.status == RunningStatus.loading) {
+                                    return Container();
+                                  } else {
+                                      double temperature = state.preferences!.targetTemp;
+                                      double precipitation = state.preferences!.rainPref;
+                                      double cloudCoverage = state.preferences!.cloudPref;
+                                      double windSpeed = state.preferences!.windPref;
+                                      bool snow = state.preferences!.avoidSnow;
+                                    return RunningPreferences(temperature, precipitation, cloudCoverage, windSpeed, snow);
+                                  }
+                                },
+                              );
+                            });
+                      },
+                      child: const Text("Preferences"))
+                ],
               ),
+            ),
+            BlocBuilder<RunningBloc, RunningState>(
+              builder: (context, state) {
+                if (state.status == RunningStatus.loading) {
+                  return const CircularProgressIndicator();
+                } else {
+                  final recommended = state.intervals ?? [];
+                  return Column(
+                      children: recommended
+                          .map((e) => SuggestedRunningCard(interval: e))
+                          .toList());
+                }
+              },
+            ),
+          ]),
         ],
       ),
     );
