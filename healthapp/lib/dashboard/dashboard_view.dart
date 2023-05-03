@@ -13,6 +13,7 @@ import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/profile_view.dart';
@@ -27,6 +28,7 @@ import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
+import '../bloc/quote_bloc.dart';
 import '../bloc/user_bloc.dart';
 
 class DashboardView extends StatelessWidget {

@@ -54,7 +54,7 @@ class WeeklyWeatherCard extends StatelessWidget {
 
     return DashboardCard(
       flex: 0,
-      color: weatherColor,
+      color: Color.fromARGB(145, 118, 216, 255),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -63,11 +63,11 @@ class WeeklyWeatherCard extends StatelessWidget {
             SizedBox(
               width: 90,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(day, style: dayTextStyle),
-                  Image(image: weatherImage, width: 70,),
+                  Image(image: weatherImage, width: 60,),
                 ],
               ),
             ),
