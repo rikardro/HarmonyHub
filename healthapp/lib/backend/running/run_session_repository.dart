@@ -18,14 +18,16 @@ class RunSessionRepository {
   /// Adds a new caffeine consumption to the database
   Future<void> addRunSession(RunSession session) async {
     try {
-      await FirebaseFirestore.instance.collection('ConsumptionHistory').add({
+      await instance.add({
         'userId': provider.currentUser?.id,
-        'avgKmPerH': session.getAvgKmPerHour,
-        'avgMinPerKm': session.getAvgMinPerKm,
-        'distance': session.getDistance,
+        'avgKmPerH': session.getAvgKmPerHour(),
+        'avgMinPerKm': session.getAvgMinPerKm(),
+        'distance': session.getDistance(),
         'duration': session.duration.inSeconds,
       });
     } catch (e) {
+      print(e);
+      print("FIREBASE ERROR");
     }
   }
 

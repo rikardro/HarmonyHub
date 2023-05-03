@@ -23,6 +23,11 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
     );
   }
 
+  String twoDigits(int? n){
+    if(n == null) return "--";
+    return n.toString().padLeft(2, "0");
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -33,19 +38,6 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
           child: Center(
             child: BlocBuilder<RunTrackerBloc, RunTrackerState>(
                builder: (context, state) {
-                  /*return InkWell(
-                    onTap: (){
-                      if(state.status == RunTrackerStatus.stopped)
-                        context.read<RunTrackerBloc>().add(StartTracking());
-                      else
-                        context.read<RunTrackerBloc>().add(StopTracking());
-                    },
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      color: state.status == RunTrackerStatus.running ? Colors.red : Colors.green,),
-                    );
-                   */
                  final height = MediaQuery.of(context).size.height;
                  return Stack(
                     children: [
@@ -105,7 +97,7 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Text("${state.runSession?.duration.inMinutes ?? "--"}:${state.runSession?.duration.inSeconds ?? "--"}", style: TextStyle(color: Colors.grey[700], fontSize: 40),),
+                                        Text("${twoDigits(state.runSession?.duration.inMinutes.remainder(60))}:${twoDigits(state.runSession?.duration.inSeconds.remainder(60)) ?? "--"}", style: TextStyle(color: Colors.grey[700], fontSize: 40),),
                                         Text("min", style: TextStyle(color: Colors.grey[500], fontSize: 20),)
                                       ],
                                     ),
