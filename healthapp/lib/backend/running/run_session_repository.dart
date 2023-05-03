@@ -25,9 +25,9 @@ class RunSessionRepository {
     try {
       await instance.add({
         'userId': provider.currentUser?.id,
-        'avgKmPerH': session.getAvgKmPerHour().toString(),
-        'avgMinPerKm': session.getAvgMinPerKm().toString(),
-        'distance': session.getDistance().toString(),
+        'avgKmPerH': session.getAvgKmPerHour().toStringAsFixed(2),
+        'avgMinPerKm': session.getAvgMinPerKm().toStringAsFixed(2),
+        'distance': session.getDistance().toStringAsFixed(2),
         'duration': "${twoDigits(session.duration.inMinutes.remainder(60))}:${twoDigits(session.duration.inSeconds.remainder(60))}",
         'startTime': DateTime.now()
       });

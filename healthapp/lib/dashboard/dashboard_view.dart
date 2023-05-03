@@ -149,11 +149,9 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-              HealthCard(
-                title: "Steps",
-                value: "3457",
-                icon: Icons.directions_walk,
-                iconColor: Colors.grey[600],
+              BlocProvider(
+                create: (context) => QuoteBloc()..add(FetchQuote()),
+                child: QuoteCard(),
               ),
               const HealthCard(
                   title: "Heart",
