@@ -14,7 +14,7 @@ class RunHistoryPage extends StatefulWidget {
 }
 
 class _RunHistoryPageState extends State<RunHistoryPage> {
-  Widget newRunBtn(){
+  Widget newRunBtn() {
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -41,7 +41,11 @@ class _RunHistoryPageState extends State<RunHistoryPage> {
             ),
           ],
         ),
-        child: Icon(Icons.add, color: Colors.white, size: 50,),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 50,
+        ),
       ),
     );
   }
@@ -49,43 +53,48 @@ class _RunHistoryPageState extends State<RunHistoryPage> {
   @override
   Widget build(BuildContext context) {
     context.read<RunHistoryBloc>().add(FetchRunHistory());
-    return SafeArea(
-      child: Material(
-        color: Colors.grey[200],
-        child: Column(
-          children: [
-            // history here
-            Align(
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+            height: 50,
+          ),
+          // history here
+          Align(
               alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text("Run tracker", style: TextStyle(color: Colors.grey[700], fontSize: 26, fontWeight: FontWeight.w500),),
-                )),
-            Expanded(
-              child: BlocBuilder<RunHistoryBloc, RunHistoryState>(
-                builder: (context, state) {
-                  final histori = state.runHistory;
-                  if(state.status == RunHistoryStatus.loading){
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else{
-                    return SingleChildScrollView(
-                      child: Column(
-                          children: histori
-                              .map((e) => RunHistoryCard(history: e))
-                              .toList()),
-                    );
-                  }
-                },
-              )
-            ),
-            Center(child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: newRunBtn(),
-            ))
-          ],
-        ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  "Run tracker",
+                  style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 26,
+                      fontWeight: FontWeight.w500),
+                ),
+              )),
+          Expanded(child: BlocBuilder<RunHistoryBloc, RunHistoryState>(
+            builder: (context, state) {
+              final histori = state.runHistory;
+              if (state.status == RunHistoryStatus.loading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return SingleChildScrollView(
+                  child: Column(
+                      children: histori
+                          .map((e) => RunHistoryCard(history: e))
+                          .toList()),
+                );
+              }
+            },
+          )),
+          Center(
+              child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: newRunBtn(),
+          ))
+        ],
       ),
     );
   }
