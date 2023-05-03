@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:healthapp/backend/location/location_search.dart';
-
-import '../location/location.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'dart:math' as math;
+
+import '../location/location.dart';
+import '../location/location_search.dart';
+
 
 class RunSession {
   String? userId;
@@ -22,6 +24,10 @@ class RunSession {
         _path = [];
 
   List<LocationData> get path => _path;
+
+  bool isPaused(){
+    return duration.inSeconds > 0;
+  }
 
   double getDistance() {
     return _distance;
@@ -44,6 +50,8 @@ class RunSession {
     _avgMinPerKm;
   }
 
+
+
   void calculateAvgKmPerHour() {
     if (duration.inSeconds == 0) {
       _avgKmPerHour = 0;
@@ -58,52 +66,43 @@ class RunSession {
       _path.add(data);
       return;
     }
-    _distance += _distanceBetween(_path.last, data);
+    _distance += (Geolocator.distanceBetween(_path.last.latitude, _path.last.longitude, data.latitude, data.longitude)/1000);
     _path.add(data);
   }
 
-  double _distanceBetween(LocationData start, LocationData end) {
-    const int radius = 6371000; // Earth's radius in meters
-    final double lat1 = start.latitude * math.pi / 180;
-    final double lat2 = end.latitude * math.pi / 180;
-    final double deltaLat = (end.latitude - start.latitude) * math.pi / 180;
-    final double deltaLng = (end.longitude - start.longitude) * math.pi / 180;
-
-    final double a = math.sin(deltaLat / 2) * math.sin(deltaLat / 2) +
-        math.cos(lat1) *
-            math.cos(lat2) *
-            math.sin(deltaLng / 2) *
-            math.sin(deltaLng / 2);
-
-    final double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
-
-    return radius * c;
-  }
 }
 
 class LocationTracker {
   late Location _location;
   late RunSession _runSession;
-  late Timer _locationTimer;
   late Timer _timeTimer;
   late StreamController<RunSession> _controller;
+  late StreamSubscription<Position> streamPos;
 
   LocationTracker() {
+    _runSession = RunSession();
     _controller = StreamController<RunSession>();
   }
 
   Future<void> startTracking() async {
     _location = await Location.getInstance();
-    _runSession = RunSession();
-    _locationTimer =
-        Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
-      _location.determinePosition();
-      final longitude = _location.longitude;
-      final latitude = _location.latitude;
-      final latLng = LocationData(latitude, longitude, '');
-      _runSession.addToPath(latLng);
-      _runSession.calculateAvgKmPerHour();
-      _runSession.calculateAvgMinPerKm();
+    if(!_runSession.isPaused()){
+      print("Create runsession");
+      _runSession = RunSession();
+    }
+
+    _controller.add(_runSession);
+
+    streamPos = _location.getPosStream().listen((Position? position) {
+      if(position != null){
+        print("MOVED");
+        final longitude = position.longitude;
+        final latitude = position.latitude;
+        final latLng = LocationData(latitude, longitude, '');
+        _runSession.addToPath(latLng);
+        _runSession.calculateAvgKmPerHour();
+        _runSession.calculateAvgMinPerKm();
+      }
     });
 
     _timeTimer =
@@ -117,9 +116,16 @@ class LocationTracker {
     return _controller.stream;
   }
 
+  void pauseTracking(){
+    _timeTimer.cancel();
+    streamPos.cancel();
+  }
+
   void stopTracking() {
-    _locationTimer.cancel();
+    streamPos.cancel();
+    _timeTimer.cancel();
     _controller.close();
+    _runSession = RunSession(); // reset run session
   }
 
   RunSession getRunSession() {
@@ -127,6 +133,4 @@ class LocationTracker {
     _runSession.duration = endTime.difference(_runSession.startTime);
     return _runSession;
   }
-
-  pauseTracking() {}
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:geolocator/geolocator.dart';
@@ -71,16 +72,26 @@ class Location {
       // Permissions are denied forever, handle appropriately. 
       return Future.error(
         'Location permissions are permanently denied, we cannot request permissions.');
-    } 
+    }
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
+
     Position position = await Geolocator.getCurrentPosition();
 
     latitude = position.latitude;
     longitude = position.longitude;
-
+    print("Latitude: $latitude, Longitude: $longitude");
   }
+
+  Stream<Position> getPosStream(){
+    LocationSettings locationSettings = const LocationSettings(
+      accuracy: LocationAccuracy.best,
+      distanceFilter: 25,
+    );
+    return Geolocator.getPositionStream(locationSettings: locationSettings);
+  }
+
 
   // Set the location name from the current position.
   Future setLocationNameFromCoords(double latitude, double longitude) async{

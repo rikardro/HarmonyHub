@@ -85,6 +85,7 @@ flutter:
     - assets/images/wind_white.png
 
     - assets/images/nature_image.png
+    - assets/images/map.png
 
     - assets/images/precipitation.png
     - assets/images/degrees.png

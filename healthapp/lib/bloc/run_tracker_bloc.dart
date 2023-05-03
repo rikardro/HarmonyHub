@@ -18,10 +18,6 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
       (event, emit) async {
         final stream = locationTracker.getStream();
         await emit.forEach(stream, onData: (RunSession runSession) {
-          print(runSession.getDistance().toString() + "m");
-          print(runSession.getAvgKmPerHour().toString() + "km/h");
-          print(runSession.getAvgMinPerKm().toString() + "min/km");
-          print(runSession.duration.inSeconds.toString() + "s");
           return state.copyWith(
             status: RunTrackerStatus.running,
             runSession: runSession,
@@ -35,11 +31,25 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
 
     on<StartTracking>(
       (event, emit) async {
+        print("START TRACKING");
         try {
           await locationTracker.startTracking();
           add(WatchRunSession());
         } catch (_) {
           print("Failed to start tracking");
+          print(_);
+          emit(state.copyWith(status: RunTrackerStatus.error));
+        }
+      },
+    );
+
+    on<ResumeTracking>(
+      (event, emit) async {
+        print("Resume TRACKING");
+        try {
+          await locationTracker.startTracking();
+          emit(state.copyWith(status: RunTrackerStatus.running));
+        } catch (_) {
           emit(state.copyWith(status: RunTrackerStatus.error));
         }
       },
@@ -48,7 +58,7 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
     on<PauseTracking>(
       (event, emit) async {
         try {
-          await locationTracker.pauseTracking();
+          locationTracker.pauseTracking();
           emit(state.copyWith(status: RunTrackerStatus.paused));
         } catch (_) {
           emit(state.copyWith(status: RunTrackerStatus.error));
@@ -58,11 +68,12 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
 
     on<StopTracking>((event, emit) async {
       try {
-        locationTracker.stopTracking();
-        emit(state.copyWith(status: RunTrackerStatus.stopped));
 
         final runSession = locationTracker.getRunSession();
-        runSessionRepository.addRunSession(runSession);
+        await runSessionRepository.addRunSession(runSession);
+
+        locationTracker.stopTracking();
+        emit(state.copyWith(status: RunTrackerStatus.stopped));
 
         //await repository.addRunSession(runSession);
       } catch (_) {
@@ -82,6 +93,8 @@ class StartTracking extends RunTrackerEvent {}
 class StopTracking extends RunTrackerEvent {}
 
 class PauseTracking extends RunTrackerEvent {}
+
+class ResumeTracking extends RunTrackerEvent{}
 
 class WatchRunSession extends RunTrackerEvent {}
 
