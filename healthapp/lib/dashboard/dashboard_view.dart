@@ -12,6 +12,7 @@ import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/profile_view.dart';
@@ -25,6 +26,7 @@ import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
+import '../bloc/quote_bloc.dart';
 import '../bloc/user_bloc.dart';
 
 class DashboardView extends StatelessWidget {
@@ -36,7 +38,6 @@ class DashboardView extends StatelessWidget {
   Future<Location> fetchLocation() async {
     return await Location.getInstance();
   }
-  
 
   Future<WeatherInformationCurrent> fetchWeatherData() async {
     ApiParser apiParser = ApiParser();
@@ -86,9 +87,9 @@ class DashboardView extends StatelessWidget {
                       width: 10,
                     ),
                     Text(
-                  '${GreetingPhrase.get()} 👋',
-                  style: topTextStyle,
-                ),
+                      '${GreetingPhrase.get()} 👋',
+                      style: topTextStyle,
+                    ),
                   ],
                 ),
                 GestureDetector(
@@ -129,82 +130,80 @@ class DashboardView extends StatelessWidget {
             ),
           ),
           Row(
-              children: [
-                FutureBuilder(
-                    future: fetchWeatherData(),
-                    builder:
-                        (context, AsyncSnapshot<WeatherInformationCurrent> weatherData) {
-                          if(weatherData.hasData){
-                            return WeatherCard(weatherData: weatherData);
-                          }
-                          return CircularProgressIndicator();
-                    }),
-                BlocProvider(create: (context) => AirQualityBloc()..add(FetchAirQuality()),
-                child: AirQualityCard())
-              ],
-            ),
-              Row(
-                children: [
-                  HealthCard(
-                    title: "Steps",
-                    value: "3457",
-                    icon: Icons.directions_walk,
-                    iconColor: Colors.grey[600],
-                  ),
-                  const HealthCard(
-                      title: "Heart",
-                      value: "69",
-                      icon: Icons.favorite,
-                      iconColor: Colors.red)
-                ],
+            children: [
+              FutureBuilder(
+                  future: fetchWeatherData(),
+                  builder: (context,
+                      AsyncSnapshot<WeatherInformationCurrent> weatherData) {
+                    if (weatherData.hasData) {
+                      return WeatherCard(weatherData: weatherData);
+                    }
+                    return CircularProgressIndicator();
+                  }),
+              BlocProvider(
+                  create: (context) => AirQualityBloc()..add(FetchAirQuality()),
+                  child: AirQualityCard())
+            ],
+          ),
+          Row(
+            children: [
+              BlocProvider(
+                create: (context) => QuoteBloc()..add(FetchQuote()),
+                child: QuoteCard(),
               ),
-              Row(
-                children: [
-                  HealthCard(
-                    flex: 5,
-                    height: 120,
-                    title: "Flights",
-                    value: "13",
-                    icon: Icons.stairs,
-                    iconColor: Colors.grey[600],
-                    topPadding: 24,
-                  ),
-                  BlocProvider(
-                    create: (context) => CaffeineBloc(CaffeineRepository())
-                      ..add(const FetchCaffeine()),
-                    child: CaffeineCard(),
-                  )
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Suggested running days",
-                  style: topTextStyle,
-                ),
+              const HealthCard(
+                  title: "Heart",
+                  value: "69",
+                  icon: Icons.favorite,
+                  iconColor: Colors.red)
+            ],
+          ),
+          Row(
+            children: [
+              HealthCard(
+                flex: 5,
+                height: 120,
+                title: "Flights",
+                value: "13",
+                icon: Icons.stairs,
+                iconColor: Colors.grey[600],
+                topPadding: 24,
               ),
               BlocProvider(
-             create: (context) => RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
-                    ..add(const FetchRecommended()),
-                  child: BlocBuilder<RunningBloc, RunningState>(
-                    builder: (context, state){
-                      if(state.status == RunningStatus.loading){
-                        return CircularProgressIndicator();
-                      } else{
-                        final recommended = state.intervals ?? [];
-                        return Column(
-                          children: recommended.map((e) => SuggestedRunningCard(interval: e)).toList()
-                        );
-                       
-                      }
-                    },
-                  )
+                create: (context) => CaffeineBloc(CaffeineRepository())
+                  ..add(const FetchCaffeine()),
+                child: CaffeineCard(),
               )
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Suggested running days",
+              style: topTextStyle,
+            ),
+          ),
+          BlocProvider(
+              create: (context) =>
+                  RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
+                    ..add(const FetchRecommended()),
+              child: BlocBuilder<RunningBloc, RunningState>(
+                builder: (context, state) {
+                  if (state.status == RunningStatus.loading) {
+                    return CircularProgressIndicator();
+                  } else {
+                    final recommended = state.intervals ?? [];
+                    return Column(
+                        children: recommended
+                            .map((e) => SuggestedRunningCard(interval: e))
+                            .toList());
+                  }
+                },
+              ))
         ],
       ),
     );
-    
   }
 }
 
@@ -305,12 +304,10 @@ class _LocationPopupState extends State<LocationPopup> {
                   },
                 ),
               ),
-             
             ],
           ),
         );
       },
     );
   }
-
 }
