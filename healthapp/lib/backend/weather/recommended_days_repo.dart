@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:healthapp/backend/weather/weather.dart';
+import 'package:healthapp/services/auth/auth/firebase_auth_provider.dart';
+import 'package:healthapp/util/weatherPreferences.dart';
 
 import '../../util/weatherInformation.dart';
 import '../../util/weatherType.dart';
@@ -37,6 +40,12 @@ class PointsData{
 class RecommendedDaysRepo {
   final ApiParser apiClient;
 
+  final FirebaseAuthProvider provider = FirebaseAuthProvider();
+
+  //TODO: this should be broken out into DataSource with its interface!
+  final CollectionReference instance =
+      FirebaseFirestore.instance.collection('UserWeatherPreferences');
+
   RecommendedDaysRepo({required this.apiClient}) : assert(apiClient != null);
 
   double proximityWeight(double diff, double k, double limit){
@@ -44,27 +53,27 @@ class RecommendedDaysRepo {
     return max(funcVal, 0);
   }
 
-  PointsData calculatePoints(WeatherInformation weatherData, {int idealTemperature = 18}) {
+  PointsData calculatePoints(WeatherInformation weatherData, WeatherPreferences weatherPreferences) {
 
     // Wind
-    double windPoints = -(weatherData.windspeed / 5);
+    double windPoints = -(weatherData.windspeed - weatherPreferences.windPref).abs();
 
     // Temperature
     //points -= pow((weatherData.temperature - idealTemperature).abs().round()/2, 2);
-    double tempPoints = -(weatherData.temperature - idealTemperature).abs() * 3;
+    double tempPoints = -(weatherData.temperature - weatherPreferences.targetTemp).abs() * 3;
     //points += proximityWeight((weatherData.temperature - idealTemperature).abs(), 1, 0.5);
 
     // Snow depth
     double snowPoints = 0;
-    if (weatherData.snow_depth > 0) {
-      snowPoints = -10;
+    if (weatherData.snow_depth > 0 && weatherPreferences.avoidSnow) {
+      snowPoints = -15;
     }
 
     // Precipitation
-    double precipitationPoints = -(weatherData.precipitation * 30);
+    double precipitationPoints = -(weatherData.precipitation * weatherPreferences.rainPref * 2);
 
     // Cloud cover
-    double cloudPoints = -(weatherData.cloudcover) * 0.05;
+    double cloudPoints = -(weatherData.cloudcover - weatherPreferences.cloudPref).abs() * 0.1;
 
     return PointsData(windPoints: windPoints, temperaturePoints: tempPoints, snowPoints: snowPoints, cloudCoverPoints: cloudPoints, precipitationPoints: precipitationPoints);
   }
@@ -72,9 +81,12 @@ class RecommendedDaysRepo {
   Future<List<RecommendedIntervals>> getRecommended(int amount) async{
     Location loc = await Location.getInstance();
     List<WeatherInformation> weatherList = await apiClient.requestWeather(loc.latitude, loc.longitude);
+
+    WeatherPreferences preferences = await getUserPreferences() ?? WeatherPreferences(18, true, 0, 25, 0);
+
     List<RecommendedTime> recommended = [];
     for (WeatherInformation weather in weatherList) {
-      PointsData points = calculatePoints(weather);
+      PointsData points = calculatePoints(weather, preferences);
       recommended.add(RecommendedTime(weather, points));
     }
 
@@ -167,6 +179,37 @@ class RecommendedDaysRepo {
       }
 
       print("=====================================");
+    }
+  }
+
+
+  Future<void> savePreferences(WeatherPreferences weatherPreferences) async {
+    final currentUserId = provider.currentUser?.id;
+    await instance.doc(currentUserId).set({
+      'targetTemp': weatherPreferences.targetTemp,
+      'avoidSnow': weatherPreferences.avoidSnow,
+      'rainPref': weatherPreferences.rainPref,
+      'cloudPref': weatherPreferences.cloudPref,
+      'windPref': weatherPreferences.windPref,
+    });
+  }
+
+    Future<WeatherPreferences?> getUserPreferences() async {
+
+    final currentUserId = provider.currentUser?.id;
+
+    final snapshot = await instance.where('id', isEqualTo: currentUserId).get();
+
+    if (snapshot.docs.isNotEmpty) {
+      final Map<String, dynamic> data =
+          snapshot.docs.first.data() as Map<String, dynamic>;
+      if (data.isNotEmpty) {
+        return WeatherPreferences.fromMap(data);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 

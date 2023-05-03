@@ -18,4 +18,13 @@ class WeatherPreferences{
   double get rainPref => _rainPref;
   double get cloudPref => _cloudPref;
   double get windPref => _windPref;
+
+  factory WeatherPreferences.fromMap(Map<String, dynamic> map) {
+    return WeatherPreferences(
+      map['targetTemp'], 
+      map["avoidSnow"], 
+      map['rainPref'], 
+      map['cloudPref'], 
+      map['windPref']);
+  }
 }
