@@ -1,21 +1,21 @@
 
 class WeatherPreferences{
-  final int _targetTemp;
+  final double _targetTemp;
   final bool _avoidSnow;
-  final int _rainPref;
-  final int _cloudPref;
-  final int _windPref;
+  final double _rainPref;
+  final double _cloudPref;
+  final double _windPref;
 
-  WeatherPreferences(int temp, bool snow, int rain, int cloud, int wind) :
+  WeatherPreferences(double temp, bool snow, double rain, double cloud, double wind) :
     _targetTemp = temp,
     _avoidSnow = snow,
     _rainPref = rain,
     _cloudPref = cloud,
     _windPref = wind;
 
-  int get targetTemp => _targetTemp;
+  double get targetTemp => _targetTemp;
   bool get avoidSnow => _avoidSnow;
-  int get rainPref => _rainPref;
-  int get cloudPref => _cloudPref;
-  int get windPref => _windPref;
+  double get rainPref => _rainPref;
+  double get cloudPref => _cloudPref;
+  double get windPref => _windPref;
 }
