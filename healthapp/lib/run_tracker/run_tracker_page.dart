@@ -46,6 +46,19 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
         extendBodyBehindAppBar: true,
         body: Center(child: BlocBuilder<RunTrackerBloc, RunTrackerState>(
           builder: (context, state) {
+            String minutes;
+            String seconds;
+            if (state.status == RunTrackerStatus.running ||
+                state.status == RunTrackerStatus.paused) {
+              minutes = state.runSession!.getAvgMinPerKm().floor().toString();
+              seconds = twoDigits(
+                      (state.runSession!.getAvgMinPerKm().remainder(1) * 60)
+                          .round())
+                  .toString();
+            } else {
+              minutes = "--";
+              seconds = "--";
+            }
             final height = MediaQuery.of(context).size.height;
             return Stack(
               children: [
@@ -121,13 +134,7 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                             // avg. min/km, distance and avg. speed
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              statBox(
-                                  Icons.av_timer,
-                                  state.runSession
-                                          ?.getAvgMinPerKm()
-                                          .toStringAsFixed(2)
-                                          .replaceFirst(".", ":") ??
-                                      "--:--",
+                              statBox(Icons.av_timer, '${minutes}:$seconds',
                                   "Avg. min/km"),
                               statBox(
                                   Icons.directions_run,

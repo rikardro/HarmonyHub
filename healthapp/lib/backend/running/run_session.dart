@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,7 +8,6 @@ import 'dart:math' as math;
 
 import '../location/location.dart';
 import '../location/location_search.dart';
-
 
 class RunSession {
   String? userId;
@@ -25,7 +25,7 @@ class RunSession {
 
   List<LocationData> get path => _path;
 
-  bool isPaused(){
+  bool isPaused() {
     return duration.inSeconds > 0;
   }
 
@@ -44,21 +44,20 @@ class RunSession {
   void calculateAvgMinPerKm() {
     if (_distance == 0) {
       _avgMinPerKm = 0;
+      log("distance is 0");
       return;
     }
-    _avgMinPerKm = duration.inMinutes / (_distance / 1000);
-    _avgMinPerKm;
+    _avgMinPerKm = (duration.inSeconds / 60) / (_distance);
+    
   }
 
-
-
-  void calculateAvgKmPerHour() {
+  void calculateAvgMPerS() {
     if (duration.inSeconds == 0) {
       _avgKmPerHour = 0;
       return;
     }
-    _avgKmPerHour = (_distance / 1000) / (duration.inSeconds / 3600);
-    _avgKmPerHour;
+
+    _avgKmPerHour = (_distance * 1000) / (duration.inSeconds);
   }
 
   void addToPath(LocationData data) {
@@ -66,10 +65,11 @@ class RunSession {
       _path.add(data);
       return;
     }
-    _distance += (Geolocator.distanceBetween(_path.last.latitude, _path.last.longitude, data.latitude, data.longitude)/1000);
+    _distance += (Geolocator.distanceBetween(_path.last.latitude,
+            _path.last.longitude, data.latitude, data.longitude) /
+        1000);
     _path.add(data);
   }
-
 }
 
 class LocationTracker {
@@ -86,20 +86,19 @@ class LocationTracker {
 
   Future<void> startTracking() async {
     _location = await Location.getInstance();
-    if(!_runSession.isPaused()){
-      print("Create runsession");
+    if (!_runSession.isPaused()) {
       _runSession = RunSession();
     }
 
     _controller.add(_runSession);
 
     streamPos = _location.getPosStream().listen((Position? position) {
-      if(position != null){
+      if (position != null) {
         final longitude = position.longitude;
         final latitude = position.latitude;
         final latLng = LocationData(latitude, longitude, '');
         _runSession.addToPath(latLng);
-        _runSession.calculateAvgKmPerHour();
+        _runSession.calculateAvgMPerS();
         _runSession.calculateAvgMinPerKm();
       }
     });
@@ -115,7 +114,7 @@ class LocationTracker {
     return _controller.stream;
   }
 
-  void pauseTracking(){
+  void pauseTracking() {
     _timeTimer.cancel();
     streamPos.cancel();
   }
