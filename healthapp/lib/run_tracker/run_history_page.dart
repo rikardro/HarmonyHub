@@ -39,6 +39,14 @@ class _RunHistoryPageState extends State<RunHistoryPage> {
     return SafeArea(
       child: Material(
         color: Colors.grey[200],
+        child: Column(
+          children: [
+            // history here
+            Text("Run tracker", style: TextStyle(color: Colors.grey[700], fontSize: 40, fontWeight: FontWeight.w500),)
+            // TODO
+
+          ],
+        ),
       ),
     );
   }

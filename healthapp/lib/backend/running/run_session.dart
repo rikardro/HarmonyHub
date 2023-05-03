@@ -95,7 +95,6 @@ class LocationTracker {
 
     streamPos = _location.getPosStream().listen((Position? position) {
       if(position != null){
-        print("MOVED");
         final longitude = position.longitude;
         final latitude = position.latitude;
         final latLng = LocationData(latitude, longitude, '');

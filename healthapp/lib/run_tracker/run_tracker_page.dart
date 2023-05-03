@@ -74,11 +74,13 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                           ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: (height * 0.375),
                         // circle container
                         child: Container(
-                          height: height*0.575,
+                          height: height*0.6,
                           child: BlocBuilder<RunTrackerBloc, RunTrackerState>(
                             builder: (context, state) {
                               print(state.runSession?.getDistance());
