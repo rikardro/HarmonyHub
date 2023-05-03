@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:healthapp/backend/running/run_session.dart';
+import 'package:healthapp/backend/running/run_session_repository.dart';
 
 import '../backend/location/location.dart';
 
 class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
+  RunSessionRepository runSessionRepository = RunSessionRepository();
   RunTrackerBloc() : super(RunTrackerState()) {
     // fetch data
 
@@ -59,7 +61,9 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
         locationTracker.stopTracking();
         emit(state.copyWith(status: RunTrackerStatus.stopped));
 
-        final runSession = LocationTracker().getRunSession();
+        final runSession = locationTracker.getRunSession();
+        runSessionRepository.addRunSession(runSession);
+
         //await repository.addRunSession(runSession);
       } catch (_) {
         emit(state.copyWith(status: RunTrackerStatus.error));

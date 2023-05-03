@@ -9,7 +9,6 @@ import 'dart:math' as math;
 
 class RunSession {
   String? userId;
-  String? id;
   DateTime startTime;
   Duration duration;
   List<LocationData> _path;
@@ -21,16 +20,6 @@ class RunSession {
       : startTime = DateTime.now(),
         duration = Duration.zero,
         _path = [];
-
-  static FromFirestore(Map<String, dynamic> firestore) {
-    return RunSession()
-      ..startTime = firestore['date']
-      ..duration = firestore['duration']
-      .._path = firestore['path']
-      .._distance = firestore['distance']
-      .._avgMinPerKm = firestore['avgMinPerKm']
-      .._avgKmPerHour = firestore['avgKmPerHour'];
-  }
 
   List<LocationData> get path => _path;
 
