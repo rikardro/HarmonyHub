@@ -82,7 +82,11 @@ class RecommendedDaysRepo {
     Location loc = await Location.getInstance();
     List<WeatherInformation> weatherList = await apiClient.requestWeather(loc.latitude, loc.longitude);
 
-    WeatherPreferences preferences = await getUserPreferences() ?? WeatherPreferences(18, true, 0, 25, 0);
+    WeatherPreferences? preferences = await getUserPreferences();
+
+    preferences ??= WeatherPreferences(18, true, 0, 25, 0);
+
+    print(preferences.rainPref);
 
     List<RecommendedTime> recommended = [];
     for (WeatherInformation weather in weatherList) {
@@ -195,22 +199,20 @@ class RecommendedDaysRepo {
   }
 
     Future<WeatherPreferences?> getUserPreferences() async {
+      final currentUserId = provider.currentUser?.id;
+      final snapshot = await instance.doc(currentUserId).get();
 
-    final currentUserId = provider.currentUser?.id;
-
-    final snapshot = await instance.where('id', isEqualTo: currentUserId).get();
-
-    if (snapshot.docs.isNotEmpty) {
-      final Map<String, dynamic> data =
-          snapshot.docs.first.data() as Map<String, dynamic>;
-      if (data.isNotEmpty) {
-        return WeatherPreferences.fromMap(data);
+      if (snapshot.exists) {
+        final Map<String, dynamic> data =
+            snapshot.data() as Map<String, dynamic>;
+        if (data.isNotEmpty) {
+          return WeatherPreferences.fromMap(data);
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
-    } else {
-      return null;
-    }
   }
 
 }
