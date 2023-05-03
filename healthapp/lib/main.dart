@@ -3,9 +3,12 @@ import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthapp/backend/running/run_session_history.dart';
+import 'package:healthapp/backend/running/run_session_repository.dart';
 import 'package:healthapp/backend/user/user_repository.dart';
 import 'package:healthapp/bloc/caffeine_bloc.dart';
 import 'package:healthapp/bloc/location_bloc.dart';
+import 'package:healthapp/bloc/run_history_bloc.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_view.dart';
 import 'package:healthapp/services/auth/auth/bloc/auth_bloc.dart';
@@ -53,6 +56,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserBloc>(
           create: (context) => UserBloc(UserRepository())..add(FetchUser()),
         ),
+        BlocProvider<RunHistoryBloc>(
+          create: (context) => RunHistoryBloc(RunSessionRepository())..add(FetchRunHistory()),
+        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

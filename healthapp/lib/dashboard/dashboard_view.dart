@@ -12,10 +12,12 @@ import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/profile_view.dart';
+import 'package:healthapp/run_tracker/run_tracker_page.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
@@ -160,15 +162,7 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-              HealthCard(
-                flex: 5,
-                height: 120,
-                title: "Flights",
-                value: "13",
-                icon: Icons.stairs,
-                iconColor: Colors.grey[600],
-                topPadding: 24,
-              ),
+              RunTrackerCard(),
               BlocProvider(
                 create: (context) => CaffeineBloc(CaffeineRepository())
                   ..add(const FetchCaffeine()),
