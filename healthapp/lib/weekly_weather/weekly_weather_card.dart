@@ -54,7 +54,7 @@ class WeeklyWeatherCard extends StatelessWidget {
 
     return DashboardCard(
       flex: 0,
-      color: weatherColor,
+      color: Color.fromARGB(145, 118, 216, 255),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
