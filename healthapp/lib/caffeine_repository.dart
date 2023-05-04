@@ -100,7 +100,6 @@ class CaffeineRepository {
         'timeConsumed': Timestamp.fromMillisecondsSinceEpoch(timeConsumed),
         'drinkType': drinkType,
       });
-      print('Document added successfully!');
     } catch (e) {
       print('Error adding document: $e');
     }
