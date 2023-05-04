@@ -62,13 +62,15 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserBloc>(
           create: (context) => UserBloc(UserRepository())..add(FetchUser()),
         ),
-
-        BlocProvider<RunningBloc>(create: (context) => RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))..add(const FetchRecommended()),)
-
+        BlocProvider<RunningBloc>(
+          create: (context) =>
+              RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
+                ..add(const FetchRecommended()),
+        ),
         BlocProvider<RunHistoryBloc>(
-          create: (context) => RunHistoryBloc(RunSessionRepository())..add(FetchRunHistory()),
+          create: (context) =>
+              RunHistoryBloc(RunSessionRepository())..add(FetchRunHistory()),
         )
-
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
