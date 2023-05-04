@@ -151,18 +151,9 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-
-              HealthCard(
-                title: "Steps",
-                value: "3457",
-                icon: Icons.directions_walk,
-                iconColor: Colors.grey[600],
-              ),
-
               BlocProvider(
                 create: (context) => QuoteBloc()..add(FetchQuote()),
                 child: QuoteCard(),
-
               ),
               const HealthCard(
                   title: "Heart",
@@ -173,19 +164,7 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-
-              HealthCard(
-                flex: 5,
-                height: 120,
-                title: "Flights",
-                value: "13",
-                icon: Icons.stairs,
-                iconColor: Colors.grey[600],
-                topPadding: 24,
-              ),
-
               RunTrackerCard(),
-
               BlocProvider(
                 create: (context) => CaffeineBloc(CaffeineRepository())
                   ..add(const FetchCaffeine()),
@@ -193,7 +172,6 @@ class DashboardView extends StatelessWidget {
               )
             ],
           ),
-
           Column(children: [
             Container(
               margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
@@ -220,13 +198,20 @@ class DashboardView extends StatelessWidget {
                                   if (state.status == RunningStatus.loading) {
                                     return Container();
                                   } else {
-                                      WeatherPreferences preference = state.preferences ?? WeatherPreferences(18, false, 0, 25, 0);
-                                      final temperature = preference.targetTemp;
-                                      final precipitation = preference.rainPref;
-                                      final cloudCoverage = preference.cloudPref;
-                                      final windSpeed = preference.windPref;
-                                      final snow = preference.avoidSnow;
-                                    return RunningPreferences(temperature, precipitation, cloudCoverage, windSpeed, snow);
+                                    WeatherPreferences preference = state
+                                            .preferences ??
+                                        WeatherPreferences(18, false, 0, 25, 0);
+                                    final temperature = preference.targetTemp;
+                                    final precipitation = preference.rainPref;
+                                    final cloudCoverage = preference.cloudPref;
+                                    final windSpeed = preference.windPref;
+                                    final snow = preference.avoidSnow;
+                                    return RunningPreferences(
+                                        temperature,
+                                        precipitation,
+                                        cloudCoverage,
+                                        windSpeed,
+                                        snow);
                                   }
                                 },
                               );
@@ -250,33 +235,6 @@ class DashboardView extends StatelessWidget {
               },
             ),
           ]),
-
-          Container(
-            margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Suggested running days",
-              style: topTextStyle,
-            ),
-          ),
-          BlocProvider(
-              create: (context) =>
-                  RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
-                    ..add(const FetchRecommended()),
-              child: BlocBuilder<RunningBloc, RunningState>(
-                builder: (context, state) {
-                  if (state.status == RunningStatus.loading) {
-                    return CircularProgressIndicator();
-                  } else {
-                    final recommended = state.intervals ?? [];
-                    return Column(
-                        children: recommended
-                            .map((e) => SuggestedRunningCard(interval: e))
-                            .toList());
-                  }
-                },
-              ))
-
         ],
       ),
     );
