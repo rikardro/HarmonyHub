@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/backend/weather/recommended_days_repo.dart';
 import 'package:healthapp/util/weatherPreferences.dart';
@@ -41,12 +43,12 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
     on<FetchPreferences>((event, emit) async {
       emit(state.copyWith(status: RunningStatus.loading));
       try {
-        WeatherPreferences? preferences = await repository.getUserPreferences();
+        log("hit kommer jag");
+        WeatherPreferences preferences = await repository.getUserPreferences();
         emit(state.copyWith(
           status: RunningStatus.success,
           preferences: preferences,
         ));
-        print(preferences!.avoidSnow);
       } catch (_) {
         emit(state.copyWith(status: RunningStatus.error));
         print("fel");

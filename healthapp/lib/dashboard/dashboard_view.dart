@@ -17,6 +17,7 @@ import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/dashboard/running_preferences.dart';
 import 'package:healthapp/profile_view.dart';
 import 'package:healthapp/util/weatherInformation.dart';
+import 'package:healthapp/util/weatherPreferences.dart';
 import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
 import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
@@ -203,11 +204,12 @@ class DashboardView extends StatelessWidget {
                                   if (state.status == RunningStatus.loading) {
                                     return Container();
                                   } else {
-                                      double temperature = state.preferences!.targetTemp;
-                                      double precipitation = state.preferences!.rainPref;
-                                      double cloudCoverage = state.preferences!.cloudPref;
-                                      double windSpeed = state.preferences!.windPref;
-                                      bool snow = state.preferences!.avoidSnow;
+                                      WeatherPreferences preference = state.preferences ?? WeatherPreferences(18, false, 0, 25, 0);
+                                      final temperature = preference.targetTemp;
+                                      final precipitation = preference.rainPref;
+                                      final cloudCoverage = preference.cloudPref;
+                                      final windSpeed = preference.windPref;
+                                      final snow = preference.avoidSnow;
                                     return RunningPreferences(temperature, precipitation, cloudCoverage, windSpeed, snow);
                                   }
                                 },

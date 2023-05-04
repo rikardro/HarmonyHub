@@ -27,4 +27,9 @@ class WeatherPreferences{
       map['cloudPref'], 
       map['windPref']);
   }
+
+  @override
+  String toString() {
+    return 'WeatherPreferences{_targetTemp: $_targetTemp, _avoidSnow: $_avoidSnow, _rainPref: $_rainPref, _cloudPref: $_cloudPref, _windPref: $_windPref}';
+  }
 }
