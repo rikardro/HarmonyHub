@@ -7,7 +7,7 @@ class WeatherInformation {
   final double _temperature;
   final double _precipitation;
   final double _snowfall;
-  final double _snow_depth;
+  final double _snow_depth; 
   final WeatherType _weather;
   final int _cloudcover;
   final double _windspeed;

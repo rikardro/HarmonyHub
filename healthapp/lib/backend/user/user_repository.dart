@@ -7,6 +7,8 @@ import 'package:healthapp/caffeine_detailed_view.dart';
 import 'package:healthapp/services/auth/auth/firebase_auth_provider.dart';
 import 'dart:math' as math;
 
+import 'package:healthapp/util/weatherPreferences.dart';
+
 class UserRepository {
   //TODO: should be in constructor instead?
   final FirebaseAuthProvider provider = FirebaseAuthProvider();

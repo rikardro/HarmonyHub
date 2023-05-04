@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:healthapp/backend/weather/weather.dart';
+import 'package:healthapp/services/auth/auth/firebase_auth_provider.dart';
+import 'package:healthapp/util/weatherPreferences.dart';
 
 import '../../util/weatherInformation.dart';
 import '../../util/weatherType.dart';
@@ -10,89 +13,114 @@ import 'package:intl/intl.dart';
 import '../../util/weatherVisuals.dart';
 import '../location/location.dart';
 
-class PointsData{
+class PointsData {
   final double windPoints;
   final double temperaturePoints;
   final double snowPoints;
-  final double weatherTypePoints;
+  final double cloudCoverPoints;
   final double precipitationPoints;
 
-  double getTotalPoints(){
-    return windPoints + temperaturePoints + snowPoints + weatherTypePoints + precipitationPoints;
+  double getTotalPoints() {
+    return windPoints +
+        temperaturePoints +
+        snowPoints +
+        cloudCoverPoints +
+        precipitationPoints;
   }
 
-  void printPoints(){
+  void printPoints() {
     print("POINTS!:::");
     print("Wind: $windPoints");
     print("Temperature: $temperaturePoints");
     print("Snow: $snowPoints");
-    print("Weather: $weatherTypePoints");
+    print("Cloud cover: $cloudCoverPoints");
     print("Precipitation: $precipitationPoints");
     print("--------------------");
   }
 
-  PointsData({required this.windPoints, required this.temperaturePoints, required this.snowPoints, required this.weatherTypePoints, required this.precipitationPoints});
+  PointsData(
+      {required this.windPoints,
+      required this.temperaturePoints,
+      required this.snowPoints,
+      required this.cloudCoverPoints,
+      required this.precipitationPoints});
 }
 
 class RecommendedDaysRepo {
   final ApiParser apiClient;
 
+  final FirebaseAuthProvider provider = FirebaseAuthProvider();
+
+  //TODO: this should be broken out into DataSource with its interface!
+  final CollectionReference instance =
+      FirebaseFirestore.instance.collection('UserWeatherPreferences');
+
   RecommendedDaysRepo({required this.apiClient}) : assert(apiClient != null);
 
-  double proximityWeight(double diff, double k, double limit){
+  double proximityWeight(double diff, double k, double limit) {
     double funcVal = (diff * k).abs() - limit * k;
     return max(funcVal, 0);
   }
 
-  PointsData calculatePoints(WeatherInformation weatherData, {int idealTemperature = 18}) {
-
+  PointsData calculatePoints(
+      WeatherInformation weatherData, WeatherPreferences weatherPreferences) {
     // Wind
-    double windPoints = -(weatherData.windspeed / 5);
+    double windPoints =
+        -(weatherData.windspeed - weatherPreferences.windPref).abs();
 
     // Temperature
     //points -= pow((weatherData.temperature - idealTemperature).abs().round()/2, 2);
-    double tempPoints = -(weatherData.temperature - idealTemperature).abs() * 3;
+    double tempPoints =
+        -(weatherData.temperature - weatherPreferences.targetTemp).abs() * 3;
     //points += proximityWeight((weatherData.temperature - idealTemperature).abs(), 1, 0.5);
 
     // Snow depth
     double snowPoints = 0;
-    if (weatherData.snow_depth > 0) {
-      snowPoints = -10;
+    if (weatherData.snow_depth > 0 && weatherPreferences.avoidSnow) {
+      snowPoints = -15;
     }
 
-    // Weather type
-    Map<WeatherType, double> weatherTypePoints = {
-      WeatherType.clear: 10,
-      WeatherType.cloudy: 3,
-      WeatherType.foggy: -3,
-      WeatherType.halfCloudy: 6,
-      WeatherType.raining: -6,
-      WeatherType.snowing: -3
-    };
-    double weatherPoints = weatherTypePoints[weatherData.weather] ?? 0;
-
     // Precipitation
-    double precipitationPoints = -(weatherData.precipitation * 30);
+    double precipitationPoints =
+        -(weatherData.precipitation * weatherPreferences.rainPref * 2);
 
-    // TODO add humidity and air quality
+    // Cloud cover
+    double cloudPoints =
+        -(weatherData.cloudcover - weatherPreferences.cloudPref).abs() * 0.1;
 
-    return PointsData(windPoints: windPoints, temperaturePoints: tempPoints, snowPoints: snowPoints, weatherTypePoints: weatherPoints, precipitationPoints: precipitationPoints);
+    return PointsData(
+        windPoints: windPoints,
+        temperaturePoints: tempPoints,
+        snowPoints: snowPoints,
+        cloudCoverPoints: cloudPoints,
+        precipitationPoints: precipitationPoints);
   }
 
-  Future<List<RecommendedIntervals>> getRecommended(int amount) async{
+  Future<List<RecommendedIntervals>> getRecommended(int amount) async {
     Location loc = await Location.getInstance();
-    List<WeatherInformation> weatherList = await apiClient.requestWeather(loc.latitude, loc.longitude);
+    List<WeatherInformation> weatherList =
+        await apiClient.requestWeather(loc.latitude, loc.longitude);
+
+    WeatherPreferences? preferences = await getUserPreferences();
+
+    preferences ??= WeatherPreferences(18, true, 0, 25, 0);
+
+    print(preferences.rainPref);
+
     List<RecommendedTime> recommended = [];
     for (WeatherInformation weather in weatherList) {
-      PointsData points = calculatePoints(weather);
+      PointsData points = calculatePoints(weather, preferences);
       recommended.add(RecommendedTime(weather, points));
     }
 
     final List<List<RecommendedTime>> clusters = clusterTimes(recommended);
 
     // Sort clusters by the average points
-    clusters.sort((a, b) => (b.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) / b.length
-                  - a.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) / a.length).toInt());
+    clusters.sort((a, b) =>
+        (b.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) / b.length -
+                a.fold(0.0, (sum, e) => sum + e.points.getTotalPoints()) /
+                    a.length)
+            .toInt());
 
     List<List<RecommendedTime>> topClusters = clusters.take(amount).toList();
     topClusters.sort((a, b) {
@@ -110,9 +138,13 @@ class RecommendedDaysRepo {
       final end = DateTime.parse(cluster.last.weather.time);
 
       String dayName;
-      if (start.day == now.day && start.month == now.month && start.year == now.year) {
+      if (start.day == now.day &&
+          start.month == now.month &&
+          start.year == now.year) {
         dayName = "Today";
-      } else if (start.day == tomorrow.day && start.month == tomorrow.month && start.year == tomorrow.year) {
+      } else if (start.day == tomorrow.day &&
+          start.month == tomorrow.month &&
+          start.year == tomorrow.year) {
         dayName = "Tomorrow";
       } else {
         final date = DateTime.parse(cluster.first.weather.time);
@@ -121,35 +153,40 @@ class RecommendedDaysRepo {
 
       recommendedIntervals.add(RecommendedIntervals(
           dayName,
-          start.hour != end.hour ? "${start.hour}:00 - ${end.hour}:00" : "${start.hour}:00",
+          start.hour != end.hour
+              ? "${start.hour}:00 - ${end.hour}:00"
+              : "${start.hour}:00",
           "${(cluster.fold(0.0, (sum, e) => sum + e.weather.temperature) / cluster.length).toStringAsFixed(1)}°C",
           "${(cluster.fold(0.0, (sum, e) => sum + e.weather.windspeed) / cluster.length).toStringAsFixed(1)} m/s",
           "${(cluster.fold(0.0, (sum, e) => sum + e.weather.precipitation) / cluster.length).toStringAsFixed(1)}mm",
           cluster.map((x) => x.points).toList(),
-          WeatherVisuals.getWeatherIcons(cluster.map((x) => x.weather.weather).toSet())
-      ));
+          WeatherVisuals.getWeatherIcons(
+              cluster.map((x) => x.weather.weather).toSet())));
     }
 
     return recommendedIntervals;
   }
 
   // Cluster times into intervals
-  List<List<RecommendedTime>> clusterTimes(List<RecommendedTime> recommendedTimes){
+  List<List<RecommendedTime>> clusterTimes(
+      List<RecommendedTime> recommendedTimes) {
     List<List<RecommendedTime>> clusters = [];
     List<RecommendedTime> currentCluster = [];
-    for(int i = 0; i < recommendedTimes.length; i++){
+    for (int i = 0; i < recommendedTimes.length; i++) {
       DateTime date = DateTime.parse(recommendedTimes[i].weather.time);
 
       DateTime startTime = DateTime(date.year, date.month, date.day, 4, 59);
       DateTime endTime = DateTime(date.year, date.month, date.day, 22, 01);
 
       if (date.isAfter(startTime) && date.isBefore(endTime)) {
-        if(currentCluster.isEmpty){
+        if (currentCluster.isEmpty) {
           currentCluster.add(recommendedTimes[i]);
-        }
-        else if((currentCluster.last.points.getTotalPoints() - recommendedTimes[i].points.getTotalPoints()).abs() <= 2.5){
+        } else if ((currentCluster.last.points.getTotalPoints() -
+                    recommendedTimes[i].points.getTotalPoints())
+                .abs() <=
+            2.5) {
           currentCluster.add(recommendedTimes[i]);
-        } else if(currentCluster.isNotEmpty){
+        } else if (currentCluster.isNotEmpty) {
           clusters.add(currentCluster.toList());
           currentCluster.clear();
         }
@@ -159,7 +196,7 @@ class RecommendedDaysRepo {
     return clusters;
   }
 
-  void printIntervals(List<RecommendedIntervals> intervals){
+  void printIntervals(List<RecommendedIntervals> intervals) {
     // print out the recommended intervals
     for (RecommendedIntervals interval in intervals) {
       print('Day name: ${interval.dayName}');
@@ -169,8 +206,9 @@ class RecommendedDaysRepo {
       print('Precipitation: ${interval.precipitation}');
       print('Weather types: ${interval.weatherTypeIcons}');
 
-      print('Total points: ${interval.points.fold(0.0, (sum, e) => sum + e.getTotalPoints())}');
-      
+      print(
+          'Total points: ${interval.points.fold(0.0, (sum, e) => sum + e.getTotalPoints())}');
+
       // print all points in interval
       for (PointsData points in interval.points) {
         //points.printPoints();
@@ -180,9 +218,35 @@ class RecommendedDaysRepo {
     }
   }
 
+  Future<void> savePreferences(WeatherPreferences weatherPreferences) async {
+    final currentUserId = provider.currentUser?.id;
+    await instance.doc(currentUserId).set({
+      'targetTemp': weatherPreferences.targetTemp,
+      'avoidSnow': weatherPreferences.avoidSnow,
+      'rainPref': weatherPreferences.rainPref,
+      'cloudPref': weatherPreferences.cloudPref,
+      'windPref': weatherPreferences.windPref,
+    });
+  }
+
+  Future<WeatherPreferences> getUserPreferences() async {
+    final currentUserId = provider.currentUser?.id;
+    final snapshot = await instance.doc(currentUserId).get();
+
+    if (snapshot.exists) {
+      final Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      if (data.isNotEmpty) {
+        return WeatherPreferences.fromMap(data);
+      } else {
+        return WeatherPreferences(18, false, 0, 25, 0);
+      }
+    } else {
+      return WeatherPreferences(18, false, 0, 25, 0);
+    }
+  }
 }
 
-class RecommendedTime{
+class RecommendedTime {
   final WeatherInformation weather;
   final PointsData points;
 
@@ -190,7 +254,7 @@ class RecommendedTime{
 }
 
 // For the frontend
-class RecommendedIntervals{
+class RecommendedIntervals {
   final String dayName;
   final String interval;
   final String temperature;
@@ -199,5 +263,6 @@ class RecommendedIntervals{
   final List<PointsData> points;
   final Set<AssetImage> weatherTypeIcons;
 
-  RecommendedIntervals(this.dayName, this.interval, this.temperature, this.windspeed, this.precipitation, this.points, this.weatherTypeIcons);
+  RecommendedIntervals(this.dayName, this.interval, this.temperature,
+      this.windspeed, this.precipitation, this.points, this.weatherTypeIcons);
 }

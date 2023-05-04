@@ -16,9 +16,11 @@ import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
+import 'package:healthapp/dashboard/running_preferences.dart';
 import 'package:healthapp/profile_view.dart';
 import 'package:healthapp/run_tracker/run_tracker_page.dart';
 import 'package:healthapp/util/weatherInformation.dart';
+import 'package:healthapp/util/weatherPreferences.dart';
 import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
 import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
@@ -149,9 +151,17 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
+
+              HealthCard(
+                title: "Steps",
+                value: "3457",
+                icon: Icons.directions_walk,
+                iconColor: Colors.grey[600],
+
               BlocProvider(
                 create: (context) => QuoteBloc()..add(FetchQuote()),
                 child: QuoteCard(),
+
               ),
               const HealthCard(
                   title: "Heart",
@@ -162,7 +172,19 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
+
+              HealthCard(
+                flex: 5,
+                height: 120,
+                title: "Flights",
+                value: "13",
+                icon: Icons.stairs,
+                iconColor: Colors.grey[600],
+                topPadding: 24,
+              ),
+
               RunTrackerCard(),
+
               BlocProvider(
                 create: (context) => CaffeineBloc(CaffeineRepository())
                   ..add(const FetchCaffeine()),
@@ -170,6 +192,64 @@ class DashboardView extends StatelessWidget {
               )
             ],
           ),
+
+          Column(children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Suggested running days",
+                    style: topTextStyle,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            context: context,
+                            builder: (context) {
+                              context
+                                  .read<RunningBloc>()
+                                  .add(FetchPreferences());
+                              return BlocBuilder<RunningBloc, RunningState>(
+                                builder: (context, state) {
+                                  if (state.status == RunningStatus.loading) {
+                                    return Container();
+                                  } else {
+                                      WeatherPreferences preference = state.preferences ?? WeatherPreferences(18, false, 0, 25, 0);
+                                      final temperature = preference.targetTemp;
+                                      final precipitation = preference.rainPref;
+                                      final cloudCoverage = preference.cloudPref;
+                                      final windSpeed = preference.windPref;
+                                      final snow = preference.avoidSnow;
+                                    return RunningPreferences(temperature, precipitation, cloudCoverage, windSpeed, snow);
+                                  }
+                                },
+                              );
+                            });
+                      },
+                      child: const Text("Preferences"))
+                ],
+              ),
+            ),
+            BlocBuilder<RunningBloc, RunningState>(
+              builder: (context, state) {
+                if (state.status == RunningStatus.loading) {
+                  return const CircularProgressIndicator();
+                } else {
+                  final recommended = state.intervals ?? [];
+                  return Column(
+                      children: recommended
+                          .map((e) => SuggestedRunningCard(interval: e))
+                          .toList());
+                }
+              },
+            ),
+          ]),
+
           Container(
             margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
             alignment: Alignment.centerLeft,
@@ -195,6 +275,7 @@ class DashboardView extends StatelessWidget {
                   }
                 },
               ))
+
         ],
       ),
     );
