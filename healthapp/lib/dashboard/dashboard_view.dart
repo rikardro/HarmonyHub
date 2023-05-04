@@ -157,6 +157,7 @@ class DashboardView extends StatelessWidget {
                 value: "3457",
                 icon: Icons.directions_walk,
                 iconColor: Colors.grey[600],
+              ),
 
               BlocProvider(
                 create: (context) => QuoteBloc()..add(FetchQuote()),
