@@ -30,17 +30,12 @@ class CaffeineRepository {
       return Caffeine(amount: 0, status: "Low");
     }
 
-    log(currentUserId.toString() + " is the current user id");
-
     /// Get all the caffeine consumed today
     final QuerySnapshot querySnapshot = await instance
         .where('userId', isEqualTo: currentUserId)
         .where('timeConsumed', isGreaterThanOrEqualTo: startOfToday)
         .where('timeConsumed', isLessThanOrEqualTo: endOfToday)
         .get();
-
-    log(querySnapshot.docs.length.toString());
-    log("got here hej");
 
     final total = getTotalCaffeine(querySnapshot);
     final status = _getStatus(total);
@@ -105,7 +100,6 @@ class CaffeineRepository {
         'timeConsumed': Timestamp.fromMillisecondsSinceEpoch(timeConsumed),
         'drinkType': drinkType,
       });
-      print('Document added successfully!');
     } catch (e) {
       print('Error adding document: $e');
     }

@@ -10,7 +10,7 @@ class GradientColor {
 
   static Color hueShift(int c) {
     var hslColor = HSLColor.fromColor(Color(c));
-    var increment = max(min(hslColor.hue*0.1, 50), 15); // just looks good
+    var increment = max(min(hslColor.hue*0.1, 50), 25); // just looks good
     return hslColor.withHue(hslColor.hue+increment).toColor();
   }
 

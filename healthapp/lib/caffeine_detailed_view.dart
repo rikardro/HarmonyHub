@@ -28,7 +28,6 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
     final bloc = BlocProvider.of<CaffeineDetailedBloc>(context);
     return BlocConsumer<CaffeineDetailedBloc, CaffeineDetailedState>(
       listener: (context, state) {
-        print("LISTENER");
         context.read<CaffeineBloc>().add(const FetchCaffeine());
       },
       builder: (context, state) {
@@ -140,7 +139,6 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
             ),
           );
         } else {
-          log("got here");
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
@@ -478,7 +476,6 @@ class _QuickAddGridState extends State<QuickAddGrid> {
 
   @override
   Widget build(BuildContext context) {
-    //log(_selectedCardIndex.toString());
     return Column(
       children: [
         Container(
@@ -488,7 +485,7 @@ class _QuickAddGridState extends State<QuickAddGrid> {
             padding: const EdgeInsets.all(10),
             child: GridView.count(
               physics: NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
+              crossAxisCount: 3,  
               children: List.generate(6, (index) {
                 final product = drinks[index].product;
                 final amount = drinks[index].caffeineAmount;

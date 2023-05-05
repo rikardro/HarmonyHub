@@ -11,30 +11,4 @@ class Caffeine {
 
   Caffeine({required this.amount, required this.status});
 
-  /* static Caffeine fromFirestore(QueryDocumentSnapshot<Object?> doc) {
-    // TODO: NULL CHECK!
-    // TODO: fix status?
-
-    //log(doc.data().toString());
-
-    /* final caffeine = Caffeine(
-      id: doc.id,
-      //id: "XXX",
-      amount: doc['amountConsumed'] as double,
-      timestamp: doc['timeConsumed'] as Timestamp,
-      //TODO change this to dynmically set status from {"high", "medium", "low}
-      //status: "High",
-    ); */
-
-    final caffeine = Caffeine(
-        id: "XXX", timestamp: Timestamp.fromDate(DateTime.now()), amount: 5000);
- 
-    log(caffeine.toString());
-    return caffeine;
-  } */
-
-  /* @override
-  String toString() {
-    return 'Caffeine { amount: $amount, timestamp: $timestamp }';
-  } */
 }

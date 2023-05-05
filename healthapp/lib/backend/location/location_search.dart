@@ -12,6 +12,11 @@ class LocationData{
 
   LocationData(this.latitude, this.longitude, this.name);
 
+  //TODO: might be a better way?
+  static fromJson(e) {
+    return LocationData(e['latitude'], e['longitude'], "");
+  }
+
 }
 
 

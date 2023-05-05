@@ -1,8 +1,20 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthapp/backend/running/run_session_history.dart';
+import 'package:healthapp/backend/running/run_session_repository.dart';
+import 'package:healthapp/backend/user/user_repository.dart';
+import 'package:healthapp/backend/weather/recommended_days_repo.dart';
+import 'package:healthapp/backend/weather/weather.dart';
 import 'package:healthapp/bloc/caffeine_bloc.dart';
 import 'package:healthapp/bloc/location_bloc.dart';
+
+import 'package:healthapp/bloc/running_bloc.dart';
+
+import 'package:healthapp/bloc/run_history_bloc.dart';
+
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_view.dart';
 import 'package:healthapp/services/auth/auth/bloc/auth_bloc.dart';
@@ -10,6 +22,8 @@ import 'package:healthapp/services/auth/auth/bloc/auth_event.dart';
 import 'package:healthapp/services/auth/auth/bloc/auth_state.dart';
 import 'package:healthapp/services/auth/auth/firebase_auth_provider.dart';
 
+import 'add_user_information.dart';
+import 'bloc/user_bloc.dart';
 import 'login/forgot_password_view.dart';
 import 'login/login_view.dart';
 import 'login/register_view.dart';
@@ -45,6 +59,18 @@ class MyApp extends StatelessWidget {
         BlocProvider<LocationBloc>(
           create: (context) => LocationBloc()..add(FetchLocation()),
         ),
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc(UserRepository())..add(FetchUser()),
+        ),
+        BlocProvider<RunningBloc>(
+          create: (context) =>
+              RunningBloc(RecommendedDaysRepo(apiClient: ApiParser()))
+                ..add(const FetchRecommended()),
+        ),
+        BlocProvider<RunHistoryBloc>(
+          create: (context) =>
+              RunHistoryBloc(RunSessionRepository())..add(FetchRunHistory()),
+        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -72,18 +98,35 @@ class _MyHomePageState extends State<MyHomePage> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
-          return Material(
-            child: SafeArea(child: BlocBuilder<LocationBloc, LocationState>(
-              builder: (context, state) {
-                if (state.status == LocationStatus.success) {
-                  return DashboardView();
-                } else {
-                  return const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  );
-                }
-              },
-            )),
+          return BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              return BlocBuilder<UserBloc, UserState>(
+                builder: (context, state) {
+                  if (state.status == UserStatus.success) {
+                    return Material(
+                      child: SafeArea(
+                          child: BlocBuilder<LocationBloc, LocationState>(
+                        builder: (context, state) {
+                          if (state.status == LocationStatus.success) {
+                            return DashboardView();
+                          } else {
+                            return const Scaffold(
+                              body: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                        },
+                      )),
+                    );
+                  } else if (state.status == UserStatus.needsFirstLastName) {
+                    return AddUserInformationView();
+                  } else {
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                },
+              );
+            },
           );
         } else if (state is AuthStateNeedsVerification) {
           return const VerifyEmailView();

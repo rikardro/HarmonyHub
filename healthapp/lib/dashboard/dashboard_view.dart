@@ -4,23 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:healthapp/backend/location/location.dart';
+import 'package:healthapp/backend/weather/recommended_days_repo.dart';
 import 'package:healthapp/backend/location/location_search.dart';
 import 'package:healthapp/backend/weather/weather.dart';
+import 'package:healthapp/bloc/running_bloc.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
+import 'package:healthapp/dashboard/running_preferences.dart';
+import 'package:healthapp/profile_view.dart';
+import 'package:healthapp/run_tracker/run_tracker_page.dart';
 import 'package:healthapp/util/weatherInformation.dart';
+import 'package:healthapp/util/weatherPreferences.dart';
 import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
 import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
 
+import '../backend/greetingPhrase.dart';
 import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
+import '../bloc/quote_bloc.dart';
+import '../bloc/user_bloc.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -42,16 +53,48 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: ListView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Välkommen!",
-                  style: topTextStyle,
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfileView()));
+                      },
+                      child: BlocBuilder<UserBloc, UserState>(
+                        builder: (context, state) {
+                          String initials = state.initals ?? "";
+                          initials = initials.toUpperCase();
+                          return CircleAvatar(
+                            backgroundColor: Colors.blueGrey,
+                            radius: 25,
+                            child: Text(
+                              initials,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      '${GreetingPhrase.get()} 👋',
+                      style: topTextStyle,
+                    ),
+                  ],
                 ),
                 GestureDetector(
                   onTap: () {
@@ -63,7 +106,7 @@ class DashboardView extends StatelessWidget {
                       builder: (context) {
                         return BlocProvider(
                           create: (context) => LocationSearchBloc(),
-                          child: LocationPopup(),
+                          child: const LocationPopup(),
                         );
                       },
                     );
@@ -77,7 +120,7 @@ class DashboardView extends StatelessWidget {
                       BlocBuilder<LocationBloc, LocationState>(
                         builder: (context, state) {
                           if (state.status == LocationStatus.loading) {
-                            return Text("");
+                            return const Text("");
                           } else {
                             return Text(state.locationName ?? "",
                                 style: topTextStyle);
@@ -96,21 +139,21 @@ class DashboardView extends StatelessWidget {
                   future: fetchWeatherData(),
                   builder: (context,
                       AsyncSnapshot<WeatherInformationCurrent> weatherData) {
-                    return WeatherCard(weatherData);
+                    if (weatherData.hasData) {
+                      return WeatherCard(weatherData: weatherData);
+                    }
+                    return CircularProgressIndicator();
                   }),
               BlocProvider(
-                create: (context) => AirQualityBloc()..add(FetchAirQuality()),
-                child: AirQualityCard(),
-              ),
+                  create: (context) => AirQualityBloc()..add(FetchAirQuality()),
+                  child: AirQualityCard())
             ],
           ),
           Row(
             children: [
-              HealthCard(
-                title: "Steps",
-                value: "3457",
-                icon: Icons.directions_walk,
-                iconColor: Colors.grey[600],
+              BlocProvider(
+                create: (context) => QuoteBloc()..add(FetchQuote()),
+                child: QuoteCard(),
               ),
               const HealthCard(
                   title: "Heart",
@@ -121,29 +164,77 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-              HealthCard(
-                flex: 5,
-                height: 120,
-                title: "Flights",
-                value: "13",
-                icon: Icons.stairs,
-                iconColor: Colors.grey[600],
-                topPadding: 24,
-              ),
-              CaffeineCard()
+              RunTrackerCard(),
+              BlocProvider(
+                create: (context) => CaffeineBloc(CaffeineRepository())
+                  ..add(const FetchCaffeine()),
+                child: CaffeineCard(),
+              )
             ],
           ),
-          Container(
-            margin: EdgeInsets.fromLTRB(12, 16, 12, 0),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Suggested running days",
-              style: topTextStyle,
+          Column(children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Suggested running days",
+                    style: topTextStyle,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            context: context,
+                            builder: (context) {
+                              context
+                                  .read<RunningBloc>()
+                                  .add(FetchPreferences());
+                              return BlocBuilder<RunningBloc, RunningState>(
+                                builder: (context, state) {
+                                  if (state.status == RunningStatus.loading) {
+                                    return Container();
+                                  } else {
+                                    WeatherPreferences preference = state
+                                            .preferences ??
+                                        WeatherPreferences(18, false, 0, 25, 0);
+                                    final temperature = preference.targetTemp;
+                                    final precipitation = preference.rainPref;
+                                    final cloudCoverage = preference.cloudPref;
+                                    final windSpeed = preference.windPref;
+                                    final snow = preference.avoidSnow;
+                                    return RunningPreferences(
+                                        temperature,
+                                        precipitation,
+                                        cloudCoverage,
+                                        windSpeed,
+                                        snow);
+                                  }
+                                },
+                              );
+                            });
+                      },
+                      child: const Text("Preferences"))
+                ],
+              ),
             ),
-          ),
-          Column(
-            children: [SuggestedRunningCard(), SuggestedRunningCard()],
-          ),
+            BlocBuilder<RunningBloc, RunningState>(
+              builder: (context, state) {
+                if (state.status == RunningStatus.loading) {
+                  return const CircularProgressIndicator();
+                } else {
+                  final recommended = state.intervals ?? [];
+                  return Column(
+                      children: recommended
+                          .map((e) => SuggestedRunningCard(interval: e))
+                          .toList());
+                }
+              },
+            ),
+          ]),
         ],
       ),
     );
@@ -193,18 +284,18 @@ class _LocationPopupState extends State<LocationPopup> {
           _searchResults = state.locations!;
         }
         return Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: _searchController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search for a location',
                 ),
                 onChanged: (value) async {
-                  await Future.delayed(Duration(milliseconds: 500));
+                  await Future.delayed(const Duration(milliseconds: 500));
                   setState(() {
                     context.read<LocationSearchBloc>().add(
                           LocationsSearchFetch(
@@ -214,7 +305,7 @@ class _LocationPopupState extends State<LocationPopup> {
                   });
                 },
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Expanded(
                 child: ListView.builder(
                   itemCount: _searchController.text.isEmpty
@@ -226,7 +317,7 @@ class _LocationPopupState extends State<LocationPopup> {
                         onTap: () {
                           addLocation(true, null, null);
                         },
-                        child: ListTile(
+                        child: const ListTile(
                           leading: Icon(Icons.my_location),
                           title: Text('Current location'),
                         ),

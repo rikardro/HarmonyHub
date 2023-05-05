@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../backend/greetingPhrase.dart';
 import '../services/auth/auth/auth_exceptions.dart';
 import '../services/auth/auth/bloc/auth_bloc.dart';
 import '../services/auth/auth/bloc/auth_event.dart';
@@ -14,14 +15,26 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
+
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  
+  final snackBar = SnackBar(content: Text('${GreetingPhrase.get()} 👋', style: const TextStyle(fontSize: 18),),
+  duration: const Duration(seconds: 3),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+  behavior: SnackBarBehavior.floating,
+  margin: EdgeInsets.symmetric(vertical: 200, horizontal: 175));
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    Future<Null>.delayed(Duration.zero, () {
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackBar,
+      );
+    });
     super.initState();
   }
 
@@ -55,8 +68,12 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Image.asset(
+                'assets/images/nature_image.png',
+                height: 300,
+              ),
               const Text(
-                'Please log in to your account in order to interact with and create notes!',
+                'Welcome to Healthapp, please log in to see all kinds of interesting things about your health!',
               ),
               TextField(
                 controller: _email,
