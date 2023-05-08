@@ -196,11 +196,11 @@ class DashboardView extends StatelessWidget {
                               return BlocBuilder<RunningBloc, RunningState>(
                                 builder: (context, state) {
                                   if (state.status == RunningStatus.loading) {
-                                    return Container();
+                                    return const CircularProgressIndicator();
                                   } else {
                                     WeatherPreferences preference = state
                                             .preferences ??
-                                        WeatherPreferences(18, false, 0, 25, 0);
+                                        WeatherPreferences(18, true, 0, 25, 0);
                                     final temperature = preference.targetTemp;
                                     final precipitation = preference.rainPref;
                                     final cloudCoverage = preference.cloudPref;
