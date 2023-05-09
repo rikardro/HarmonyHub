@@ -43,7 +43,6 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
     on<FetchPreferences>((event, emit) async {
       emit(state.copyWith(status: RunningStatus.loading));
       try {
-        log("hit kommer jag");
         WeatherPreferences preferences = await repository.getUserPreferences();
         emit(state.copyWith(
           status: RunningStatus.success,
@@ -51,7 +50,6 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
         ));
       } catch (_) {
         emit(state.copyWith(status: RunningStatus.error));
-        print("fel");
       }
     });
   }
