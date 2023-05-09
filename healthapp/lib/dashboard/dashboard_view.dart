@@ -7,7 +7,9 @@ import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/backend/weather/recommended_days_repo.dart';
 import 'package:healthapp/backend/location/location_search.dart';
 import 'package:healthapp/backend/weather/weather.dart';
+import 'package:healthapp/bloc/breathing_bloc.dart';
 import 'package:healthapp/bloc/running_bloc.dart';
+import 'package:healthapp/breathing_view.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
@@ -32,6 +34,7 @@ import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
 import '../bloc/quote_bloc.dart';
 import '../bloc/user_bloc.dart';
+import 'dashboard_cards/breathing_card.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -155,11 +158,7 @@ class DashboardView extends StatelessWidget {
                 create: (context) => QuoteBloc()..add(FetchQuote()),
                 child: QuoteCard(),
               ),
-              const HealthCard(
-                  title: "Heart",
-                  value: "69",
-                  icon: Icons.favorite,
-                  iconColor: Colors.red)
+              BreathingCard(),
             ],
           ),
           Row(
@@ -196,11 +195,11 @@ class DashboardView extends StatelessWidget {
                               return BlocBuilder<RunningBloc, RunningState>(
                                 builder: (context, state) {
                                   if (state.status == RunningStatus.loading) {
-                                    return const CircularProgressIndicator();
+                                    return Container();
                                   } else {
                                     WeatherPreferences preference = state
                                             .preferences ??
-                                        WeatherPreferences(18, true, 0, 25, 0);
+                                        WeatherPreferences(18, false, 0, 25, 0);
                                     final temperature = preference.targetTemp;
                                     final precipitation = preference.rainPref;
                                     final cloudCoverage = preference.cloudPref;

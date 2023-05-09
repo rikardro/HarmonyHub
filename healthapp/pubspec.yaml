@@ -46,6 +46,7 @@ dependencies:
 
   equatable: ^2.0.5
   syncfusion_flutter_gauges: ^21.1.39
+  audioplayers: ^4.0.1
   
 dev_dependencies:
   flutter_test:
