@@ -7,12 +7,13 @@ class DashboardCard extends StatefulWidget {
       this.flex = 1,
       this.color = Colors.white,
       this.height = 120,
-      this.child})
+      this.child, this.onTap})
       : super(key: key);
   final int? flex;
   final Color? color;
   final double? height;
   final Widget? child;
+  final Function()? onTap;
 
   @override
   State<DashboardCard> createState() => _DashboardCardState();
@@ -42,34 +43,37 @@ class _DashboardCardState extends State<DashboardCard> {
   Widget build(BuildContext context) {
     return Expanded(
         flex: widget.flex!,
-        child: Container(
-          margin: EdgeInsets.all(10),
-          height: widget.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: GradientColor.getGradient(widget.color!.value),
-            ),
-            color: widget.color!,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 3), // changes position of shadow
+        child: InkWell(
+          onTap: widget.onTap,
+          child: Container(
+            margin: EdgeInsets.all(10),
+            height: widget.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: GradientColor.getGradient(widget.color!.value),
               ),
-            ],
-          ),
-          //child: widget.child!,
-          child: Stack(
-            children: [
-              Positioned.fill(child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: widget.child!,
-              ))
-            ],
+              color: widget.color!,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
+            //child: widget.child!,
+            child: Stack(
+              children: [
+                Positioned.fill(child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: widget.child!,
+                ))
+              ],
+            ),
           ),
         ));
   }

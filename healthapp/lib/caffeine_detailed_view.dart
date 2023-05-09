@@ -28,7 +28,6 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
     final bloc = BlocProvider.of<CaffeineDetailedBloc>(context);
     return BlocConsumer<CaffeineDetailedBloc, CaffeineDetailedState>(
       listener: (context, state) {
-        print("LISTENER");
         context.read<CaffeineBloc>().add(const FetchCaffeine());
       },
       builder: (context, state) {

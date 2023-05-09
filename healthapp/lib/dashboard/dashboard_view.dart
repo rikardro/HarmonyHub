@@ -12,11 +12,15 @@ import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
+import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/dashboard/running_preferences.dart';
 import 'package:healthapp/profile_view.dart';
+import 'package:healthapp/run_tracker/run_tracker_page.dart';
 import 'package:healthapp/util/weatherInformation.dart';
+import 'package:healthapp/util/weatherPreferences.dart';
 import 'package:healthapp/util/weatherType.dart';
 import 'package:healthapp/weekly_weather/weather_view.dart';
 import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
@@ -26,6 +30,7 @@ import '../bloc/air_quality_bloc.dart';
 import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
+import '../bloc/quote_bloc.dart';
 import '../bloc/user_bloc.dart';
 
 class DashboardView extends StatelessWidget {
@@ -146,11 +151,9 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-              HealthCard(
-                title: "Steps",
-                value: "3457",
-                icon: Icons.directions_walk,
-                iconColor: Colors.grey[600],
+              BlocProvider(
+                create: (context) => QuoteBloc()..add(FetchQuote()),
+                child: QuoteCard(),
               ),
               const HealthCard(
                   title: "Heart",
@@ -161,15 +164,7 @@ class DashboardView extends StatelessWidget {
           ),
           Row(
             children: [
-              HealthCard(
-                flex: 5,
-                height: 120,
-                title: "Flights",
-                value: "13",
-                icon: Icons.stairs,
-                iconColor: Colors.grey[600],
-                topPadding: 24,
-              ),
+              RunTrackerCard(),
               BlocProvider(
                 create: (context) => CaffeineBloc(CaffeineRepository())
                   ..add(const FetchCaffeine()),
@@ -201,14 +196,22 @@ class DashboardView extends StatelessWidget {
                               return BlocBuilder<RunningBloc, RunningState>(
                                 builder: (context, state) {
                                   if (state.status == RunningStatus.loading) {
-                                    return Container();
+                                    return const CircularProgressIndicator();
                                   } else {
-                                      double temperature = state.preferences!.targetTemp;
-                                      double precipitation = state.preferences!.rainPref;
-                                      double cloudCoverage = state.preferences!.cloudPref;
-                                      double windSpeed = state.preferences!.windPref;
-                                      bool snow = state.preferences!.avoidSnow;
-                                    return RunningPreferences(temperature, precipitation, cloudCoverage, windSpeed, snow);
+                                    WeatherPreferences preference = state
+                                            .preferences ??
+                                        WeatherPreferences(18, true, 0, 25, 0);
+                                    final temperature = preference.targetTemp;
+                                    final precipitation = preference.rainPref;
+                                    final cloudCoverage = preference.cloudPref;
+                                    final windSpeed = preference.windPref;
+                                    final snow = preference.avoidSnow;
+                                    return RunningPreferences(
+                                        temperature,
+                                        precipitation,
+                                        cloudCoverage,
+                                        windSpeed,
+                                        snow);
                                   }
                                 },
                               );
