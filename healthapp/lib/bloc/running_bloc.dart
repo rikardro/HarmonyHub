@@ -12,7 +12,7 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
       (event, emit) async {
         emit(state.copyWith(status: RunningStatus.loading));
         try {
-          final recommended = await repository.getRecommended(3);
+          final recommended = await repository.getRecommended(10);
           emit(state.copyWith(
             status: RunningStatus.success,
             intervals: recommended,
@@ -28,7 +28,7 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
       try {
         await repository.savePreferences(WeatherPreferences(
             event.temp, event.snow, event.rain, event.cloud, event.wind));
-        final recommended = await repository.getRecommended(3);
+        final recommended = await repository.getRecommended(10);
         emit(state.copyWith(
           status: RunningStatus.success,
           intervals: recommended,
