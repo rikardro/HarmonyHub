@@ -21,8 +21,10 @@ class AudioPickerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 22, 43, 65),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -33,28 +35,38 @@ class AudioPickerView extends StatelessWidget {
             end: Alignment.center,
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AudioCard(
-                    title: audioCards[0].first, imageUrl: audioCards[0].last),
-                AudioCard(
-                    title: audioCards[1].first, imageUrl: audioCards[1].last)
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AudioCard(
-                    title: audioCards[2].first, imageUrl: audioCards[2].last),
-                AudioCard(
-                    title: audioCards[3].first, imageUrl: audioCards[3].last)
-              ],
-            ),
-          ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Choose a category",
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AudioCard(
+                      title: audioCards[0].first, imageUrl: audioCards[0].last),
+                  AudioCard(
+                      title: audioCards[1].first, imageUrl: audioCards[1].last)
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AudioCard(
+                      title: audioCards[2].first, imageUrl: audioCards[2].last),
+                  AudioCard(
+                      title: audioCards[3].first, imageUrl: audioCards[3].last)
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
