@@ -58,6 +58,7 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                       margin: const EdgeInsets.only(top: 35),
                       child: Column(
                         children: [
+                          const SizedBox(height: 40,),
                           const Text(
                             "Your caffeine level",
                             style: TextStyle(
@@ -88,6 +89,7 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
 
                                             Center(
                                                 child: SfRadialGauge(
+                                                  enableLoadingAnimation: true, animationDuration: 4500,
                                                   axes: <RadialAxis>[
                                                     RadialAxis(
                                                       minimum: 0, maximum: 301,
@@ -114,14 +116,15 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
 
                                             Center(
                                               child: SfRadialGauge(
+                                                enableLoadingAnimation: true, animationDuration: 4500,
                                               axes: <RadialAxis>[
                                                 RadialAxis(
                                                   minimum: 0, maximum: 300,
                                                   startAngle: 180, endAngle: 0,
                                                   ranges: <GaugeRange>[
-                                                  GaugeRange(startValue: 0, endValue: min(50, roundedAmount.toDouble()), color:Colors.green, startWidth: 14, endWidth: 14,),
-                                                  GaugeRange(startValue: 50,endValue: max(50, min(200, roundedAmount.toDouble())), color: Colors.orange, startWidth: 14, endWidth: 14,),
-                                                  GaugeRange(startValue: 200,endValue: max(200, min(299, roundedAmount.toDouble())),color: Colors.red, startWidth: 14, endWidth: 14,)],
+                                                  GaugeRange(startValue: 0, endValue: min(50, roundedAmount.toDouble()-1), color:Colors.green, startWidth: 14, endWidth: 14,),
+                                                  GaugeRange(startValue: 50,endValue: max(50, min(200, roundedAmount.toDouble()-1)), color: Colors.orange, startWidth: 14, endWidth: 14,),
+                                                  GaugeRange(startValue: 200,endValue: max(200, min(299, roundedAmount.toDouble()-1)),color: Colors.red, startWidth: 14, endWidth: 14,)],
                                                   // pointers: <GaugePointer>[NeedlePointer(value: roundedAmount.toDouble())],
                                                   showLabels: false,
                                                   showTicks: false,
@@ -130,6 +133,7 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                                             
                                               Center(
                                                 child: SfRadialGauge(
+                                                  enableLoadingAnimation: true, animationDuration: 4500,
                                                   axes: <RadialAxis>[
                                                     RadialAxis(
                                                       minimum: 0, maximum: 301,
