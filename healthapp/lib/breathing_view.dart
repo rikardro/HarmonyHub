@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/breathing_bloc.dart';
+
+const Color transparentGreyBackgroundColor = Color.fromARGB(170, 29, 28, 28);
 
 class AudioView extends StatefulWidget {
   @override
@@ -14,6 +18,7 @@ class _AudioViewState extends State<AudioView> {
   PlayerState? playerState;
   Duration duration = Duration();
   Duration position = Duration();
+  String _imgUrl = "";
 
   @override
   void initState() {
@@ -21,6 +26,7 @@ class _AudioViewState extends State<AudioView> {
 
     audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
       setState(() {
+        log("state: $state");
         playerState = state;
       });
     });
@@ -51,70 +57,136 @@ class _AudioViewState extends State<AudioView> {
         builder: (context, state) {
       final audioUri = state.audioUri;
       if (state.status == BreathingStatus.success) {
+        log(state.category.toString());
+        switch (state.category!.toLowerCase()) {
+          case ("relax"):
+            _imgUrl = "assets/images/hammoc.png";
+            break;
+          case ("focus"):
+            _imgUrl = "assets/images/waterfall.png";
+            break;
+          case ("energize"):
+            _imgUrl = "assets/images/mountain_range.png";
+            break;
+          default:
+            _imgUrl = "assets/images/fireplace.gif";
+        }
         return Scaffold(
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
-            title: Text(state.category ?? ""),
+            /* leading: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(left: 20, top: 20),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                  size: 15,
+                ),
+              ),
+            ), */
+            elevation: 0,
+            title: Text(
+              "",
+            ),
+            backgroundColor: Colors.transparent,
           ),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              /* Text(
-                'Take a deep breath',
-                style: TextStyle(
-                  fontSize: 35,
+          body: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: AssetImage(
+                  _imgUrl,
                 ),
-              ), */
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Slider(
-                  value: position.inSeconds.toDouble(),
-                  min: 0,
-                  max: duration.inSeconds.toDouble(),
-                  onChanged: (double value) {
-                    setState(() {
-                      audioPlayer.seek(Duration(seconds: value.toInt()));
-                    });
-                  },
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                /* Text(
+                  'Take a deep breath',
+                  style: TextStyle(
+                    fontSize: 35,
+                  ),
+                ), */
+                SizedBox(height: 500),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  color: transparentGreyBackgroundColor,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: Slider(
+                          activeColor: Colors.white,
+                          inactiveColor: Colors.grey[700],
+                          value: position.inSeconds.toDouble(),
+                          min: 0,
+                          max: duration.inSeconds.toDouble(),
+                          onChanged: (double value) {
+                            setState(() {
+                              audioPlayer
+                                  .seek(Duration(seconds: value.toInt()));
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 35.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Text(
+                                "-${(duration - position).inMinutes}:${((duration - position).inSeconds % 60).toString().padLeft(2, '0')}",
+                                style: TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: IconButton(
+                          onPressed: () async {
+                            if (playerState == null) {
+                              await audioPlayer
+                                  .play(UrlSource(audioUri.toString()));
+                            } else if (playerState == PlayerState.paused) {
+                              await audioPlayer.resume();
+                            } else {
+                              await audioPlayer.pause();
+                            }
+                          },
+                          icon: Icon(
+                            playerState == PlayerState.paused ||
+                                    playerState == null
+                                ? Icons.play_arrow
+                                : Icons.pause,
+                            size: 40,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 35.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                        "${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}"),
-                    Text(
-                        "-${(duration - position).inMinutes}:${((duration - position).inSeconds % 60).toString().padLeft(2, '0')}"),
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      await audioPlayer.play(UrlSource(audioUri.toString()));
-                    },
-                    icon: Icon(Icons.play_arrow),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await audioPlayer.pause();
-                    },
-                    icon: Icon(Icons.pause),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await audioPlayer.stop();
-                    },
-                    icon: Icon(Icons.restart_alt_outlined),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         );
       } else {

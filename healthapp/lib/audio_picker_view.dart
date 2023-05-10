@@ -10,7 +10,7 @@ import 'bloc/breathing_bloc.dart';
 const List<List<String>> audioList = [
   ['Relax', 'assets/images/hammoc.png'],
   ['Energize', 'assets/images/mountain_range.png'],
-  ['Sleep', 'assets/images/raining.png'],
+  ['Sleep', 'assets/images/fireplace.gif'],
   ['Focus', 'assets/images/waterfall.png'],
 ];
 
