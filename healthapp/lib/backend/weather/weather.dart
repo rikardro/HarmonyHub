@@ -78,7 +78,6 @@ class ApiParser {
   Future<SunUp> getSunUp(double latitude, double longitude) async{
     String request = "lat=$latitude&lng=$longitude&timezone=EET&date=today";
     var url = Uri.parse(ApiConstants.sunsetSunrise + request);
-    print(url);
     var response = await http.get(url);
     SunUp sunUp = parseSunUpJson(response.body.toString());
     
