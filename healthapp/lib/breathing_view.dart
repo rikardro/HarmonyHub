@@ -26,7 +26,6 @@ class _AudioViewState extends State<AudioView> {
 
     audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
       setState(() {
-        log("state: $state");
         playerState = state;
       });
     });
@@ -57,7 +56,6 @@ class _AudioViewState extends State<AudioView> {
         builder: (context, state) {
       final audioUri = state.audioUri;
       if (state.status == BreathingStatus.success) {
-        log(state.category.toString());
         switch (state.category!.toLowerCase()) {
           case ("relax"):
             _imgUrl = "assets/images/hammoc.png";
@@ -74,24 +72,6 @@ class _AudioViewState extends State<AudioView> {
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
-            /* leading: Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(left: 20, top: 20),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                  size: 15,
-                ),
-              ),
-            ), */
             elevation: 0,
             title: Text(
               "",
