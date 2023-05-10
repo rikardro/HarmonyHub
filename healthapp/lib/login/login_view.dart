@@ -17,11 +17,13 @@ class LoginView extends StatefulWidget {
 }
 
 
+
 class _LoginViewState extends State<LoginView> {
-  late final TextEditingController _email;
-  late final TextEditingController _password;
+  static late bool logging_in;
+  static late bool reseting_password;
   static bool firstTimeShowing = true;
-  
+  final TextEditingController _email = TextEditingController();
+  late final TextEditingController _password = TextEditingController();
   final snackBar = SnackBar(content: Text('${GreetingPhrase.get()} 👋', style: const TextStyle(fontSize: 18),),
   duration: const Duration(seconds: 3),
   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
@@ -30,8 +32,8 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
+    logging_in = false;
+    reseting_password = false;
     if (firstTimeShowing){
       Future<Null>.delayed(Duration.zero, () {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -52,7 +54,167 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
+    if (reseting_password){
+      return BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) async {
+          if (state is AuthStateLoggedOut) {
+            if (state.exception is UserNotFoundAuthException) {
+              await showErrorDialog(
+                context, "Cannot find a user with the entered credentials");
+            } else if (state.exception is WrongPasswordAuthException) {
+                await showErrorDialog(context, "Wrong credentials");
+            } else if (state.exception is GenericAuthException) {
+                await showErrorDialog(context, "Authentication error");
+          }
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/boat.gif'),
+            fit: BoxFit.cover,
+            ),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 175),
+              Text(
+                'HarmonyHub',
+                style: GoogleFonts.pinyonScript(
+                color: Colors.white,
+                fontSize: 50,
+                ),
+              ),
+              const SizedBox(height: 70),
+              const Text(
+                'If you forgot your password, simply enter your email and we will send you a password reset link',
+                style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                autofocus: true,
+                controller: _email,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Color.fromARGB(255, 38, 0, 126),
+                  hintText: 'Your email adress ...',
+                  hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209)),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  final email = _email.text;
+                  context
+                      .read<AuthBloc>()
+                      .add(AuthEventForgotPassword(email: email));
+                },
+                child: const Text(
+                  'Send me a password reset link',
+                    style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    decoration: TextDecoration.underline)),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    reseting_password = false;
+                  });
+                },
+                child: const Text(
+                  'Back to login page',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    decoration: TextDecoration.underline)),
+              ),
+            ],
+          ),),),);
+    }
+    else if (!logging_in){
+      return BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) async {
+          if (state is AuthStateLoggedOut) {
+            if (state.exception is UserNotFoundAuthException) {
+              await showErrorDialog(
+                context, "Cannot find a user with the entered credentials");
+            } else if (state.exception is WrongPasswordAuthException) {
+                await showErrorDialog(context, "Wrong credentials");
+            } else if (state.exception is GenericAuthException) {
+                await showErrorDialog(context, "Authentication error");
+          }
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/boat.gif'),
+            fit: BoxFit.cover,
+            ),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 175),
+              Text(
+                'HarmonyHub',
+                style: GoogleFonts.pinyonScript(
+                color: Colors.white,
+                fontSize: 50,
+                ),
+              ),
+              const SizedBox(height: 70),
+              const Text(
+                'Welcome to HarmonyHub, please log in to see all kinds of interesting things about your health!',
+                style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                child: const Text(
+                  "Login",
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 38, 0, 126),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  textStyle: TextStyle
+                    (color: Colors.white,
+                    fontSize: 20) 
+                ),
+                onPressed: () {
+                  setState(() {
+                    logging_in = true;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 38, 0, 126),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), 
+                  textStyle: TextStyle
+                    (color: Colors.white,
+                    fontSize: 20), 
+                ),
+                child: const Text("Register",),
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventShouldRegister(),
+                      );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    } 
+    else{
+      return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
@@ -76,12 +238,7 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const Text("H", style: TextStyle(fontSize: 50, color: Colors.transparent),
-              ),
-              const Text("H", style: TextStyle(fontSize: 50, color: Colors.transparent),
-              ),
-              const Text("H", style: TextStyle(fontSize: 50, color: Colors.transparent),
-              ),
+              const SizedBox(height: 175),
               Text(
                 'HarmonyHub',
                 style: GoogleFonts.pinyonScript(
@@ -89,14 +246,12 @@ class _LoginViewState extends State<LoginView> {
                 fontSize: 50,
                 ),
               ),
-              const Text("H", style: TextStyle(fontSize: 60, color: Colors.transparent),
-              ),
+              const SizedBox(height: 70),
               const Text(
-                'Welcome to Healthapp, please log in to see all kinds of interesting things about your health!',
+                'Welcome to HarmonyHub, please log in to see all kinds of interesting things about your health!',
                 style: TextStyle(color: Colors.white),
               ),
-              const Text("H", style: TextStyle(fontSize: 20, color: Colors.transparent),
-              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: _email,
                 enableSuggestions: false,
@@ -105,75 +260,62 @@ class _LoginViewState extends State<LoginView> {
                 style: TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   filled: true,
-                  fillColor: Colors.black,
+                  fillColor: Color.fromARGB(255, 38, 0, 126),
                   hintText: "Enter your email here",
                   hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209))
-                ),
-              ),
-              const Text("H", style: TextStyle(fontSize: 10, color: Colors.transparent),
-              ),
+              ),),
+              const SizedBox(height: 20),
               TextField(
-                controller: _password,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                style: TextStyle(color: Colors.white),
-                decoration:
-                    const InputDecoration(
-                      filled: true,
-                      fillColor: Colors.black,
-                      hintText: "Enter your password here",
-                      hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209))),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  context.read<AuthBloc>().add(
-                        AuthEventLogIn(
-                          email,
-                          password,
-                        ),
-                      );
-                },
-                child: const Text(
-                  "Login",
-                  style: TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.underline),
-                  
+                  controller: _password,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  style: TextStyle(color: Colors.white),
+                  decoration:
+                      const InputDecoration(
+                        filled: true,
+                        fillColor: Color.fromARGB(255, 38, 0, 126),
+                        hintText: "Enter your password here",
+                  hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209))),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(
-                        const AuthEventForgotPassword(),
-                      );
-                },
-                child: const Text(
-                  "I forgot my password",
-                  style: TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.underline),
+            Row(
+              children: [
+                  TextButton(
+                    onPressed: () {
+                    setState(() {
+                      logging_in = false;
+                    });
+                  },
+                    child: const Text(
+                      "Back",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        decoration: TextDecoration.underline),
+                  ),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(
-                        const AuthEventShouldRegister(),
-                      );
-                },
-                child: const Text(
-                  "Not registered yet? Register here!",
-                  style: TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.underline),
-                ),
-              ),
+                const Spacer(),
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        reseting_password = true;
+                      });
+                    },
+                    child: const Text(
+                      "Forgot your password?",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        decoration: TextDecoration.underline),
+                    ),
+                  ),
+              ],
+            ),
             ],
           ),
         ),
       ),
     );
+    }
   }
 }
