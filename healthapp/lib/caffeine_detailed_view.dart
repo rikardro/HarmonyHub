@@ -38,103 +38,112 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
               title: const Text(""),
               backgroundColor: const Color(0xFF8D3786),
             ),
-            backgroundColor: const Color(0xFF8D3786),
-            body: Center(
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 35),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Your caffeine level",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
-                              color: Colors.white),
-                        ),
-                        const SizedBox(height: 30),
-                        BlocBuilder<CaffeineBloc, CaffeineState>(
-                          builder: (context, state) {
-                            final String caffeineStatus =
-                                state.caffeineStatus ?? "";
-                            final double caffeineAmount = state.caffeine ?? 0;
-                            final roundedAmount = caffeineAmount.round();
-                            if (state.status == CaffeineStatus.loading) {
-                              return const CircularProgressIndicator();
-                            } else {
-                              return Column(
-                                children: [
-                                  Text(
-                                    "$roundedAmount mg",
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25,
-                                        color: Colors.white),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    caffeineStatus,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.white),
-                                  ),
-                                ],
-                              );
-                            }
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  ElevatedButton(
-                    /* onPressed: () {
-                      //TODO: Why does this not work?
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const AddCaffeinePopup();
-                        },
-                      );
-                    }, */
-                    onPressed: () {
-                      showModalBottomSheet(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color(0xFF8D3786),
+                  Color(0xFF8D3751),
+                ],
+                end: Alignment.bottomCenter,
+                begin: Alignment.topCenter),
+              ),
+              child: Center(
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 35),
+                      child: Column(
+                        children: [
+                          const Text(
+                            "Your caffeine level",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                                color: Colors.white),
                           ),
-                          context: context,
-                          builder: (context) {
-                            return BlocProvider<CaffeineDetailedBloc>.value(
-                                value: bloc, child: const AddCaffeinePopup());
-                          });
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.white),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        ),
+                          const SizedBox(height: 30),
+                          BlocBuilder<CaffeineBloc, CaffeineState>(
+                            builder: (context, state) {
+                              final String caffeineStatus =
+                                  state.caffeineStatus ?? "";
+                              final double caffeineAmount = state.caffeine ?? 0;
+                              final roundedAmount = caffeineAmount.round();
+                              if (state.status == CaffeineStatus.loading) {
+                                return const CircularProgressIndicator();
+                              } else {
+                                return Column(
+                                  children: [
+                                    Text(
+                                      "$roundedAmount mg",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 25,
+                                          color: Colors.white),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      caffeineStatus,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
+                          )
+                        ],
                       ),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(18.0),
-                      child: Text("Add consumed drink",
-                          style: TextStyle(color: Colors.black)),
+                    const SizedBox(height: 50),
+                    ElevatedButton(
+                      /* onPressed: () {
+                        //TODO: Why does this not work?
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const AddCaffeinePopup();
+                          },
+                        );
+                      }, */
+                      onPressed: () {
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            context: context,
+                            builder: (context) {
+                              return BlocProvider<CaffeineDetailedBloc>.value(
+                                  value: bloc, child: const AddCaffeinePopup());
+                            });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.white),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                          ),
+                        ),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(18.0),
+                        child: Text("Add consumed drink",
+                            style: TextStyle(color: Colors.black)),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 50),
-                  const Text(
-                    "Consumption history",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  Expanded(
-                    child: CaffeineList(caffeineList: listOfCaffeine),
-                  ),
-                ],
+                    const SizedBox(height: 50),
+                    const Text(
+                      "Consumption history",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Expanded(
+                      child: CaffeineList(caffeineList: listOfCaffeine),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
