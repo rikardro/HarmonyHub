@@ -89,6 +89,7 @@ flutter:
     - assets/images/mountain_range.png
     - assets/images/waterfall.png
     - assets/images/fireplace.png
+    - assets/images/park.png
 
     - assets/images/fireplace.gif
 
@@ -97,6 +98,8 @@ flutter:
 
     - assets/images/precipitation.png
     - assets/images/degrees.png
+
+    - assets/images/runner.png
 
 
   #   - images/a_dot_burr.jpeg
