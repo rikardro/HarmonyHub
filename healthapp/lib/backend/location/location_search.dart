@@ -24,10 +24,11 @@ class LocationSearch{
   Future<List<LocationData>> search(String query) async{
 
     List<LocationData> locations = [];
+    List<String> cities = [];
 
     String request = "&lang=en&q=$query";
     var url = Uri.parse(ApiConstantsGeo.autosuggestBaseUrl + ApiConstantsGeo.autosuggestCodeEndpoint 
-    + request + ApiConstantsGeo.autosuggestType + ApiConstantsGeo.apiKey);
+    + request + ApiConstantsGeo.apiKey);
 
     var response = await http.get(url);
     Map<String, dynamic> valueMap = json.decode(utf8.decode(response.bodyBytes));
@@ -36,7 +37,10 @@ class LocationSearch{
 
     for (final item in items){
       String city = item['address']['label'].split(",")[0].trim();
-      locations.add(LocationData(item['position']['lat'], item['position']['lng'], city));
+      if(!cities.contains(city)){
+        locations.add(LocationData(item['position']['lat'], item['position']['lng'], city));
+        cities.add(city);
+      }
     }
     return locations;
 

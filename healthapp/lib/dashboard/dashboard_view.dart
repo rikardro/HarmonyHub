@@ -81,7 +81,7 @@ class DashboardView extends StatelessWidget {
                             radius: 25,
                             child: Text(
                               initials,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
                               ),
@@ -187,11 +187,12 @@ class DashboardView extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
+                            isScrollControlled: true,
                             context: context,
                             builder: (context) {
                               context
                                   .read<RunningBloc>()
-                                  .add(FetchPreferences());
+                                  .add(const FetchPreferences());
                               return BlocBuilder<RunningBloc, RunningState>(
                                 builder: (context, state) {
                                   if (state.status == RunningStatus.loading) {
@@ -199,18 +200,23 @@ class DashboardView extends StatelessWidget {
                                   } else {
                                     WeatherPreferences preference = state
                                             .preferences ??
-                                        WeatherPreferences(18, false, 0, 25, 0);
+                                        WeatherPreferences(18, true, 0, 25, 0, const TimeOfDay(hour: 4, minute: 59), const TimeOfDay(hour: 22, minute: 01));
                                     final temperature = preference.targetTemp;
                                     final precipitation = preference.rainPref;
                                     final cloudCoverage = preference.cloudPref;
                                     final windSpeed = preference.windPref;
                                     final snow = preference.avoidSnow;
+                                    final startTime = preference.startTime;
+                                    final endTime = preference.endTime;
                                     return RunningPreferences(
                                         temperature,
                                         precipitation,
                                         cloudCoverage,
                                         windSpeed,
-                                        snow);
+                                        snow,
+                                        startTime, 
+                                        endTime
+                                        );
                                   }
                                 },
                               );
@@ -220,25 +226,56 @@ class DashboardView extends StatelessWidget {
                 ],
               ),
             ),
-            BlocBuilder<RunningBloc, RunningState>(
-              builder: (context, state) {
-                if (state.status == RunningStatus.loading) {
-                  return const CircularProgressIndicator();
-                } else {
-                  final recommended = state.intervals ?? [];
-                  return Column(
-                      children: recommended
-                          .map((e) => SuggestedRunningCard(interval: e))
-                          .toList());
-                }
-              },
-            ),
+            SuggestedRunningCards(),
           ]),
         ],
       ),
     );
   }
 }
+
+
+
+class SuggestedRunningCards extends StatefulWidget {
+  @override
+  _SuggestedRunningCardsState createState() => _SuggestedRunningCardsState();
+}
+
+class _SuggestedRunningCardsState extends State<SuggestedRunningCards> {
+  int _displayCount = 3;
+
+  void _loadMore() {
+    setState(() {
+      _displayCount += 7;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<RunningBloc, RunningState>(
+      builder: (context, state) {
+        if (state.status == RunningStatus.loading) {
+          _displayCount = 3;
+          return const CircularProgressIndicator();
+        } else {
+          final recommended = state.intervals ?? [];
+          final displayed = recommended.take(_displayCount).toList();
+          return Column(
+            children: [
+              ...displayed.map((e) => SuggestedRunningCard(interval: e)),
+              if (displayed.length < recommended.length)
+                ElevatedButton(
+                  onPressed: _loadMore,
+                  child: const Text('Load More'),
+                ),
+            ],
+          );
+        }
+      },
+    );
+  }
+}
+
 
 const Color lightBlack = Color(0xFF3A3A3A);
 
