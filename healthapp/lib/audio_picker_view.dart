@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/breathing_view.dart';
+import 'package:healthapp/dashboard/gradientColor.dart';
 
 import 'bloc/breathing_bloc.dart';
 
@@ -20,28 +21,40 @@ class AudioPickerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AudioCard(
-                  title: audioCards[0].first, imageUrl: audioCards[0].last),
-              AudioCard(
-                  title: audioCards[1].first, imageUrl: audioCards[1].last)
-            ],
+      appBar: AppBar(
+        backgroundColor: Color(0xFFB6CFFA),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: GradientColor.getGradient(Color(0xFFA6CFFA).value),
+            begin: Alignment.topLeft,
+            end: Alignment.center,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AudioCard(
-                  title: audioCards[2].first, imageUrl: audioCards[2].last),
-              AudioCard(
-                  title: audioCards[3].first, imageUrl: audioCards[3].last)
-            ],
-          ),
-        ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AudioCard(
+                    title: audioCards[0].first, imageUrl: audioCards[0].last),
+                AudioCard(
+                    title: audioCards[1].first, imageUrl: audioCards[1].last)
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AudioCard(
+                    title: audioCards[2].first, imageUrl: audioCards[2].last),
+                AudioCard(
+                    title: audioCards[3].first, imageUrl: audioCards[3].last)
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -56,10 +69,15 @@ class AudioCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10), color: Colors.red),
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          image: AssetImage("assets/images/raining.png"),
+          fit: BoxFit.cover,
+        ),
+      ),
       margin: EdgeInsets.all(10),
-      width: 150,
-      height: 150,
+      width: 180,
+      height: 250,
       child: GestureDetector(
         onTap: () {
           Navigator.push(
@@ -68,7 +86,7 @@ class AudioCard extends StatelessWidget {
               builder: (context) => BlocProvider(
                 create: (context) => BreathingBloc()
                   ..add(FetchBreathingExercise(category: title)),
-                child: BreathingAudioView(),
+                child: AudioView(),
               ),
             ),
           );
@@ -76,8 +94,13 @@ class AudioCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(title),
-            Image.asset("assets/images/raining.png"),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 25,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),

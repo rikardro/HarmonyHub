@@ -4,12 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/breathing_bloc.dart';
 
-class BreathingAudioView extends StatefulWidget {
+class AudioView extends StatefulWidget {
   @override
-  _BreathingAudioViewState createState() => _BreathingAudioViewState();
+  _AudioViewState createState() => _AudioViewState();
 }
 
-class _BreathingAudioViewState extends State<BreathingAudioView> {
+class _AudioViewState extends State<AudioView> {
   AudioPlayer audioPlayer = AudioPlayer();
   PlayerState? playerState;
   Duration duration = Duration();
@@ -47,15 +47,49 @@ class _BreathingAudioViewState extends State<BreathingAudioView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<BreathingBloc, BreathingState>(
-        builder: (context, state) {
-          final audioUri = state.audioUri;
-          return Column(
+    return BlocBuilder<BreathingBloc, BreathingState>(
+      builder: (context, state) {
+        final audioUri = state.audioUri;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(state.category ?? ""),
+          ),
+          body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Take a deep breath', style: TextStyle(fontSize: 35)),
+              /* Text(
+                'Take a deep breath',
+                style: TextStyle(
+                  fontSize: 35,
+                ),
+              ), */
               SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Slider(
+                  value: position.inSeconds.toDouble(),
+                  min: 0,
+                  max: duration.inSeconds.toDouble(),
+                  onChanged: (double value) {
+                    setState(() {
+                      audioPlayer.seek(Duration(seconds: value.toInt()));
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 35.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                        "${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}"),
+                    Text(
+                        "-${(duration - position).inMinutes}:${((duration - position).inSeconds % 60).toString().padLeft(2, '0')}"),
+                  ],
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -75,27 +109,14 @@ class _BreathingAudioViewState extends State<BreathingAudioView> {
                     onPressed: () async {
                       await audioPlayer.stop();
                     },
-                    icon: Icon(Icons.stop),
+                    icon: Icon(Icons.restart_alt_outlined),
                   ),
                 ],
               ),
-              Slider(
-                value: position.inSeconds.toDouble(),
-                min: 0,
-                max: duration.inSeconds.toDouble(),
-                onChanged: (double value) {
-                  setState(() {
-                    audioPlayer.seek(Duration(seconds: value.toInt()));
-                  });
-                },
-              ),
-              Text('Audio Position: ${position.toString()}'),
-              Text('Audio Duration: ${duration.toString()}'),
-              Text('Audio State: ${playerState.toString()}'),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -21,12 +21,14 @@ class BreathingBloc extends Bloc<BreathingEvent, BreathingState> {
           final String audioUrl =
               await repository.getBreathingAudio(event.category.toLowerCase());
           final Uri audioUri = Uri.parse(audioUrl);
+          final String category = event.category;
 
           log(audioUri.toString());
 
           emit(state.copyWith(
             status: BreathingStatus.success,
             audioUri: audioUri,
+            category: category,
           ));
         } catch (_) {
           log("något gick snett");
@@ -50,13 +52,18 @@ class FetchBreathingExercise extends BreathingEvent {
 enum BreathingStatus { loading, success, error }
 
 class BreathingState {
-  const BreathingState({this.status = BreathingStatus.loading, this.audioUri});
+  const BreathingState(
+      {this.status = BreathingStatus.loading, this.audioUri, this.category});
 
   final BreathingStatus status;
   final Uri? audioUri;
+  final String? category;
 
-  BreathingState copyWith({BreathingStatus? status, Uri? audioUri}) {
+  BreathingState copyWith(
+      {BreathingStatus? status, Uri? audioUri, String? category}) {
     return BreathingState(
-        status: status ?? this.status, audioUri: audioUri ?? this.audioUri);
+        status: status ?? this.status,
+        audioUri: audioUri ?? this.audioUri,
+        category: category ?? this.category);
   }
 }
