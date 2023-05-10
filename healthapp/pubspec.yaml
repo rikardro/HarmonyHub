@@ -88,6 +88,8 @@ flutter:
     - assets/images/hammoc.png
     - assets/images/mountain_range.png
     - assets/images/waterfall.png
+    - assets/images/fireplace.png
+
     - assets/images/fireplace.gif
 
     - assets/images/nature_image.png

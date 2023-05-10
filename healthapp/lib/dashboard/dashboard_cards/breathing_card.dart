@@ -12,15 +12,16 @@ import '../../bloc/quote_bloc.dart';
 import '../../caffeine_detailed_view.dart';
 import '../dashboard_card.dart';
 
-class BreathingCard extends StatelessWidget {
-  const BreathingCard({Key? key}) : super(key: key);
+class AudioPlayerCard extends StatelessWidget {
+  const AudioPlayerCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DashboardCard(
-        flex: 1,
+        flex: 5,
         color: const Color(0xFFFA7DCA),
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             Navigator.push(
               context,
@@ -29,14 +30,23 @@ class BreathingCard extends StatelessWidget {
               ),
             );
           },
-          child: const Center(
-            child: Text(
-              "Meditation",
-              style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                "Music",
+                style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500),
+              ),
+              SizedBox(height: 5),
+              Icon(
+                Icons.music_note_outlined,
+                color: Colors.white,
+                size: 40,
+              )
+            ],
           ),
         ));
   }

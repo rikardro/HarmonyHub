@@ -10,7 +10,7 @@ import 'bloc/breathing_bloc.dart';
 const List<List<String>> audioList = [
   ['Relax', 'assets/images/hammoc.png'],
   ['Energize', 'assets/images/mountain_range.png'],
-  ['Sleep', 'assets/images/fireplace.gif'],
+  ['Sleep', 'assets/images/fireplace.png'],
   ['Focus', 'assets/images/waterfall.png'],
 ];
 
@@ -92,6 +92,7 @@ class AudioCard extends StatelessWidget {
       width: 180,
       height: 250,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           Navigator.push(
             context,

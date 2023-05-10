@@ -67,7 +67,7 @@ class _AudioViewState extends State<AudioView> {
             _imgUrl = "assets/images/mountain_range.png";
             break;
           default:
-            _imgUrl = "assets/images/fireplace.gif";
+            _imgUrl = "assets/images/fireplace.png";
         }
         return Scaffold(
           extendBodyBehindAppBar: true,

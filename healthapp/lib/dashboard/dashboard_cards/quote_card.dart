@@ -15,7 +15,7 @@ class QuoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DashboardCard(
-      flex: 1,
+      flex: 5,
       color: Colors.green,
       child: BlocBuilder<QuoteBloc, QuoteState>(builder: (context, state) {
         if (state.status == QuoteStatus.loading) {

@@ -158,17 +158,17 @@ class DashboardView extends StatelessWidget {
                 create: (context) => QuoteBloc()..add(FetchQuote()),
                 child: QuoteCard(),
               ),
-              BreathingCard(),
+              RunTrackerCard(),
             ],
           ),
           Row(
             children: [
-              RunTrackerCard(),
+              AudioPlayerCard(),
               BlocProvider(
                 create: (context) => CaffeineBloc(CaffeineRepository())
                   ..add(const FetchCaffeine()),
                 child: CaffeineCard(),
-              )
+              ),
             ],
           ),
           Column(children: [
