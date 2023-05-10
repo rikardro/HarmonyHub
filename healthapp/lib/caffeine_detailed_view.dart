@@ -77,109 +77,139 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                               } else {
                                 return Column(
                                   children: [
-                                    
-                                    /*Stack(
+
+                                    Stack(
                                       alignment:  AlignmentDirectional.center,
                                       children: [
+                                        Stack(
+                                          alignment: AlignmentDirectional.center,
+                                          // clipBehavior: Clip.none, // <--- important part
+                                          children: [
 
-                                      ],
-                                    ),*/
-                                    Stack(
-                                      alignment: AlignmentDirectional.center,
-                                      // clipBehavior: Clip.none, // <--- important part
-                                      children: [
-
-                                        Center(
-                                            child: SfRadialGauge(
-                                              axes: <RadialAxis>[
-                                                RadialAxis(
-                                                  minimum: 0, maximum: 301,
-                                                  startAngle: 180, endAngle: 0,
-                                                  axisLabelStyle: const GaugeTextStyle(
-                                                    color: Colors.white, fontSize: 15,),
-                                                  ranges: <GaugeRange>[
-                                                    GaugeRange(
-                                                        startValue: 0,
-                                                        endValue: min(300, roundedAmount.toDouble()),
-                                                        color: Colors.white,
-                                                        startWidth: 15,
-                                                        endWidth: 15,
-                                                    )
-                                                  ],
-                                                  majorTickStyle: const MajorTickStyle(length: 0.1, 
-                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white),
-                                                    minorTickStyle: const MinorTickStyle(length: 0.05, 
-                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white)
-                                                ),
-                                              ],
-                                            )
-                                        ),
-
-                                        Center(
-                                          child: SfRadialGauge(
-                                          axes: <RadialAxis>[
-                                            RadialAxis(
-                                              minimum: 0, maximum: 300,
-                                              startAngle: 180, endAngle: 0,
-                                              ranges: <GaugeRange>[
-                                              GaugeRange(startValue: 0, endValue: min(50, roundedAmount.toDouble()), color:Colors.green, startWidth: 14, endWidth: 14,),
-                                              GaugeRange(startValue: 50,endValue: max(50, min(200, roundedAmount.toDouble())), color: Colors.orange, startWidth: 14, endWidth: 14,),
-                                              GaugeRange(startValue: 200,endValue: max(200, min(299, roundedAmount.toDouble())),color: Colors.red, startWidth: 14, endWidth: 14,)],
-                                              // pointers: <GaugePointer>[NeedlePointer(value: roundedAmount.toDouble())],
-                                              showLabels: false,
-                                              showTicks: false,
-                                              showAxisLine: false,
-                                        )])),
-                                        
-                                          Center(
-                                            child: SfRadialGauge(
-                                              axes: <RadialAxis>[
-                                                RadialAxis(
-                                                  minimum: 0, maximum: 301,
-                                                  startAngle: 180, endAngle: 0,
-                                                  axisLabelStyle: const GaugeTextStyle(
-                                                    color: Colors.white, fontSize: 15,),
-                                                  ranges: <GaugeRange>[
-                                                    GaugeRange(
-                                                        startValue: 0,
-                                                        endValue: min(300, roundedAmount.toDouble()),
-                                                        color: Colors.white,
-                                                        startWidth: 1,
-                                                        endWidth: 1
+                                            Center(
+                                                child: SfRadialGauge(
+                                                  axes: <RadialAxis>[
+                                                    RadialAxis(
+                                                      minimum: 0, maximum: 301,
+                                                      startAngle: 180, endAngle: 0,
+                                                      axisLabelStyle: const GaugeTextStyle(
+                                                        color: Colors.white, fontSize: 15,),
+                                                      ranges: <GaugeRange>[
+                                                        GaugeRange(
+                                                            startValue: 0,
+                                                            endValue: min(300, roundedAmount.toDouble()),
+                                                            color: Colors.white,
+                                                            startWidth: 15,
+                                                            endWidth: 15,
+                                                        )
+                                                      ],
+                                                      majorTickStyle: const MajorTickStyle(length: 0.1, 
+                                                        lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white),
+                                                        minorTickStyle: const MinorTickStyle(length: 0.05, 
+                                                        lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white)
                                                     ),
-                                                    GaugeRange(startValue: 0, endValue: 1, color:Colors.white, startWidth: 15, endWidth: 15,),
-                                                    GaugeRange(startValue: min(300, roundedAmount.toDouble()) - 1, endValue: min(300, roundedAmount.toDouble()), color:Colors.white, startWidth: 15, endWidth: 15,),
                                                   ],
-                                                  majorTickStyle: const MajorTickStyle(length: 0.1, 
-                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white),
-                                                    minorTickStyle: const MinorTickStyle(length: 0.05, 
-                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white)
+                                                )
+                                            ),
+
+                                            Center(
+                                              child: SfRadialGauge(
+                                              axes: <RadialAxis>[
+                                                RadialAxis(
+                                                  minimum: 0, maximum: 300,
+                                                  startAngle: 180, endAngle: 0,
+                                                  ranges: <GaugeRange>[
+                                                  GaugeRange(startValue: 0, endValue: min(50, roundedAmount.toDouble()), color:Colors.green, startWidth: 14, endWidth: 14,),
+                                                  GaugeRange(startValue: 50,endValue: max(50, min(200, roundedAmount.toDouble())), color: Colors.orange, startWidth: 14, endWidth: 14,),
+                                                  GaugeRange(startValue: 200,endValue: max(200, min(299, roundedAmount.toDouble())),color: Colors.red, startWidth: 14, endWidth: 14,)],
+                                                  // pointers: <GaugePointer>[NeedlePointer(value: roundedAmount.toDouble())],
+                                                  showLabels: false,
+                                                  showTicks: false,
+                                                  showAxisLine: false,
+                                            )])),
+                                            
+                                              Center(
+                                                child: SfRadialGauge(
+                                                  axes: <RadialAxis>[
+                                                    RadialAxis(
+                                                      minimum: 0, maximum: 301,
+                                                      startAngle: 180, endAngle: 0,
+                                                      axisLabelStyle: const GaugeTextStyle(
+                                                        color: Colors.white, fontSize: 15,),
+                                                      ranges: <GaugeRange>[
+                                                        GaugeRange(
+                                                            startValue: 0,
+                                                            endValue: min(300, roundedAmount.toDouble()),
+                                                            color: Colors.white,
+                                                            startWidth: 1,
+                                                            endWidth: 1
+                                                        ),
+                                                        GaugeRange(startValue: 0, endValue: 1, color:Colors.white, startWidth: 15, endWidth: 15,),
+                                                        GaugeRange(startValue: min(300, roundedAmount.toDouble()) - 1, endValue: min(300, roundedAmount.toDouble()), color:Colors.white, startWidth: 15, endWidth: 15,),
+                                                      ],
+                                                      majorTickStyle: const MajorTickStyle(length: 0.1, 
+                                                        lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white),
+                                                        minorTickStyle: const MinorTickStyle(length: 0.05, 
+                                                        lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white)
+                                                    ),
+                                                  ],
+                                                )
+                                            ),
+
+
+                                          ],
+                                        ),
+
+                                        Column(
+                                          children: [
+                                            const SizedBox(height: 88,),
+                                            Text(
+                                              caffeineStatus,
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                  color: Colors.white),
+                                            ),
+                                            const SizedBox(height: 10,),
+                                            Text(
+                                              "$roundedAmount mg",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 25,
+                                                  color: Colors.white),
+                                            ),
+                                            const SizedBox(height: 10,),
+                                            const SizedBox(height : 60),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                showModalBottomSheet(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(10.0),
+                                                    ),
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return BlocProvider<CaffeineDetailedBloc>.value(
+                                                          value: bloc, child: const AddCaffeinePopup());
+                                                    });
+                                              },
+                                              style: ButtonStyle(
+                                                backgroundColor: MaterialStateProperty.all(Colors.white),
+                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(18.0),
+                                                  ),
                                                 ),
-                                              ],
-                                            )
+                                              ),
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(18.0),
+                                                child: Text("Add consumed drink",
+                                                    style: TextStyle(color: Colors.black)),
+                                              ),
+                                            ),
+                                          ],
                                         ),
 
                                       ],
-                                    ),
-                                    
-                                      
-                                      
-                                    Text(
-                                      "$roundedAmount mg",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 25,
-                                          color: Colors.white),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      caffeineStatus,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.white),
                                     ),
                                   ],
                                 );
@@ -189,43 +219,7 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 50),
-                    ElevatedButton(
-                      /* onPressed: () {
-                        //TODO: Why does this not work?
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const AddCaffeinePopup();
-                          },
-                        );
-                      }, */
-                      onPressed: () {
-                        showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            context: context,
-                            builder: (context) {
-                              return BlocProvider<CaffeineDetailedBloc>.value(
-                                  value: bloc, child: const AddCaffeinePopup());
-                            });
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.white),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                          ),
-                        ),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(18.0),
-                        child: Text("Add consumed drink",
-                            style: TextStyle(color: Colors.black)),
-                      ),
-                    ),
-                    const SizedBox(height: 50),
+
                     const Text(
                       "Consumption history",
                       style: TextStyle(color: Colors.white, fontSize: 20),
