@@ -18,16 +18,16 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
       children: [
         Icon(
           icon,
-          color: Colors.grey[700],
-          size: 35,
+          color: Colors.white,
+          size: 25,
         ),
         Text(
           value,
-          style: TextStyle(color: Colors.grey[700], fontSize: 26),
+          style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         Text(
           subtitle,
-          style: TextStyle(color: Colors.grey[500], fontSize: 18),
+          style: TextStyle(color: Colors.white, fontSize: 13),
         )
       ],
     );
@@ -43,92 +43,71 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
     return BlocProvider(
       create: (context) => RunTrackerBloc(),
       child: Scaffold(
+        backgroundColor: Color(0xFFAD76EC),
         extendBodyBehindAppBar: true,
-        body: Center(child: BlocBuilder<RunTrackerBloc, RunTrackerState>(
-          builder: (context, state) {
-            String minutes;
-            String seconds;
-            if (state.status == RunTrackerStatus.running ||
-                state.status == RunTrackerStatus.paused) {
-              minutes = state.runSession!.getAvgMinPerKm().floor().toString();
-              seconds = twoDigits(
-                      (state.runSession!.getAvgMinPerKm().remainder(1) * 60)
-                          .round())
-                  .toString();
-            } else {
-              minutes = "--";
-              seconds = "--";
-            }
-            final height = MediaQuery.of(context).size.height;
-            return Stack(
-              children: [
-                Positioned(
-                  top: -(height * 0.5),
-                  left: -(height * 0.3),
-                  right: -(height * 0.3),
-                  child: Container(
-                    width: height,
-                    height: height,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/runner.png"),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            child: BlocBuilder<RunTrackerBloc, RunTrackerState>(
+              builder: (context, state) {
+                String minutes;
+                String seconds;
+                if (state.status == RunTrackerStatus.running ||
+                    state.status == RunTrackerStatus.paused) {
+                  minutes =
+                      state.runSession!.getAvgMinPerKm().floor().toString();
+                  seconds = twoDigits(
+                          (state.runSession!.getAvgMinPerKm().remainder(1) * 60)
+                              .round())
+                      .toString();
+                } else {
+                  minutes = "--";
+                  seconds = "--";
+                }
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      height: 30,
                     ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/images/map.png',
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: (height * 0.375),
-                  // circle container
-                  child: Container(
-                    height: height * 0.6,
-                    child: BlocBuilder<RunTrackerBloc, RunTrackerState>(
-                        builder: (context, state) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Container(
+                      padding: EdgeInsets.only(bottom: 30),
+                      color: Color.fromARGB(170, 29, 28, 28),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
+                          SizedBox(
+                            height: 30,
+                          ),
                           Container(
-                            width: 120,
-                            height: 120,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color.fromRGBO(255, 255, 255, 0.9),
-                              // shadow
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
+                            width: 90,
+                            height: 90,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "${twoDigits(state.runSession?.duration.inMinutes.remainder(60))}:${twoDigits(state.runSession?.duration.inSeconds.remainder(60)) ?? "--"}",
+                                  "${twoDigits(state.runSession?.duration.inMinutes.remainder(60))}:${twoDigits(state.runSession?.duration.inSeconds.remainder(60))}",
                                   style: TextStyle(
-                                      color: Colors.grey[700], fontSize: 40),
+                                      color: Colors.white, fontSize: 30),
                                 ),
                                 Text(
                                   "min",
                                   style: TextStyle(
-                                      color: Colors.grey[500], fontSize: 20),
+                                      color: Colors.white, fontSize: 15),
                                 )
                               ],
                             ),
+                          ),
+                          SizedBox(
+                            height: 10,
                           ),
                           Row(
                             // avg. min/km, distance and avg. speed
@@ -145,6 +124,9 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                                   "${state.runSession?.getAvgKmPerHour().toStringAsFixed(1) ?? "-"} m/s",
                                   "Avg. speed")
                             ],
+                          ),
+                          SizedBox(
+                            height: 30,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -198,29 +180,12 @@ class _RunTrackerPageState extends State<RunTrackerPage> {
                             ],
                           )
                         ],
-                      );
-                    }),
-                  ),
-                ),
-                /* Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: InkWell(
-                          onTap: (){
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Icon(Icons.arrow_back_ios_rounded, color: Colors.black45, size: 35,),
-                          ),
-                        ),
-                      )
-                    ) */
-              ],
-            );
-          },
-        )),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            )),
       ),
     );
   }

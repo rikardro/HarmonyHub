@@ -22,33 +22,21 @@ class _RunTrackerCardState extends State<RunTrackerCard> {
         );
       },
       flex: 5,
-      color: Color(0xFF0C4C4D),
+      color: Color.fromARGB(255, 49, 204, 207),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             "Run Tracker",
-            style: TextStyle(color: Colors.white, fontSize: 15),
+            style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           SizedBox(
             height: 10,
           ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              Icon(
-                Icons.directions_run,
-                color: Colors.white,
-                size: 30,
-              ),
-            ],
+          Icon(
+            Icons.timer_rounded,
+            color: Colors.white,
+            size: 40,
           ),
         ],
       ),
