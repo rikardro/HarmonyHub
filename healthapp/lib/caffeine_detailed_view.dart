@@ -228,12 +228,13 @@ class CaffeineRecordCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(width: 20,),
               Text(product),
               const SizedBox(width: 10),
               Text('$caffeineAmount mg'),
@@ -243,8 +244,11 @@ class CaffeineRecordCard extends StatelessWidget {
           ),
           //TODO: implement next sprint!
           IconButton(
-            icon: const Icon(Icons.delete, color: Colors.transparent),
-            onPressed: () {},
+            icon: const Icon(Icons.delete, color: Colors.black),
+            onPressed: () {
+              context.read<CaffeineDetailedBloc>().add(DeleteCaffeine(id: id));
+              context.read<CaffeineDetailedBloc>().add(const FetchAllCaffeine());
+            },
           ),
         ],
       ),

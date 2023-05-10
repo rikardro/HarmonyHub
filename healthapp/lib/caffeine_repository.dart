@@ -128,4 +128,9 @@ class CaffeineRepository {
 
     return caffeineList;
   }
+
+
+  Future<void> deleteCaffeine(String docRef) async{
+    await instance.doc(docRef).delete();
+  }
 }
