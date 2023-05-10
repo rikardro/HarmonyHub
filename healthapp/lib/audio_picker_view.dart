@@ -8,10 +8,10 @@ import 'package:healthapp/dashboard/gradientColor.dart';
 import 'bloc/breathing_bloc.dart';
 
 const List<List<String>> audioList = [
-  ['Breathing', 'assets/images/breathing.png'],
-  ['Meditation', 'assets/images/meditation.png'],
-  ['Sleep', 'assets/images/sleep.png'],
-  ['Focus', 'assets/images/relax.png'],
+  ['Relax', 'assets/images/hammoc.png'],
+  ['Energize', 'assets/images/mountain_range.png'],
+  ['Sleep', 'assets/images/raining.png'],
+  ['Focus', 'assets/images/waterfall.png'],
 ];
 
 class AudioPickerView extends StatelessWidget {
@@ -22,12 +22,13 @@ class AudioPickerView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFB6CFFA),
+        backgroundColor: Color.fromARGB(255, 22, 43, 65),
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: GradientColor.getGradient(Color(0xFFA6CFFA).value),
+            colors: GradientColor.getGradient(
+                Color.fromARGB(255, 22, 43, 65).value),
             begin: Alignment.topLeft,
             end: Alignment.center,
           ),
@@ -71,7 +72,7 @@ class AudioCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         image: DecorationImage(
-          image: AssetImage("assets/images/raining.png"),
+          image: AssetImage(imageUrl),
           fit: BoxFit.cover,
         ),
       ),

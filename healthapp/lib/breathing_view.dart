@@ -48,8 +48,9 @@ class _AudioViewState extends State<AudioView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BreathingBloc, BreathingState>(
-      builder: (context, state) {
-        final audioUri = state.audioUri;
+        builder: (context, state) {
+      final audioUri = state.audioUri;
+      if (state.status == BreathingStatus.success) {
         return Scaffold(
           appBar: AppBar(
             title: Text(state.category ?? ""),
@@ -116,7 +117,11 @@ class _AudioViewState extends State<AudioView> {
             ],
           ),
         );
-      },
-    );
+      } else {
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      }
+    });
   }
 }

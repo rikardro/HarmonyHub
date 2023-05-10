@@ -85,6 +85,10 @@ flutter:
     - assets/images/wind.png
     - assets/images/wind_white.png
 
+    - assets/images/hammoc.png
+    - assets/images/mountain_range.png
+    - assets/images/waterfall.png
+
     - assets/images/nature_image.png
     - assets/images/map.png
 
