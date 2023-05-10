@@ -43,6 +43,21 @@ class CaffeineDetailedBloc
         }
       },
     );
+
+    on<DeleteCaffeine>(
+      (event, emit) async{
+        emit(state.copyWith(status: CaffeineDetailedStatus.loading));
+          try {
+          emit(state.copyWith(
+              status: CaffeineDetailedStatus.loading, caffeineList: null));
+          await repository.deleteCaffeine(event.id);
+          emit(state.copyWith(
+              status: CaffeineDetailedStatus.success, caffeineList: null));
+        } catch (_) {
+          emit(state.copyWith(status: CaffeineDetailedStatus.error));
+        }
+      }
+    );
   }
 }
 
@@ -64,7 +79,7 @@ class AddCaffeine extends CaffeineDetailedEvent {
 }
 
 class DeleteCaffeine extends CaffeineDetailedEvent {
-  final int id;
+  final String id;
   const DeleteCaffeine({required this.id});
 }
 

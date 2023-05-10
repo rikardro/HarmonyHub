@@ -17,8 +17,9 @@ class CaffeineRepository {
   /// Returns the current caffeine level
   Future<Caffeine> fetchCurrentCaffeine() async {
     final today = DateTime.now();
-    final startOfToday = Timestamp.fromDate(
-        DateTime(today.year, today.month, today.day, 0, 0, 0, 0, 0));
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final startOfYesterday = Timestamp.fromDate(
+        DateTime(yesterday.year, yesterday.month, yesterday.day, 0, 0, 0, 0, 0));
 
     final endOfToday = Timestamp.fromDate(
         DateTime(today.year, today.month, today.day, 23, 59, 59, 999, 999));
@@ -33,7 +34,7 @@ class CaffeineRepository {
     /// Get all the caffeine consumed today
     final QuerySnapshot querySnapshot = await instance
         .where('userId', isEqualTo: currentUserId)
-        .where('timeConsumed', isGreaterThanOrEqualTo: startOfToday)
+        .where('timeConsumed', isGreaterThanOrEqualTo: startOfYesterday)
         .where('timeConsumed', isLessThanOrEqualTo: endOfToday)
         .get();
 
@@ -51,9 +52,9 @@ class CaffeineRepository {
 
     if (total < 50) {
       status = "Low";
-    } else if (total >= 50 && total < 150) {
+    } else if (total >= 50 && total < 200) {
       status = "Medium";
-    } else if (total >= 150) {
+    } else if (total >= 200) {
       status = "High";
     } else {
       status = "Error";
@@ -126,5 +127,10 @@ class CaffeineRepository {
     caffeineList.sort((a, b) => b.timeConsumed.compareTo(a.timeConsumed));
 
     return caffeineList;
+  }
+
+
+  Future<void> deleteCaffeine(String docRef) async{
+    await instance.doc(docRef).delete();
   }
 }
