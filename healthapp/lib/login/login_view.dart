@@ -7,6 +7,7 @@ import '../services/auth/auth/bloc/auth_bloc.dart';
 import '../services/auth/auth/bloc/auth_event.dart';
 import '../services/auth/auth/bloc/auth_state.dart';
 import '../util/dialogs/error_dialog.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -19,22 +20,26 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  static bool firstTimeShowing = true;
   
   final snackBar = SnackBar(content: Text('${GreetingPhrase.get()} 👋', style: const TextStyle(fontSize: 18),),
   duration: const Duration(seconds: 3),
   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
   behavior: SnackBarBehavior.floating,
-  margin: EdgeInsets.symmetric(vertical: 200, horizontal: 175));
+  margin: EdgeInsets.fromLTRB(175, 0, 175, 450));
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
-    Future<Null>.delayed(Duration.zero, () {
+    if (firstTimeShowing){
+      Future<Null>.delayed(Duration.zero, () {
       ScaffoldMessenger.of(context).showSnackBar(
         snackBar,
       );
-    });
+      });
+      firstTimeShowing = false;
+    }
     super.initState();
   }
 
@@ -61,36 +66,64 @@ class _LoginViewState extends State<LoginView> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Login"),
-        ),
-        body: Padding(
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/boat.gif'),
+              fit: BoxFit.cover,
+            ),
+          ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Image.asset(
-                'assets/images/nature_image.png',
-                height: 300,
+              const Text("H", style: TextStyle(fontSize: 50, color: Colors.transparent),
+              ),
+              const Text("H", style: TextStyle(fontSize: 50, color: Colors.transparent),
+              ),
+              const Text("H", style: TextStyle(fontSize: 50, color: Colors.transparent),
+              ),
+              Text(
+                'HarmonyHub',
+                style: GoogleFonts.pinyonScript(
+                color: Colors.white,
+                fontSize: 50,
+                ),
+              ),
+              const Text("H", style: TextStyle(fontSize: 60, color: Colors.transparent),
               ),
               const Text(
                 'Welcome to Healthapp, please log in to see all kinds of interesting things about your health!',
+                style: TextStyle(color: Colors.white),
+              ),
+              const Text("H", style: TextStyle(fontSize: 20, color: Colors.transparent),
               ),
               TextField(
                 controller: _email,
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
+                style: TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.black,
                   hintText: "Enter your email here",
+                  hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209))
                 ),
+              ),
+              const Text("H", style: TextStyle(fontSize: 10, color: Colors.transparent),
               ),
               TextField(
                 controller: _password,
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
+                style: TextStyle(color: Colors.white),
                 decoration:
-                    const InputDecoration(hintText: "Enter your password here"),
+                    const InputDecoration(
+                      filled: true,
+                      fillColor: Colors.black,
+                      hintText: "Enter your password here",
+                      hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209))),
               ),
               TextButton(
                 onPressed: () async {
@@ -103,7 +136,13 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       );
                 },
-                child: const Text("Login"),
+                child: const Text(
+                  "Login",
+                  style: TextStyle(
+                    color: Colors.white,
+                    decoration: TextDecoration.underline),
+                  
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -111,7 +150,12 @@ class _LoginViewState extends State<LoginView> {
                         const AuthEventForgotPassword(),
                       );
                 },
-                child: const Text("I forgot my password"),
+                child: const Text(
+                  "I forgot my password",
+                  style: TextStyle(
+                    color: Colors.white,
+                    decoration: TextDecoration.underline),
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -119,7 +163,12 @@ class _LoginViewState extends State<LoginView> {
                         const AuthEventShouldRegister(),
                       );
                 },
-                child: const Text("Not registered yet? Register here!"),
+                child: const Text(
+                  "Not registered yet? Register here!",
+                  style: TextStyle(
+                    color: Colors.white,
+                    decoration: TextDecoration.underline),
+                ),
               ),
             ],
           ),
