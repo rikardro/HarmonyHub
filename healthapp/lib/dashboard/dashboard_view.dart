@@ -78,7 +78,7 @@ class DashboardView extends StatelessWidget {
                             radius: 25,
                             child: Text(
                               initials,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
                               ),
@@ -188,11 +188,12 @@ class DashboardView extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
+                            isScrollControlled: true,
                             context: context,
                             builder: (context) {
                               context
                                   .read<RunningBloc>()
-                                  .add(FetchPreferences());
+                                  .add(const FetchPreferences());
                               return BlocBuilder<RunningBloc, RunningState>(
                                 builder: (context, state) {
                                   if (state.status == RunningStatus.loading) {
@@ -200,18 +201,23 @@ class DashboardView extends StatelessWidget {
                                   } else {
                                     WeatherPreferences preference = state
                                             .preferences ??
-                                        WeatherPreferences(18, true, 0, 25, 0);
+                                        WeatherPreferences(18, true, 0, 25, 0, const TimeOfDay(hour: 4, minute: 59), const TimeOfDay(hour: 22, minute: 01));
                                     final temperature = preference.targetTemp;
                                     final precipitation = preference.rainPref;
                                     final cloudCoverage = preference.cloudPref;
                                     final windSpeed = preference.windPref;
                                     final snow = preference.avoidSnow;
+                                    final startTime = preference.startTime;
+                                    final endTime = preference.endTime;
                                     return RunningPreferences(
                                         temperature,
                                         precipitation,
                                         cloudCoverage,
                                         windSpeed,
-                                        snow);
+                                        snow,
+                                        startTime, 
+                                        endTime
+                                        );
                                   }
                                 },
                               );
@@ -261,7 +267,7 @@ class _SuggestedRunningCardsState extends State<SuggestedRunningCards> {
               if (displayed.length < recommended.length)
                 ElevatedButton(
                   onPressed: _loadMore,
-                  child: Text('Load More'),
+                  child: const Text('Load More'),
                 ),
             ],
           );

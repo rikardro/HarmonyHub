@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/backend/weather/recommended_days_repo.dart';
 import 'package:healthapp/util/weatherPreferences.dart';
@@ -29,7 +30,7 @@ class RunningBloc extends Bloc<RunningEvent, RunningState> {
       emit(state.copyWith(status: RunningStatus.loading));
       try {
         await repository.savePreferences(WeatherPreferences(
-            event.temp, event.snow, event.rain, event.cloud, event.wind));
+            event.temp, event.snow, event.rain, event.cloud, event.wind, event.startTime, event.endTime));
         final recommended = await repository.getRecommended(10);
         emit(state.copyWith(
           status: RunningStatus.success,
@@ -69,8 +70,10 @@ class SavePreferences extends RunningEvent {
   final double rain;
   final double cloud;
   final double wind;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
 
-  const SavePreferences(this.temp, this.snow, this.rain, this.cloud, this.wind);
+  const SavePreferences(this.temp, this.snow, this.rain, this.cloud, this.wind, this.startTime, this.endTime);
 }
 
 class FetchPreferences extends RunningEvent {
