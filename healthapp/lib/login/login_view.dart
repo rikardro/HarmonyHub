@@ -266,18 +266,35 @@ class _LoginViewState extends State<LoginView> {
               ),),
               const SizedBox(height: 20),
               TextField(
-                  controller: _password,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  style: TextStyle(color: Colors.white),
-                  decoration:
-                      const InputDecoration(
-                        filled: true,
-                        fillColor: Color.fromARGB(255, 38, 0, 126),
-                        hintText: "Enter your password here",
-                  hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209))),
-                ),
+                      controller: _password,
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      style: TextStyle(color: Colors.white),
+                      decoration:
+                          InputDecoration(
+                            filled: true,
+                            fillColor: Color.fromARGB(255, 38, 0, 126),
+                            hintText: "Enter your password here",
+                            hintStyle: TextStyle(color: Color.fromARGB(255, 209, 209, 209)),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: TextButton(
+                              child: Text('Log In',
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, 
+                                decoration: TextDecoration.underline),),
+                              onPressed: () async {
+                                context.read<AuthBloc>().add(
+                                AuthEventLogIn(
+                                _email.text,
+                                _password.text,
+                        ),
+                      );
+                },),
+             ),
+            ),
+            ),
+            SizedBox(height: 10,),
             Row(
               children: [
                   TextButton(
