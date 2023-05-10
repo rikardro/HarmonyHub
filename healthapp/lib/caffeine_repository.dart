@@ -52,9 +52,9 @@ class CaffeineRepository {
 
     if (total < 50) {
       status = "Low";
-    } else if (total >= 50 && total < 150) {
+    } else if (total >= 50 && total < 200) {
       status = "Medium";
-    } else if (total >= 150) {
+    } else if (total >= 200) {
       status = "High";
     } else {
       status = "Error";

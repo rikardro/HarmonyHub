@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:healthapp/util/dialogs/error_dialog.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -13,6 +14,7 @@ import 'package:healthapp/bloc/caffeine_bloc.dart';
 import 'package:healthapp/bloc/caffeine_detailed_bloc.dart';
 
 import 'bloc/caffeine_detailed_bloc.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class CaffeineDetailedView extends StatefulWidget {
   const CaffeineDetailedView({super.key});
@@ -34,9 +36,11 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
         if (state.status == CaffeineDetailedStatus.success) {
           final List<CaffeineRecord> listOfCaffeine = state.caffeineList ?? [];
           return Scaffold(
+            extendBodyBehindAppBar: true,
             appBar: AppBar(
               title: const Text(""),
-              backgroundColor: const Color(0xFF8D3786),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
             ),
             body: Container(
               decoration: const BoxDecoration(
@@ -73,6 +77,93 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
                               } else {
                                 return Column(
                                   children: [
+                                    
+                                    /*Stack(
+                                      alignment:  AlignmentDirectional.center,
+                                      children: [
+
+                                      ],
+                                    ),*/
+                                    Stack(
+                                      alignment: AlignmentDirectional.center,
+                                      // clipBehavior: Clip.none, // <--- important part
+                                      children: [
+
+                                        Center(
+                                            child: SfRadialGauge(
+                                              axes: <RadialAxis>[
+                                                RadialAxis(
+                                                  minimum: 0, maximum: 301,
+                                                  startAngle: 180, endAngle: 0,
+                                                  axisLabelStyle: const GaugeTextStyle(
+                                                    color: Colors.white, fontSize: 15,),
+                                                  ranges: <GaugeRange>[
+                                                    GaugeRange(
+                                                        startValue: 0,
+                                                        endValue: min(300, roundedAmount.toDouble()),
+                                                        color: Colors.white,
+                                                        startWidth: 15,
+                                                        endWidth: 15,
+                                                    )
+                                                  ],
+                                                  majorTickStyle: const MajorTickStyle(length: 0.1, 
+                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white),
+                                                    minorTickStyle: const MinorTickStyle(length: 0.05, 
+                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white)
+                                                ),
+                                              ],
+                                            )
+                                        ),
+
+                                        Center(
+                                          child: SfRadialGauge(
+                                          axes: <RadialAxis>[
+                                            RadialAxis(
+                                              minimum: 0, maximum: 300,
+                                              startAngle: 180, endAngle: 0,
+                                              ranges: <GaugeRange>[
+                                              GaugeRange(startValue: 0, endValue: min(50, roundedAmount.toDouble()), color:Colors.green, startWidth: 14, endWidth: 14,),
+                                              GaugeRange(startValue: 50,endValue: max(50, min(200, roundedAmount.toDouble())), color: Colors.orange, startWidth: 14, endWidth: 14,),
+                                              GaugeRange(startValue: 200,endValue: max(200, min(299, roundedAmount.toDouble())),color: Colors.red, startWidth: 14, endWidth: 14,)],
+                                              // pointers: <GaugePointer>[NeedlePointer(value: roundedAmount.toDouble())],
+                                              showLabels: false,
+                                              showTicks: false,
+                                              showAxisLine: false,
+                                        )])),
+                                        
+                                          Center(
+                                            child: SfRadialGauge(
+                                              axes: <RadialAxis>[
+                                                RadialAxis(
+                                                  minimum: 0, maximum: 301,
+                                                  startAngle: 180, endAngle: 0,
+                                                  axisLabelStyle: const GaugeTextStyle(
+                                                    color: Colors.white, fontSize: 15,),
+                                                  ranges: <GaugeRange>[
+                                                    GaugeRange(
+                                                        startValue: 0,
+                                                        endValue: min(300, roundedAmount.toDouble()),
+                                                        color: Colors.white,
+                                                        startWidth: 1,
+                                                        endWidth: 1
+                                                    ),
+                                                    GaugeRange(startValue: 0, endValue: 1, color:Colors.white, startWidth: 15, endWidth: 15,),
+                                                    GaugeRange(startValue: min(300, roundedAmount.toDouble()) - 1, endValue: min(300, roundedAmount.toDouble()), color:Colors.white, startWidth: 15, endWidth: 15,),
+                                                  ],
+                                                  majorTickStyle: const MajorTickStyle(length: 0.1, 
+                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white),
+                                                    minorTickStyle: const MinorTickStyle(length: 0.05, 
+                                                    lengthUnit: GaugeSizeUnit.factor, thickness: 1.5, color: Colors.white)
+                                                ),
+                                              ],
+                                            )
+                                        ),
+
+                                      ],
+                                    ),
+                                    
+                                      
+                                      
                                     Text(
                                       "$roundedAmount mg",
                                       style: const TextStyle(
