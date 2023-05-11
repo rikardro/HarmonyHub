@@ -59,6 +59,6 @@ class AirQuality {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AirQualityData airQualityData = await AirQuality.fetchAirQualityData();
-  print('City: ${airQualityData.city}');
-  print('AQI: ${airQualityData.aqi}');
+  log('City: ${airQualityData.city}');
+  log('AQI: ${airQualityData.aqi}');
 }
