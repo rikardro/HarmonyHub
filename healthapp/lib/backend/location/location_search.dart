@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:healthapp/backend/location/apiConstants.dart';
 import 'package:healthapp/backend/location/location.dart';
@@ -53,7 +54,7 @@ void main(List<String> args) async {
   List<LocationData> locations = await locationSearch.search("St");
 
   for(final location in locations){
-    print(location.name);
-    print([location.latitude, location.longitude]);
+    log(location.name);
+    log([location.latitude, location.longitude].toString());
   }
 }

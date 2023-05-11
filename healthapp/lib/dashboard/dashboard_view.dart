@@ -164,11 +164,7 @@ class DashboardView extends StatelessWidget {
           Row(
             children: [
               AudioPlayerCard(),
-              BlocProvider(
-                create: (context) => CaffeineBloc(CaffeineRepository())
-                  ..add(const FetchCaffeine()),
-                child: CaffeineCard(),
-              ),
+              CaffeineCard(),
             ],
           ),
           Column(children: [
@@ -198,9 +194,18 @@ class DashboardView extends StatelessWidget {
                                   if (state.status == RunningStatus.loading) {
                                     return Container();
                                   } else {
-                                    WeatherPreferences preference = state
-                                            .preferences ??
-                                        WeatherPreferences(18, true, 0, 25, 0, const TimeOfDay(hour: 4, minute: 59), const TimeOfDay(hour: 22, minute: 01));
+                                    WeatherPreferences preference =
+                                        state.preferences ??
+                                            WeatherPreferences(
+                                                18,
+                                                true,
+                                                0,
+                                                25,
+                                                0,
+                                                const TimeOfDay(
+                                                    hour: 4, minute: 59),
+                                                const TimeOfDay(
+                                                    hour: 22, minute: 01));
                                     final temperature = preference.targetTemp;
                                     final precipitation = preference.rainPref;
                                     final cloudCoverage = preference.cloudPref;
@@ -214,9 +219,8 @@ class DashboardView extends StatelessWidget {
                                         cloudCoverage,
                                         windSpeed,
                                         snow,
-                                        startTime, 
-                                        endTime
-                                        );
+                                        startTime,
+                                        endTime);
                                   }
                                 },
                               );
@@ -233,8 +237,6 @@ class DashboardView extends StatelessWidget {
     );
   }
 }
-
-
 
 class SuggestedRunningCards extends StatefulWidget {
   @override
@@ -275,7 +277,6 @@ class _SuggestedRunningCardsState extends State<SuggestedRunningCards> {
     );
   }
 }
-
 
 const Color lightBlack = Color(0xFF3A3A3A);
 

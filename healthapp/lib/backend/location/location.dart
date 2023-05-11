@@ -81,7 +81,6 @@ class Location {
 
     latitude = position.latitude;
     longitude = position.longitude;
-    print("Latitude: $latitude, Longitude: $longitude");
   }
 
   Stream<Position> getPosStream(){

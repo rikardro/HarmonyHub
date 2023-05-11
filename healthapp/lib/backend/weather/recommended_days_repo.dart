@@ -102,7 +102,6 @@ class RecommendedDaysRepo {
         await apiClient.requestWeather(loc.latitude, loc.longitude);
     WeatherPreferences? preferences = await getUserPreferences();
     preferences ??= WeatherPreferences(18, true, 0, 25, 0, TimeOfDay(hour: 4, minute: 59), TimeOfDay(hour: 22, minute: 01));
-    print(preferences.targetTemp);
 
     List<RecommendedTime> recommended = [];
     for (WeatherInformation weather in weatherList) {

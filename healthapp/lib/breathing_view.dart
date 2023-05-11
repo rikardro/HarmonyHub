@@ -25,21 +25,27 @@ class _AudioViewState extends State<AudioView> {
     super.initState();
 
     audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      setState(() {
-        playerState = state;
-      });
+      if (mounted) {
+        setState(() {
+          playerState = state;
+        });
+      }
     });
 
     audioPlayer.onDurationChanged.listen((Duration duration) {
-      setState(() {
-        this.duration = duration;
-      });
+      if (mounted) {
+        setState(() {
+          this.duration = duration;
+        });
+      }
     });
 
     audioPlayer.onPositionChanged.listen((Duration position) {
-      setState(() {
-        this.position = position;
-      });
+      if (mounted) {
+        setState(() {
+          this.position = position;
+        });
+      }
     });
   }
 
