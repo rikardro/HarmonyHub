@@ -46,6 +46,7 @@ dependencies:
 
   equatable: ^2.0.5
   syncfusion_flutter_gauges: ^21.1.39
+  audioplayers: ^4.0.1
   google_fonts: ^4.0.4
   
 dev_dependencies:
@@ -85,11 +86,21 @@ flutter:
     - assets/images/wind.png
     - assets/images/wind_white.png
 
+    - assets/images/hammoc.png
+    - assets/images/mountain_range.png
+    - assets/images/waterfall.png
+    - assets/images/fireplace.png
+    - assets/images/park.png
+
+    - assets/images/fireplace.gif
+
     - assets/images/nature_image.png
     - assets/images/map.png
     - assets/images/boat.gif
     - assets/images/precipitation.png
     - assets/images/degrees.png
+
+    - assets/images/runner.png
 
 
   #   - images/a_dot_burr.jpeg

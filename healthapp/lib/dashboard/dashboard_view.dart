@@ -7,7 +7,9 @@ import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/backend/weather/recommended_days_repo.dart';
 import 'package:healthapp/backend/location/location_search.dart';
 import 'package:healthapp/backend/weather/weather.dart';
+import 'package:healthapp/bloc/breathing_bloc.dart';
 import 'package:healthapp/bloc/running_bloc.dart';
+import 'package:healthapp/breathing_view.dart';
 import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
@@ -32,6 +34,7 @@ import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
 import '../bloc/quote_bloc.dart';
 import '../bloc/user_bloc.dart';
+import 'dashboard_cards/breathing_card.dart';
 
 class DashboardView extends StatelessWidget {
   DashboardView({Key? key}) : super(key: key);
@@ -78,7 +81,7 @@ class DashboardView extends StatelessWidget {
                             radius: 25,
                             child: Text(
                               initials,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
                               ),
@@ -155,21 +158,17 @@ class DashboardView extends StatelessWidget {
                 create: (context) => QuoteBloc()..add(FetchQuote()),
                 child: QuoteCard(),
               ),
-              const HealthCard(
-                  title: "Heart",
-                  value: "69",
-                  icon: Icons.favorite,
-                  iconColor: Colors.red)
+              RunTrackerCard(),
             ],
           ),
           Row(
             children: [
-              RunTrackerCard(),
+              AudioPlayerCard(),
               BlocProvider(
                 create: (context) => CaffeineBloc(CaffeineRepository())
                   ..add(const FetchCaffeine()),
                 child: CaffeineCard(),
-              )
+              ),
             ],
           ),
           Column(children: [
@@ -188,30 +187,36 @@ class DashboardView extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
+                            isScrollControlled: true,
                             context: context,
                             builder: (context) {
                               context
                                   .read<RunningBloc>()
-                                  .add(FetchPreferences());
+                                  .add(const FetchPreferences());
                               return BlocBuilder<RunningBloc, RunningState>(
                                 builder: (context, state) {
                                   if (state.status == RunningStatus.loading) {
-                                    return const CircularProgressIndicator();
+                                    return Container();
                                   } else {
                                     WeatherPreferences preference = state
                                             .preferences ??
-                                        WeatherPreferences(18, true, 0, 25, 0);
+                                        WeatherPreferences(18, true, 0, 25, 0, const TimeOfDay(hour: 4, minute: 59), const TimeOfDay(hour: 22, minute: 01));
                                     final temperature = preference.targetTemp;
                                     final precipitation = preference.rainPref;
                                     final cloudCoverage = preference.cloudPref;
                                     final windSpeed = preference.windPref;
                                     final snow = preference.avoidSnow;
+                                    final startTime = preference.startTime;
+                                    final endTime = preference.endTime;
                                     return RunningPreferences(
                                         temperature,
                                         precipitation,
                                         cloudCoverage,
                                         windSpeed,
-                                        snow);
+                                        snow,
+                                        startTime, 
+                                        endTime
+                                        );
                                   }
                                 },
                               );
@@ -221,25 +226,56 @@ class DashboardView extends StatelessWidget {
                 ],
               ),
             ),
-            BlocBuilder<RunningBloc, RunningState>(
-              builder: (context, state) {
-                if (state.status == RunningStatus.loading) {
-                  return const CircularProgressIndicator();
-                } else {
-                  final recommended = state.intervals ?? [];
-                  return Column(
-                      children: recommended
-                          .map((e) => SuggestedRunningCard(interval: e))
-                          .toList());
-                }
-              },
-            ),
+            SuggestedRunningCards(),
           ]),
         ],
       ),
     );
   }
 }
+
+
+
+class SuggestedRunningCards extends StatefulWidget {
+  @override
+  _SuggestedRunningCardsState createState() => _SuggestedRunningCardsState();
+}
+
+class _SuggestedRunningCardsState extends State<SuggestedRunningCards> {
+  int _displayCount = 3;
+
+  void _loadMore() {
+    setState(() {
+      _displayCount += 7;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<RunningBloc, RunningState>(
+      builder: (context, state) {
+        if (state.status == RunningStatus.loading) {
+          _displayCount = 3;
+          return const CircularProgressIndicator();
+        } else {
+          final recommended = state.intervals ?? [];
+          final displayed = recommended.take(_displayCount).toList();
+          return Column(
+            children: [
+              ...displayed.map((e) => SuggestedRunningCard(interval: e)),
+              if (displayed.length < recommended.length)
+                ElevatedButton(
+                  onPressed: _loadMore,
+                  child: const Text('Load More'),
+                ),
+            ],
+          );
+        }
+      },
+    );
+  }
+}
+
 
 const Color lightBlack = Color(0xFF3A3A3A);
 

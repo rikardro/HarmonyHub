@@ -100,12 +100,9 @@ class RecommendedDaysRepo {
     Location loc = await Location.getInstance();
     List<WeatherInformation> weatherList =
         await apiClient.requestWeather(loc.latitude, loc.longitude);
-
     WeatherPreferences? preferences = await getUserPreferences();
-
-    preferences ??= WeatherPreferences(18, true, 0, 25, 0);
-
-    print(preferences.rainPref);
+    preferences ??= WeatherPreferences(18, true, 0, 25, 0, TimeOfDay(hour: 4, minute: 59), TimeOfDay(hour: 22, minute: 01));
+    print(preferences.targetTemp);
 
     List<RecommendedTime> recommended = [];
     for (WeatherInformation weather in weatherList) {
@@ -113,7 +110,7 @@ class RecommendedDaysRepo {
       recommended.add(RecommendedTime(weather, points));
     }
 
-    final List<List<RecommendedTime>> clusters = clusterTimes(recommended);
+    final List<List<RecommendedTime>> clusters = clusterTimes(recommended, preferences.startTime, preferences.endTime);
 
     // Sort clusters by the average points
     clusters.sort((a, b) =>
@@ -169,14 +166,14 @@ class RecommendedDaysRepo {
 
   // Cluster times into intervals
   List<List<RecommendedTime>> clusterTimes(
-      List<RecommendedTime> recommendedTimes) {
+      List<RecommendedTime> recommendedTimes, TimeOfDay sT, TimeOfDay eT) {
     List<List<RecommendedTime>> clusters = [];
     List<RecommendedTime> currentCluster = [];
     for (int i = 0; i < recommendedTimes.length; i++) {
       DateTime date = DateTime.parse(recommendedTimes[i].weather.time);
 
-      DateTime startTime = DateTime(date.year, date.month, date.day, 4, 59);
-      DateTime endTime = DateTime(date.year, date.month, date.day, 22, 01);
+      DateTime startTime = DateTime(date.year, date.month, date.day, sT.hour, sT.minute);
+      DateTime endTime = DateTime(date.year, date.month, date.day, eT.hour, eT.minute);
 
       if (date.isAfter(startTime) && date.isBefore(endTime)) {
         if (currentCluster.isEmpty) {
@@ -226,8 +223,16 @@ class RecommendedDaysRepo {
       'rainPref': weatherPreferences.rainPref,
       'cloudPref': weatherPreferences.cloudPref,
       'windPref': weatherPreferences.windPref,
+      'startTime': formattedTimeOfDay(weatherPreferences.startTime),
+      'endTime': formattedTimeOfDay(weatherPreferences.endTime),
     });
   }
+
+String formattedTimeOfDay(TimeOfDay timeOfDay) {
+  final hour = timeOfDay.hour.toString().padLeft(2, '0');
+  final minute = timeOfDay.minute.toString().padLeft(2, '0');
+  return '$hour:$minute';
+}
 
   Future<WeatherPreferences> getUserPreferences() async {
     final currentUserId = provider.currentUser?.id;
@@ -238,10 +243,10 @@ class RecommendedDaysRepo {
       if (data.isNotEmpty) {
         return WeatherPreferences.fromMap(data);
       } else {
-        return WeatherPreferences(18, false, 0, 25, 0);
+        return WeatherPreferences(18, false, 0, 25, 0, const TimeOfDay(hour: 4, minute: 59), const TimeOfDay(hour: 22, minute: 01));
       }
     } else {
-      return WeatherPreferences(18, false, 0, 25, 0);
+      return WeatherPreferences(18, false, 0, 25, 0, const TimeOfDay(hour: 4, minute: 59), const TimeOfDay(hour: 22, minute: 01));
     }
   }
 }
