@@ -44,6 +44,7 @@ class RunSession {
   void calculateAvgMinPerKm() {
     if (_distance == 0) {
       _avgMinPerKm = 0;
+      log("distance is 0");
       return;
     }
     _avgMinPerKm = (duration.inSeconds / 60) / (_distance);

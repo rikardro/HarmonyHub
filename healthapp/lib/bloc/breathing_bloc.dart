@@ -23,13 +23,15 @@ class BreathingBloc extends Bloc<BreathingEvent, BreathingState> {
           final Uri audioUri = Uri.parse(audioUrl);
           final String category = event.category;
 
+          log(audioUri.toString());
+
           emit(state.copyWith(
             status: BreathingStatus.success,
             audioUri: audioUri,
             category: category,
           ));
         } catch (_) {
-          log("something went wrong + $_");
+          log("något gick snett");
           emit(state.copyWith(status: BreathingStatus.error));
         }
       },
