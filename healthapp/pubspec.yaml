@@ -47,6 +47,7 @@ dependencies:
   equatable: ^2.0.5
   syncfusion_flutter_gauges: ^21.1.39
   audioplayers: ^4.0.1
+  google_fonts: ^4.0.4
   
 dev_dependencies:
   flutter_test:
@@ -95,7 +96,7 @@ flutter:
 
     - assets/images/nature_image.png
     - assets/images/map.png
-
+    - assets/images/boat.gif
     - assets/images/precipitation.png
     - assets/images/degrees.png
 
