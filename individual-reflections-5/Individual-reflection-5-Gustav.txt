@@ -1,0 +1,12 @@
+1) Next week I want to learn more about the entire project focusing on the parts that I was not a
+part of developing. I look forward to learning more from my team and getting a better understanding
+of the final project. 
+
+2) This week my contributions have been focused on further developing the login page of our application.
+The changes I made where both visual and functionall. It is now more dynamic in it's navigation
+and is accompanied by some soothing visuals to set the tone for the rest of our application. It also layers
+the functionallity for logging in and forgotten passwords on the same page while rederecting users to a 
+single dedicated page for registering to the app.
+
+3) Next week I hope to spend more time analyzing other peoples code so that we can have a nice and clean
+final codebase.
