@@ -131,6 +131,7 @@ class RecommendedDaysRepo {
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
     for (List<RecommendedTime> cluster in topClusters) {
+
       final start = DateTime.parse(cluster.first.weather.time);
       final end = DateTime.parse(cluster.last.weather.time);
 
@@ -174,6 +175,10 @@ class RecommendedDaysRepo {
 
       DateTime startTime = DateTime(date.year, date.month, date.day, sT.hour, sT.minute);
       DateTime endTime = DateTime(date.year, date.month, date.day, eT.hour, eT.minute);
+
+      if (date.isBefore(DateTime.now())) {
+        continue;
+      }
 
       if (date.isAfter(startTime) && date.isBefore(endTime)) {
         if (currentCluster.isEmpty) {
