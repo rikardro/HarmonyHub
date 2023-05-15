@@ -146,7 +146,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventLogOut>((event, emit) async {
       try {
         await provider.logOut();
-        print('logged out bloc');
         emit(
           const AuthStateLoggedOut(
             exception: null,
@@ -154,7 +153,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ),
         );
       } on Exception catch (e) {
-        print("failed to log out");
         emit(
           AuthStateLoggedOut(
             exception: e,
