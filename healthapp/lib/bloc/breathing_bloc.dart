@@ -22,9 +22,6 @@ class BreathingBloc extends Bloc<BreathingEvent, BreathingState> {
               await repository.getBreathingAudio(event.category.toLowerCase());
           final Uri audioUri = Uri.parse(audioUrl);
           final String category = event.category;
-
-          log(audioUri.toString());
-
           emit(state.copyWith(
             status: BreathingStatus.success,
             audioUri: audioUri,

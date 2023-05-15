@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:healthapp/backend/running/run_session_repository.dart';
 
@@ -20,7 +22,7 @@ class RunHistoryBloc extends Bloc<RunHistoryEvent, RunHistoryState> {
             ),
           );
         } catch (_) {
-          print(_);
+          log(_.toString());
           emit(state.copyWith(status: RunHistoryStatus.error));
         }
       },

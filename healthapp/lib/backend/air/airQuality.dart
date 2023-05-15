@@ -15,7 +15,7 @@ class AirQualityData {
     if (aqi < 50) {
       airQualityStatus = "Good";
     } else if (aqi <= 100) {
-      airQualityStatus = "Okey";
+      airQualityStatus = "Moderate";
     } else {
       airQualityStatus = "Poor";
     }

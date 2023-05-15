@@ -28,16 +28,6 @@ class PointsData {
         precipitationPoints;
   }
 
-  void printPoints() {
-    print("POINTS!:::");
-    print("Wind: $windPoints");
-    print("Temperature: $temperaturePoints");
-    print("Snow: $snowPoints");
-    print("Cloud cover: $cloudCoverPoints");
-    print("Precipitation: $precipitationPoints");
-    print("--------------------");
-  }
-
   PointsData(
       {required this.windPoints,
       required this.temperaturePoints,
@@ -190,28 +180,6 @@ class RecommendedDaysRepo {
     }
 
     return clusters;
-  }
-
-  void printIntervals(List<RecommendedIntervals> intervals) {
-    // print out the recommended intervals
-    for (RecommendedIntervals interval in intervals) {
-      print('Day name: ${interval.dayName}');
-      print('Interval: ${interval.interval}');
-      print('Temperature: ${interval.temperature}');
-      print('Windspeed: ${interval.windspeed}');
-      print('Precipitation: ${interval.precipitation}');
-      print('Weather types: ${interval.weatherTypeIcons}');
-
-      print(
-          'Total points: ${interval.points.fold(0.0, (sum, e) => sum + e.getTotalPoints())}');
-
-      // print all points in interval
-      for (PointsData points in interval.points) {
-        //points.printPoints();
-      }
-
-      print("=====================================");
-    }
   }
 
   Future<void> savePreferences(WeatherPreferences weatherPreferences) async {

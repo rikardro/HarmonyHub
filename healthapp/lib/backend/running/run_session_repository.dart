@@ -39,7 +39,6 @@ class RunSessionRepository {
   }
 
   Future<List<RunSessionHistory>> fetchAllRunSessions() async {
-    print("FETCH ALL RUN SESSIONS");
     // get the users id
     final currentUserId = provider.currentUser?.id;
     final QuerySnapshot querySnapshot =

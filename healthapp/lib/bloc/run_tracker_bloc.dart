@@ -31,13 +31,11 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
 
     on<StartTracking>(
       (event, emit) async {
-        print("START TRACKING");
         try {
           await locationTracker.startTracking();
           add(WatchRunSession());
         } catch (_) {
-          print("Failed to start tracking");
-          print(_);
+          log(_.toString());
           emit(state.copyWith(status: RunTrackerStatus.error));
         }
       },
@@ -45,7 +43,6 @@ class RunTrackerBloc extends Bloc<RunTrackerEvent, RunTrackerState> {
 
     on<ResumeTracking>(
       (event, emit) async {
-        print("Resume TRACKING");
         try {
           await locationTracker.startTracking();
           emit(state.copyWith(status: RunTrackerStatus.running));

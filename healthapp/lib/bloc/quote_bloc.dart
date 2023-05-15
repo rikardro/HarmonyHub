@@ -15,7 +15,7 @@ class QuoteBloc extends Bloc<QuoteEvent, QuoteState> {
         final quote = await repository.getQuote();
         emit(QuoteState(status: QuoteStatus.success, quote: quote));
       } catch (_) {
-        print(_.toString());
+        log(_.toString());
         emit(state.copyWith(status: QuoteStatus.error));
       }
     });
