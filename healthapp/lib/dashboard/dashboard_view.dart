@@ -81,6 +81,8 @@ class DashboardView extends StatelessWidget {
                     '${GreetingPhrase.get()} 👋',
                     style: topTextStyle,
                   ),
+                ]
+              ),
               GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
@@ -116,8 +118,7 @@ class DashboardView extends StatelessWidget {
                 ),
               )
             ],
-          ),
-        ),
+        )),
         Row(
           children: [
             FutureBuilder(
@@ -150,8 +151,7 @@ class DashboardView extends StatelessWidget {
           ],
         ),
         SuggestedRunningDays(),
-      ],
-    );
+  ]);
   }
 }
 
