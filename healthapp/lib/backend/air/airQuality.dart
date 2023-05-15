@@ -15,9 +15,11 @@ class AirQualityData {
     if (aqi < 50) {
       airQualityStatus = "Good";
     } else if (aqi <= 100) {
-      airQualityStatus = "Okey";
+      airQualityStatus = "Moderate";
+    } else if (aqi <= 300 && aqi > 100) {
+      airQualityStatus = "Unhealthy";
     } else {
-      airQualityStatus = "Poor";
+      airQualityStatus = "Hazardous";
     }
   }
 
@@ -59,6 +61,6 @@ class AirQuality {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AirQualityData airQualityData = await AirQuality.fetchAirQualityData();
-  print('City: ${airQualityData.city}');
-  print('AQI: ${airQualityData.aqi}');
+  log('City: ${airQualityData.city}');
+  log('AQI: ${airQualityData.aqi}');
 }

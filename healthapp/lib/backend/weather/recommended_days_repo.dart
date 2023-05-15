@@ -28,16 +28,6 @@ class PointsData {
         precipitationPoints;
   }
 
-  void printPoints() {
-    print("POINTS!:::");
-    print("Wind: $windPoints");
-    print("Temperature: $temperaturePoints");
-    print("Snow: $snowPoints");
-    print("Cloud cover: $cloudCoverPoints");
-    print("Precipitation: $precipitationPoints");
-    print("--------------------");
-  }
-
   PointsData(
       {required this.windPoints,
       required this.temperaturePoints,
@@ -102,7 +92,6 @@ class RecommendedDaysRepo {
         await apiClient.requestWeather(loc.latitude, loc.longitude);
     WeatherPreferences? preferences = await getUserPreferences();
     preferences ??= WeatherPreferences(18, true, 0, 25, 0, TimeOfDay(hour: 4, minute: 59), TimeOfDay(hour: 22, minute: 01));
-    print(preferences.targetTemp);
 
     List<RecommendedTime> recommended = [];
     for (WeatherInformation weather in weatherList) {
@@ -131,6 +120,7 @@ class RecommendedDaysRepo {
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
     for (List<RecommendedTime> cluster in topClusters) {
+
       final start = DateTime.parse(cluster.first.weather.time);
       final end = DateTime.parse(cluster.last.weather.time);
 
@@ -175,6 +165,10 @@ class RecommendedDaysRepo {
       DateTime startTime = DateTime(date.year, date.month, date.day, sT.hour, sT.minute);
       DateTime endTime = DateTime(date.year, date.month, date.day, eT.hour, eT.minute);
 
+      if (date.isBefore(DateTime.now())) {
+        continue;
+      }
+
       if (date.isAfter(startTime) && date.isBefore(endTime)) {
         if (currentCluster.isEmpty) {
           currentCluster.add(recommendedTimes[i]);
@@ -191,28 +185,6 @@ class RecommendedDaysRepo {
     }
 
     return clusters;
-  }
-
-  void printIntervals(List<RecommendedIntervals> intervals) {
-    // print out the recommended intervals
-    for (RecommendedIntervals interval in intervals) {
-      print('Day name: ${interval.dayName}');
-      print('Interval: ${interval.interval}');
-      print('Temperature: ${interval.temperature}');
-      print('Windspeed: ${interval.windspeed}');
-      print('Precipitation: ${interval.precipitation}');
-      print('Weather types: ${interval.weatherTypeIcons}');
-
-      print(
-          'Total points: ${interval.points.fold(0.0, (sum, e) => sum + e.getTotalPoints())}');
-
-      // print all points in interval
-      for (PointsData points in interval.points) {
-        //points.printPoints();
-      }
-
-      print("=====================================");
-    }
   }
 
   Future<void> savePreferences(WeatherPreferences weatherPreferences) async {

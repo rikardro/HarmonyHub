@@ -14,7 +14,9 @@ Future<T?> showGenericDialog<T>({
     builder: (builder) {
       return AlertDialog(
         title: Text(title),
-        content: Text(content),
+        content: SingleChildScrollView(
+          child: Text(content),
+        ),
         actions: options.keys.map((optionTitle) {
           final T value = options[optionTitle];
           return TextButton(

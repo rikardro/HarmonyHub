@@ -15,8 +15,8 @@ class RunSessionRepository {
   final CollectionReference instance =
       FirebaseFirestore.instance.collection('RunSessions');
 
-  String twoDigits(int? n){
-    if(n == null) return "--";
+  String twoDigits(int? n) {
+    if (n == null) return "--";
     return n.toString().padLeft(2, "0");
   }
 
@@ -28,17 +28,17 @@ class RunSessionRepository {
         'avgKmPerH': session.getAvgKmPerHour().toStringAsFixed(2),
         'avgMinPerKm': session.getAvgMinPerKm().toStringAsFixed(2),
         'distance': session.getDistance().toStringAsFixed(2),
-        'duration': "${twoDigits(session.duration.inMinutes.remainder(60))}:${twoDigits(session.duration.inSeconds.remainder(60))}",
+        'duration':
+            "${twoDigits(session.duration.inMinutes.remainder(60))}:${twoDigits(session.duration.inSeconds.remainder(60))}",
         'startTime': DateTime.now()
       });
     } catch (e) {
-      print(e);
-      print("FIREBASE ERROR");
+      log(e.toString());
+      log("FIREBASE ERROR");
     }
   }
 
   Future<List<RunSessionHistory>> fetchAllRunSessions() async {
-    print("FETCH ALL RUN SESSIONS");
     // get the users id
     final currentUserId = provider.currentUser?.id;
     final QuerySnapshot querySnapshot =

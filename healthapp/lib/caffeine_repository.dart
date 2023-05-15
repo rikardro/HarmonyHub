@@ -102,7 +102,7 @@ class CaffeineRepository {
         'drinkType': drinkType,
       });
     } catch (e) {
-      print('Error adding document: $e');
+      log('Error adding document: $e');
     }
   }
 

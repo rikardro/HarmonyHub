@@ -66,7 +66,7 @@ class WeeklyWeatherCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(day, style: dayTextStyle),
+                  Text(day, style: dayTextStyle, overflow: TextOverflow.ellipsis,),
                   Image(image: weatherImage, width: 60,),
                 ],
               ),
