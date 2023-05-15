@@ -26,19 +26,23 @@ class AirQualityCard extends StatelessWidget {
         {
           return const [Color(0xFF05FF00), Color(0xFF00FFFF)];
         }
-      case ("poor"):
-        {
-          return const [
-            Color.fromARGB(255, 252, 94, 94),
-            Color.fromARGB(255, 255, 141, 89)
-          ];
-        }
       case ("moderate"):
         {
           return const [
             Color.fromARGB(255, 255, 184, 78),
             Color.fromARGB(255, 255, 237, 73)
           ];
+        }
+      case ("unhealthy"):
+        {
+          return const [
+            Color.fromARGB(255, 252, 94, 94),
+            Color.fromARGB(255, 255, 141, 89)
+          ];
+        }
+      case ("hazardous"):
+        {
+          return const [Colors.black, Colors.grey];
         }
 
       default:
@@ -81,20 +85,16 @@ class AirQualityCard extends StatelessWidget {
                         fontSize: 25.0,
                         color: Colors.white),
                   ),
-                  /* const Image(
-                    image: AssetImage('assets/images/wind_white.png'),
-                    width: 60,
-                  ), */
+
                   ShaderMask(
                     shaderCallback: (bounds) => LinearGradient(
                       colors: getQualityColor(state.airQualityStatus ?? ""),
                     ).createShader(bounds),
                     child: Text(
                       state.airQualityStatus ?? "",
-                      style: TextStyle(
-                        shadows: [textShadow],
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 25.0,
+                        fontSize: 15.0,
                         color: Colors.white,
                       ),
                     ),
