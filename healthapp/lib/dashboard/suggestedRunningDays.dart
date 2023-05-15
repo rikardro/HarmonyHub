@@ -49,7 +49,7 @@ class _SuggestedRunningCardsState extends State<SuggestedRunningDays> {
                       return BlocBuilder<RunningBloc, RunningState>(
                         builder: (context, state) {
                           if (state.status == RunningStatus.loading) {
-                            return Container();
+                            return const CircularProgressIndicator();
                           } else {
                             WeatherPreferences preference =
                                 state.preferences ??
