@@ -45,10 +45,13 @@ class _CaffeineDetailedViewState extends State<CaffeineDetailedView> {
             ),
             body: Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color(0xFF8D3786),
-                  Color(0xFF8D3751),
-                ], end: Alignment.bottomCenter, begin: Alignment.topCenter),
+                gradient: LinearGradient(
+                  colors: [
+                  Color(0xFFEB7D7A),
+                  Color.fromARGB(255, 235, 160, 122)
+                ], 
+                end: Alignment.bottomCenter, 
+                begin: Alignment.topCenter),
               ),
               child: Center(
                 child: Column(
@@ -564,6 +567,9 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           ],
         ),
         Slider(
+          thumbColor: const Color(0xFFEB7D7A),
+          activeColor: const Color(0xFFEB7D7A),
+          inactiveColor: const Color.fromARGB(255, 247, 203, 202),
           value: _sliderValue1,
           onChanged: (newValue) {
             setState(() {
@@ -573,7 +579,7 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           min: 0,
           max: 60,
           divisions: 12,
-          label: '$_sliderValue1 mg/ml',
+          label: '$_sliderValue1',
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -600,6 +606,9 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           ],
         ),
         Slider(
+          thumbColor: const Color(0xFFEB7D7A),
+          activeColor: const Color(0xFFEB7D7A),
+          inactiveColor: const Color.fromARGB(255, 247, 203, 202),
           value: _sliderValue2,
           onChanged: (newValue) {
             setState(() {
@@ -609,7 +618,7 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           min: 100,
           max: 500,
           divisions: 8,
-          label: '$_sliderValue2 ml',
+          label: '$_sliderValue2',
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -636,6 +645,9 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           ],
         ),
         Slider(
+          thumbColor: const Color(0xFFEB7D7A),
+          activeColor: const Color(0xFFEB7D7A),
+          inactiveColor: const Color.fromARGB(255, 247, 203, 202),
           value: _sliderValue3,
           onChanged: (newValue) {
             setState(() {
@@ -645,7 +657,7 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
           min: 0,
           max: 10,
           divisions: 10,
-          label: '$_sliderValue3 hour(s)',
+          label: '$_sliderValue3',
         ),
         ElevatedButton(
           onPressed: () {
@@ -661,7 +673,11 @@ class _CustomAddSlidersState extends State<CustomAddSliders> {
             );
             Navigator.pop(context);
           },
-          child: Text("Add drink"),
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(const Color(0xFFEB7D7A)),
+          ),
+          child: const Text("Add"),
         )
       ],
     );
@@ -706,6 +722,7 @@ class _QuickAddGridState extends State<QuickAddGrid> {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: GridView.count(
+              childAspectRatio: 1.2,
               physics: NeverScrollableScrollPhysics(),
               crossAxisCount: 3,
               children: List.generate(6, (index) {
@@ -766,27 +783,20 @@ class _QuickAddGridState extends State<QuickAddGrid> {
           color: Colors.transparent,
           height: 50,
           child: Center(
-            child: SliderTheme(
-              data: SliderThemeData(
-                showValueIndicator: ShowValueIndicator.always,
-                valueIndicatorTextStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              child: Slider(
-                value: _sliderValue,
-                min: 0,
-                max: 10,
-                divisions: 20,
-                onChanged: (newValue) {
-                  setState(() {
-                    _sliderValue = newValue;
-                  });
-                },
-                label: '$_sliderValue',
-              ),
+            child: Slider(
+              value: _sliderValue,
+              thumbColor: const Color(0xFFEB7D7A),
+              activeColor: const Color(0xFFEB7D7A),
+              inactiveColor: const Color.fromARGB(255, 247, 203, 202),
+              min: 0,
+              max: 10,
+              divisions: 20,
+              onChanged: (newValue) {
+                setState(() {
+                  _sliderValue = newValue;
+                });
+              },
+              label: '$_sliderValue',
             ),
           ),
         ),
@@ -809,7 +819,7 @@ class _QuickAddGridState extends State<QuickAddGrid> {
           },
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all<Color>(Color(0xFF8D3786)),
+                MaterialStateProperty.all<Color>(const Color(0xFFEB7D7A)),
           ),
           child: const Text("Add"),
         ),
@@ -817,135 +827,6 @@ class _QuickAddGridState extends State<QuickAddGrid> {
     );
   }
 }
-
-/* class QuickAddGrid extends StatefulWidget {
-  @override
-  _QuickAddGridState createState() => _QuickAddGridState();
-}
-
-class _QuickAddGridState extends State<QuickAddGrid> {
-  double _sliderValue = 0.0;
-  Card? _selectedCard;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: Colors.red,
-          height: 300,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: GridView.count(
-              physics: NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
-              children: List.generate(6, (index) {
-                final product = drinks[index].product;
-                final amount = drinks[index].caffeineAmount;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedCard = Card(
-                        color: Colors.blue,
-                        child: Center(
-                          child: Text(
-                            '$product\n$amount mg',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      );
-                    });
-                  },
-                  child: Card(
-                    color: _selectedCard == null
-                        ? Colors.white
-                        : _selectedCard?.color,
-                    child: Center(
-                      child: Text(
-                        '$product\n$amount mg',
-                        style: TextStyle(
-                          color: _selectedCard == null
-                              ? Colors.black
-                              : Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.yellow,
-          height: 80,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("0", style: TextStyle(fontSize: 18)),
-                    Text("Hours since consumption",
-                        style: TextStyle(fontSize: 22)),
-                    Text("10", style: TextStyle(fontSize: 18)),
-                  ],
-                ),
-              ),
-              SliderTheme(
-                data: SliderThemeData(
-                  showValueIndicator: ShowValueIndicator.always,
-                  valueIndicatorTextStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: Slider(
-                  value: _sliderValue,
-                  min: 0,
-                  max: 10,
-                  divisions: 20,
-                  onChanged: (newValue) {
-                    setState(() {
-                      _sliderValue = newValue;
-                    });
-                  },
-                  label: '$_sliderValue',
-                ),
-              ),
-            ],
-          ),
-        ),
-        ElevatedButton(
-            onPressed: () {
-              if (_selectedCard == null) {
-                // No card selected
-                return;
-              }
-
-              context.read<CaffeineDetailedBloc>().add(
-                    AddCaffeine(amount: 50, drinkType: "Coffee"),
-                  );
-            },
-            child: Text("Add drink"))
-      ],
-    );
-  }
-} */
-
-/* List<CaffeineRecord> listCards = [
-  CaffeineRecord(
-      id: "XXX",
-      product: "Kaffe",
-      caffeineAmount: 50,
-      timeConsumed: Timestamp.fromDate(DateTime.now())),
-]; */
 
 class CaffeineRecord {
   final String id;
@@ -960,62 +841,3 @@ class CaffeineRecord {
     required this.timeConsumed,
   });
 }
-
-/* class _AddCaffeinePopupState extends State<AddCaffeinePopup> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(text: "Snabbval"),
-              Tab(text: "Avancerat"),
-            ],
-            indicatorColor: Colors.blue,
-            labelColor: Colors.blue,
-            unselectedLabelColor: Colors.grey,
-            labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            unselectedLabelStyle: TextStyle(fontSize: 16),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // Add Drink page
-                Center(
-                  child: Text("Add consumed drink"),
-                ),
-                // History page
-                Center(
-                  child: Text("Caffeine intake history"),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-} */
-

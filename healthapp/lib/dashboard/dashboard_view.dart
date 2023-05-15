@@ -81,8 +81,6 @@ class DashboardView extends StatelessWidget {
                     '${GreetingPhrase.get()} 👋',
                     style: topTextStyle,
                   ),
-                ],
-              ),
               GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
