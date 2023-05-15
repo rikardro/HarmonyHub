@@ -31,7 +31,7 @@ class AirQualityCard extends StatelessWidget {
             Color.fromARGB(255, 255, 141, 89)
           ];
         }
-      case ("okey"):
+      case ("okay"):
         {
           return const [
             Color.fromARGB(255, 255, 184, 78),
