@@ -10,7 +10,7 @@ const Color halfCloudyDayColor = Color.fromARGB(255, 255, 216, 143);
 const Color nightColor = Color.fromARGB(255, 115, 22, 255);
 
 const Color airQualityCardColor = Color(0xFF7EC9FF);
-const Color quoteCardColor = Color.fromARGB(255, 80, 179, 56);
+const Color quoteCardColor = Color.fromARGB(255, 96, 188, 73);
 const Color runTrackerCardColor = Color.fromARGB(255, 49, 204, 207);
 const Color musicCardColor = Color(0xFFFA7DCA);
 
