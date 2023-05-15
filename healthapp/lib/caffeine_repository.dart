@@ -25,6 +25,7 @@ class CaffeineRepository {
         DateTime(today.year, today.month, today.day, 23, 59, 59, 999, 999));
 
     final currentUserId = provider.currentUser?.id;
+    print(currentUserId);
     if (currentUserId == null) {
       // Handle the case where the user is not logged in
       //TODO: is there a better way to handle this?
@@ -37,6 +38,7 @@ class CaffeineRepository {
         .where('timeConsumed', isGreaterThanOrEqualTo: startOfYesterday)
         .where('timeConsumed', isLessThanOrEqualTo: endOfToday)
         .get();
+
 
     final total = getTotalCaffeine(querySnapshot);
     final status = _getStatus(total);
@@ -109,18 +111,24 @@ class CaffeineRepository {
   Future<List<CaffeineRecord>> fetchAllCaffeine() async {
     final currentUserId = provider.currentUser?.id;
     final QuerySnapshot querySnapshot =
-        await instance.where('userId', isEqualTo: currentUserId).get();
+    await instance.where('userId', isEqualTo: currentUserId).get();
 
     List<CaffeineRecord> caffeineList = [];
 
     for (QueryDocumentSnapshot<Object?> doc in querySnapshot.docs) {
-      CaffeineRecord caffeine = CaffeineRecord(
-        id: doc.id,
-        product: doc['drinkType'],
-        caffeineAmount: doc['amountConsumed'],
-        timeConsumed: doc['timeConsumed'],
-      );
-      caffeineList.add(caffeine);
+      print(doc.id);
+      var data = doc.data() as Map<String, dynamic>; // get the data as a Map
+      if (data.containsKey('drinkType') && data.containsKey('amountConsumed') && data.containsKey('timeConsumed')) {
+        CaffeineRecord caffeine = CaffeineRecord(
+          id: doc.id,
+          product: data['drinkType'],
+          caffeineAmount: data['amountConsumed'],
+          timeConsumed: data['timeConsumed'],
+        );
+        caffeineList.add(caffeine);
+      } else {
+        print("Document ${doc.id} does not contain all required fields.");
+      }
     }
 
     // Sort the caffeineList based on the timeConsumed field
@@ -128,7 +136,6 @@ class CaffeineRepository {
 
     return caffeineList;
   }
-
 
   Future<void> deleteCaffeine(String docRef) async{
     await instance.doc(docRef).delete();
