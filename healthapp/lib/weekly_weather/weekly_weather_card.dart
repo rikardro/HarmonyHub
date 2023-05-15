@@ -40,7 +40,7 @@ class WeeklyWeatherCard extends StatelessWidget {
 
     final dayTextStyle = TextStyle(
       color: Colors.white,
-      fontSize: 17  ,
+      fontSize: 15,
       fontWeight: FontWeight.bold,
       fontFamily: 'Inter',
       shadows: [
