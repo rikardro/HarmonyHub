@@ -2,38 +2,26 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:healthapp/backend/location/location.dart';
-import 'package:healthapp/backend/weather/recommended_days_repo.dart';
 import 'package:healthapp/backend/location/location_search.dart';
 import 'package:healthapp/backend/weather/weather.dart';
-import 'package:healthapp/bloc/breathing_bloc.dart';
 import 'package:healthapp/bloc/running_bloc.dart';
-import 'package:healthapp/breathing_view.dart';
-import 'package:healthapp/caffeine_repository.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
-import 'package:healthapp/dashboard/dashboard_cards/health_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
-import 'package:healthapp/dashboard/dashboard_cards/suggested_running_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
 import 'package:healthapp/dashboard/running_preferences.dart';
 import 'package:healthapp/profile_view.dart';
-import 'package:healthapp/run_tracker/run_tracker_page.dart';
 import 'package:healthapp/util/weatherInformation.dart';
 import 'package:healthapp/util/weatherPreferences.dart';
-import 'package:healthapp/util/weatherType.dart';
-import 'package:healthapp/weekly_weather/weather_view.dart';
-import 'package:healthapp/weekly_weather/weekly_weather_card.dart';
-
 import '../backend/greetingPhrase.dart';
 import '../bloc/air_quality_bloc.dart';
-import '../bloc/caffeine_bloc.dart';
 import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
 import '../bloc/quote_bloc.dart';
 import '../bloc/user_bloc.dart';
+import 'dashboard_cards/SuggestedRunningCards.dart';
 import 'dashboard_cards/breathing_card.dart';
 
 class DashboardView extends StatelessWidget {
@@ -54,226 +42,184 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileView()));
+                    },
+                    child: BlocBuilder<UserBloc, UserState>(
+                      builder: (context, state) {
+                        String initials = state.initals ?? "";
+                        initials = initials.toUpperCase();
+                        return CircleAvatar(
+                          backgroundColor: Colors.blueGrey,
+                          radius: 25,
+                          child: Text(
+                            initials,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    '${GreetingPhrase.get()} 👋',
+                    style: topTextStyle,
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    context: context,
+                    builder: (context) {
+                      return BlocProvider(
+                        create: (context) => LocationSearchBloc(),
+                        child: const LocationPopup(),
+                      );
+                    },
+                  );
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.grey[600],
+                    ),
+                    BlocBuilder<LocationBloc, LocationState>(
+                      builder: (context, state) {
+                        if (state.status == LocationStatus.loading) {
+                          return const Text("");
+                        } else {
+                          return Text(state.locationName ?? "",
+                              style: topTextStyle);
+                        }
+                      },
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            FutureBuilder(
+                future: fetchWeatherData(),
+                builder: (context,
+                    AsyncSnapshot<WeatherInformationCurrent> weatherData) {
+                  if (weatherData.hasData) {
+                    return WeatherCard(weatherData: weatherData);
+                  }
+                  return const CircularProgressIndicator();
+                }),
+            BlocProvider(
+                create: (context) => AirQualityBloc()..add(const FetchAirQuality()),
+                child: AirQualityCard())
+          ],
+        ),
+        Row(
+          children: [
+            BlocProvider(
+              create: (context) => QuoteBloc()..add(FetchQuote()),
+              child: const QuoteCard(),
+            ),
+            const RunTrackerCard(),
+          ],
+        ),
+        Row(
+          children: const [
+            AudioPlayerCard(),
+            CaffeineCard(),
+          ],
+        ),
+        Column(children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfileView()));
-                      },
-                      child: BlocBuilder<UserBloc, UserState>(
-                        builder: (context, state) {
-                          String initials = state.initals ?? "";
-                          initials = initials.toUpperCase();
-                          return CircleAvatar(
-                            backgroundColor: Colors.blueGrey,
-                            radius: 25,
-                            child: Text(
-                              initials,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      '${GreetingPhrase.get()} 👋',
-                      style: topTextStyle,
-                    ),
-                  ],
+                Text(
+                  "Suggested running days",
+                  style: topTextStyle,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      context: context,
-                      builder: (context) {
-                        return BlocProvider(
-                          create: (context) => LocationSearchBloc(),
-                          child: const LocationPopup(),
-                        );
-                      },
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        color: Colors.grey[600],
-                      ),
-                      BlocBuilder<LocationBloc, LocationState>(
-                        builder: (context, state) {
-                          if (state.status == LocationStatus.loading) {
-                            return const Text("");
-                          } else {
-                            return Text(state.locationName ?? "",
-                                style: topTextStyle);
-                          }
-                        },
-                      )
-                    ],
-                  ),
-                )
+                ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            context
+                                .read<RunningBloc>()
+                                .add(const FetchPreferences());
+                            return BlocBuilder<RunningBloc, RunningState>(
+                              builder: (context, state) {
+                                if (state.status == RunningStatus.loading) {
+                                  return Container();
+                                } else {
+                                  WeatherPreferences preference =
+                                      state.preferences ??
+                                          WeatherPreferences(
+                                              18,
+                                              true,
+                                              0,
+                                              25,
+                                              0,
+                                              const TimeOfDay(
+                                                  hour: 4, minute: 59),
+                                              const TimeOfDay(
+                                                  hour: 22, minute: 01));
+                                  final temperature = preference.targetTemp;
+                                  final precipitation = preference.rainPref;
+                                  final cloudCoverage = preference.cloudPref;
+                                  final windSpeed = preference.windPref;
+                                  final snow = preference.avoidSnow;
+                                  final startTime = preference.startTime;
+                                  final endTime = preference.endTime;
+                                  return RunningPreferences(
+                                      temperature,
+                                      precipitation,
+                                      cloudCoverage,
+                                      windSpeed,
+                                      snow,
+                                      startTime,
+                                      endTime);
+                                }
+                              },
+                            );
+                          });
+                    },
+                    child: const Text("Preferences"))
               ],
             ),
           ),
-          Row(
-            children: [
-              FutureBuilder(
-                  future: fetchWeatherData(),
-                  builder: (context,
-                      AsyncSnapshot<WeatherInformationCurrent> weatherData) {
-                    if (weatherData.hasData) {
-                      return WeatherCard(weatherData: weatherData);
-                    }
-                    return CircularProgressIndicator();
-                  }),
-              BlocProvider(
-                  create: (context) => AirQualityBloc()..add(FetchAirQuality()),
-                  child: AirQualityCard())
-            ],
-          ),
-          Row(
-            children: [
-              BlocProvider(
-                create: (context) => QuoteBloc()..add(FetchQuote()),
-                child: QuoteCard(),
-              ),
-              RunTrackerCard(),
-            ],
-          ),
-          Row(
-            children: [
-              AudioPlayerCard(),
-              CaffeineCard(),
-            ],
-          ),
-          Column(children: [
-            Container(
-              margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Suggested running days",
-                    style: topTextStyle,
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              context
-                                  .read<RunningBloc>()
-                                  .add(const FetchPreferences());
-                              return BlocBuilder<RunningBloc, RunningState>(
-                                builder: (context, state) {
-                                  if (state.status == RunningStatus.loading) {
-                                    return Container();
-                                  } else {
-                                    WeatherPreferences preference =
-                                        state.preferences ??
-                                            WeatherPreferences(
-                                                18,
-                                                true,
-                                                0,
-                                                25,
-                                                0,
-                                                const TimeOfDay(
-                                                    hour: 4, minute: 59),
-                                                const TimeOfDay(
-                                                    hour: 22, minute: 01));
-                                    final temperature = preference.targetTemp;
-                                    final precipitation = preference.rainPref;
-                                    final cloudCoverage = preference.cloudPref;
-                                    final windSpeed = preference.windPref;
-                                    final snow = preference.avoidSnow;
-                                    final startTime = preference.startTime;
-                                    final endTime = preference.endTime;
-                                    return RunningPreferences(
-                                        temperature,
-                                        precipitation,
-                                        cloudCoverage,
-                                        windSpeed,
-                                        snow,
-                                        startTime,
-                                        endTime);
-                                  }
-                                },
-                              );
-                            });
-                      },
-                      child: const Text("Preferences"))
-                ],
-              ),
-            ),
-            SuggestedRunningCards(),
-          ]),
-        ],
-      ),
-    );
-  }
-}
-
-class SuggestedRunningCards extends StatefulWidget {
-  @override
-  _SuggestedRunningCardsState createState() => _SuggestedRunningCardsState();
-}
-
-class _SuggestedRunningCardsState extends State<SuggestedRunningCards> {
-  int _displayCount = 3;
-
-  void _loadMore() {
-    setState(() {
-      _displayCount += 7;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<RunningBloc, RunningState>(
-      builder: (context, state) {
-        if (state.status == RunningStatus.loading) {
-          _displayCount = 3;
-          return const CircularProgressIndicator();
-        } else {
-          final recommended = state.intervals ?? [];
-          final displayed = recommended.take(_displayCount).toList();
-          return Column(
-            children: [
-              ...displayed.map((e) => SuggestedRunningCard(interval: e)),
-              if (displayed.length < recommended.length)
-                ElevatedButton(
-                  onPressed: _loadMore,
-                  child: const Text('Load More'),
-                ),
-            ],
-          );
-        }
-      },
+          SuggestedRunningCards(),
+        ]),
+      ],
     );
   }
 }
