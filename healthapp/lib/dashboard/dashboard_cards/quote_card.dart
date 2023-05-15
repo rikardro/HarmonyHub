@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/bloc/caffeine_bloc.dart';
 import 'package:healthapp/caffeine_repository.dart';
+import 'package:healthapp/constants/colors.dart';
 import '../../bloc/caffeine_detailed_bloc.dart';
 import '../../bloc/quote_bloc.dart';
 import '../../caffeine_detailed_view.dart';
@@ -16,7 +17,7 @@ class QuoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return DashboardCard(
       flex: 5,
-      color: Colors.green,
+      color: quoteCardColor,
       child: BlocBuilder<QuoteBloc, QuoteState>(builder: (context, state) {
         if (state.status == QuoteStatus.loading) {
           return CircularProgressIndicator();

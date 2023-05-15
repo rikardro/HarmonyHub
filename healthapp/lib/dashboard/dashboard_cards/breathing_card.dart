@@ -10,6 +10,7 @@ import '../../bloc/breathing_bloc.dart';
 import '../../bloc/caffeine_detailed_bloc.dart';
 import '../../bloc/quote_bloc.dart';
 import '../../caffeine_detailed_view.dart';
+import '../../constants/colors.dart';
 import '../dashboard_card.dart';
 
 class AudioPlayerCard extends StatelessWidget {
@@ -19,7 +20,7 @@ class AudioPlayerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return DashboardCard(
         flex: 5,
-        color: const Color(0xFFFA7DCA),
+        color: musicCardColor,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {

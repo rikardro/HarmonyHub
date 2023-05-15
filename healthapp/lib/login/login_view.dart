@@ -54,6 +54,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
     if (reseting_password){
       return BlocListener<AuthBloc, AuthState>(
         listener: (context, state) async {
@@ -79,15 +80,28 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const SizedBox(height: 175),
+              SizedBox(height: 175,
+              width: screenWidth,),
+                            Stack( children: [
               Text(
                 'HarmonyHub',
                 style: GoogleFonts.pinyonScript(
-                color: Colors.white,
-                fontSize: 50,
+                fontSize: 60,
+                foreground: Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 6
+                ..color = Colors.black
+                  ),
                 ),
+              Text(
+                'HarmonyHub',
+                style: GoogleFonts.pinyonScript(
+                fontSize: 60,
+                color: Colors.white),
+                ),
+                ]
               ),
-              const SizedBox(height: 70),
+              const SizedBox(height: 90),
               const Text(
                 'If you forgot your password, simply enter your email and we will send you a password reset link',
                 style: TextStyle(color: Colors.white),
@@ -160,24 +174,37 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const SizedBox(height: 175),
+              SizedBox(height: 175,
+              width: screenWidth),
+              Stack( children: [
               Text(
                 'HarmonyHub',
                 style: GoogleFonts.pinyonScript(
-                color: Colors.white,
-                fontSize: 50,
+                fontSize: 60,
+                foreground: Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 6
+                ..color = Colors.black
+                  ),
                 ),
+              Text(
+                'HarmonyHub',
+                style: GoogleFonts.pinyonScript(
+                fontSize: 60,
+                color: Colors.white),
+                ),
+                ]
               ),
-              const SizedBox(height: 70),
-              const Text(
-                'Welcome to HarmonyHub, please log in to see all kinds of interesting things about your health!',
-                style: TextStyle(color: Colors.white),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 90),
               ElevatedButton(
-                child: const Text(
-                  "Login",
-                ),
+                child: SizedBox(
+                  width: 100,
+                  height: 40,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: const Text(
+                      "Login",
+                ),),),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromARGB(255, 38, 0, 126),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -200,15 +227,19 @@ class _LoginViewState extends State<LoginView> {
                     (color: Colors.white,
                     fontSize: 20), 
                 ),
-                child: const Text("Register",),
+                child: SizedBox(
+                  width: 100,
+                  height: 40,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: const Text("Register",),),),
                 onPressed: () {
                   context.read<AuthBloc>().add(
                         const AuthEventShouldRegister(),
                       );
                 },
               ),
-            ],
-          ),
+          ],),
         ),
       ),
     );
@@ -239,19 +270,26 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             children: [
               const SizedBox(height: 175),
+              Stack( children: [
               Text(
                 'HarmonyHub',
                 style: GoogleFonts.pinyonScript(
-                color: Colors.white,
-                fontSize: 50,
+                fontSize: 60,
+                foreground: Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 6
+                ..color = Colors.black
+                  ),
                 ),
+              Text(
+                'HarmonyHub',
+                style: GoogleFonts.pinyonScript(
+                fontSize: 60,
+                color: Colors.white),
+                ),
+                ]
               ),
-              const SizedBox(height: 70),
-              const Text(
-                'Welcome to HarmonyHub, please log in to see all kinds of interesting things about your health!',
-                style: TextStyle(color: Colors.white),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 90),
               TextField(
                 controller: _email,
                 enableSuggestions: false,

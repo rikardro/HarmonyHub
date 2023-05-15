@@ -6,9 +6,8 @@ import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/util/dialogs/error_dialog.dart';
 import 'package:healthapp/util/dialogs/information_dialog.dart';
 import '../../bloc/air_quality_bloc.dart';
+import '../../constants/colors.dart';
 import '../dashboard_card.dart';
-
-const Color lightBlue = Color(0xFF7EC9FF);
 
 class AirQualityCard extends StatelessWidget {
   AirQualityCard({Key? key}) : super(key: key);
@@ -24,20 +23,23 @@ class AirQualityCard extends StatelessWidget {
     switch (quality) {
       case ("good"):
         {
-          return const [Color(0xFF05FF00), Color(0xFF00FFFF)];
+          return const [
+            green,
+            lightBlue,
+          ];
         }
       case ("moderate"):
         {
           return const [
-            Color.fromARGB(255, 255, 184, 78),
-            Color.fromARGB(255, 255, 237, 73)
+            orange,
+            yellow,
           ];
         }
       case ("unhealthy"):
         {
           return const [
-            Color.fromARGB(255, 252, 94, 94),
-            Color.fromARGB(255, 255, 141, 89)
+            red,
+            orange,
           ];
         }
       case ("hazardous"):
@@ -46,7 +48,10 @@ class AirQualityCard extends StatelessWidget {
         }
 
       default:
-        return const [Color(0xFF05FF00), Color(0xFF00FFFF)];
+        return const [
+          green,
+          lightBlue,
+        ];
     }
   }
 
@@ -58,7 +63,7 @@ class AirQualityCard extends StatelessWidget {
       if (state.status == AirQualityStatus.success) {
         return DashboardCard(
           flex: 5,
-          color: lightBlue,
+          color: airQualityCardColor,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
@@ -85,7 +90,6 @@ class AirQualityCard extends StatelessWidget {
                         fontSize: 25.0,
                         color: Colors.white),
                   ),
-
                   ShaderMask(
                     shaderCallback: (bounds) => LinearGradient(
                       colors: getQualityColor(state.airQualityStatus ?? ""),
