@@ -191,9 +191,7 @@ class DashboardView extends StatelessWidget {
                                   .add(const FetchPreferences());
                               return BlocBuilder<RunningBloc, RunningState>(
                                 builder: (context, state) {
-                                  if (state.status == RunningStatus.loading) {
-                                    return Container();
-                                  } else {
+                                  if (state.status == RunningStatus.success) {
                                     WeatherPreferences preference =
                                         state.preferences ??
                                             WeatherPreferences(
@@ -221,6 +219,8 @@ class DashboardView extends StatelessWidget {
                                         snow,
                                         startTime,
                                         endTime);
+                                  } else {
+                                    return const CircularProgressIndicator();
                                   }
                                 },
                               );
