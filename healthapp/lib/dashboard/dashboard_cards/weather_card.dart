@@ -29,7 +29,7 @@ class _WeatherCardState extends State<WeatherCard> {
   void changePage(BuildContext context) {
     Navigator.of(context).push(PageRouteBuilder(pageBuilder: 
     (context, animation, ignored){
-      return WeatherDetailedView();
+      return const WeatherDetailedView();
     }, opaque: false
     ))
     ;

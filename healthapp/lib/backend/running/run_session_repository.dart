@@ -8,12 +8,12 @@ import 'package:healthapp/services/auth/auth/firebase_auth_provider.dart';
 import 'dart:math' as math;
 
 class RunSessionRepository {
-  //TODO: should be in constructor instead?
-  final FirebaseAuthProvider provider = FirebaseAuthProvider();
+  final FirebaseAuthProvider provider;
+  final CollectionReference instance;
 
-  //TODO: this should be broken out into DataSource with its interface!
-  final CollectionReference instance =
-      FirebaseFirestore.instance.collection('RunSessions');
+  RunSessionRepository()
+      : provider = FirebaseAuthProvider(),
+        instance = FirebaseFirestore.instance.collection('RunSessions');
 
   String twoDigits(int? n) {
     if (n == null) return "--";

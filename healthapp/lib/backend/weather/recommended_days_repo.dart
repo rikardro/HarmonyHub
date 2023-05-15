@@ -41,7 +41,6 @@ class RecommendedDaysRepo {
 
   final FirebaseAuthProvider provider = FirebaseAuthProvider();
 
-  //TODO: this should be broken out into DataSource with its interface!
   final CollectionReference instance =
       FirebaseFirestore.instance.collection('UserWeatherPreferences');
 

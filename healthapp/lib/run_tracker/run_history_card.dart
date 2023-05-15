@@ -16,43 +16,23 @@ class RunHistoryCard extends StatelessWidget {
           color: Colors.white,
           size: 24,
         ),
-        SizedBox(
+        const SizedBox(
           width: 20,
         ),
         Text(
           value,
-          style: TextStyle(color: Colors.white, fontSize: 20),
+          style: const TextStyle(color: Colors.white, fontSize: 20),
         ),
       ],
     );
   }
 
-  // TODO, sholdn't be here lol
-  String formatDate(DateTime time) {
-    final DateFormat format = DateFormat('EEEE');
-    final now = DateTime.now();
-    final tomorrow = DateTime(now.year, now.month, now.day + 1);
-
-    String dayName;
-    if (time.day == now.day &&
-        time.month == now.month &&
-        time.year == now.year) {
-      dayName = "Today";
-    } else if (time.day == tomorrow.day &&
-        time.month == tomorrow.month &&
-        time.year == tomorrow.year) {
-      dayName = "Tomorrow";
-    } else {
-      dayName = "${format.format(time)} (${DateFormat('d/M').format(time)})";
-    }
-    return dayName;
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return DashboardCard(
       flex: 0,
-      color: Color(0xBB0000000),
+      color: const Color(0xbb0000000),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -62,27 +42,27 @@ class RunHistoryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(formatDate(history.startTime),
-                    style: TextStyle(
+                Text(history.dayName,
+                    style:const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 18,
                       color: Colors.white,
                     )),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Row(
                   children: [
                     Text(history.duration,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 26,
                           color: Colors.orangeAccent,
                         )),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
-                    Text("min",
+                    const Text("min",
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 20,
@@ -96,7 +76,7 @@ class RunHistoryCard extends StatelessWidget {
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+                  children: const [
                     Icon(
                       Icons.av_timer,
                       color: Colors.white,
@@ -114,7 +94,7 @@ class RunHistoryCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 Column(
@@ -122,15 +102,15 @@ class RunHistoryCard extends StatelessWidget {
                   children: [
                     Text(
                       history.avgMinPerKm,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     Text(
                       "${history.distance} km",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     Text(
                       "${history.avgKmPerHour} m/s",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ],
                 )
@@ -138,7 +118,7 @@ class RunHistoryCard extends StatelessWidget {
             )
           ],
         ),
-      ), // CONTENT HERE
+      ),
     );
   }
 }

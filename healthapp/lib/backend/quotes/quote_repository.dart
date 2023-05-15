@@ -7,11 +7,10 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class QuoteRepository {
-  //TODO: should be in constructor instead?
 
-  //TODO: this should be broken out into DataSource with its interface!
-  final CollectionReference instance =
-      FirebaseFirestore.instance.collection('InspirationalQuotes');
+  final CollectionReference instance;
+
+  QuoteRepository() : instance = FirebaseFirestore.instance.collection('InspirationalQuotes');
 
   Future<String> getQuote() async {
     //there are 42 quotes in the database
@@ -25,11 +24,4 @@ class QuoteRepository {
     return quote;
   }
 
-  //TODO: use this for getting one quote per day
-  int _getDayOfYear(DateTime date) {
-    int year = date.year;
-    DateTime startOfYear = DateTime(year);
-    int diff = date.difference(startOfYear).inDays;
-    return diff + 1;
-  }
 }

@@ -7,12 +7,12 @@ import 'dart:math' as math;
 import 'caffeine.dart';
 
 class CaffeineRepository {
-  //TODO: should be in constructor instead?
-  final FirebaseAuthProvider provider = FirebaseAuthProvider();
+  final FirebaseAuthProvider provider;
+  final CollectionReference instance;
 
-  //TODO: this should be broken out into DataSource with its interface!
-  final CollectionReference instance =
-      FirebaseFirestore.instance.collection('ConsumptionHistory');
+  CaffeineRepository()
+      : provider = FirebaseAuthProvider(),
+        instance = FirebaseFirestore.instance.collection('ConsumptionHistory');
 
   /// Returns the current caffeine level
   Future<Caffeine> fetchCurrentCaffeine() async {
@@ -27,7 +27,6 @@ class CaffeineRepository {
     final currentUserId = provider.currentUser?.id;
     if (currentUserId == null) {
       // Handle the case where the user is not logged in
-      //TODO: is there a better way to handle this?
       return Caffeine(amount: 0, status: "Low");
     }
 
