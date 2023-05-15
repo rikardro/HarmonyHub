@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthapp/run_tracker/run_history_page.dart';
 
+import '../../constants/colors.dart';
 import '../../run_tracker/run_tracker_page.dart';
 import '../dashboard_card.dart';
 
@@ -22,10 +23,10 @@ class _RunTrackerCardState extends State<RunTrackerCard> {
         );
       },
       flex: 5,
-      color: Color.fromARGB(255, 49, 204, 207),
+      color: runTrackerCardColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: const [
           Text(
             "Run Tracker",
             style: TextStyle(color: Colors.white, fontSize: 20),
