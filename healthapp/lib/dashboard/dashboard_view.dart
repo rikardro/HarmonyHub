@@ -5,23 +5,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthapp/backend/location/location.dart';
 import 'package:healthapp/backend/location/location_search.dart';
 import 'package:healthapp/backend/weather/weather.dart';
-import 'package:healthapp/bloc/running_bloc.dart';
 import 'package:healthapp/dashboard/dashboard_cards/air_quality_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/caffeine_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/run_tracker_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/quote_card.dart';
 import 'package:healthapp/dashboard/dashboard_cards/weather_card.dart';
-import 'package:healthapp/dashboard/running_preferences.dart';
+import 'package:healthapp/dashboard/suggestedRunningDays.dart';
 import 'package:healthapp/profile_view.dart';
 import 'package:healthapp/util/weatherInformation.dart';
-import 'package:healthapp/util/weatherPreferences.dart';
 import '../backend/greetingPhrase.dart';
 import '../bloc/air_quality_bloc.dart';
 import '../bloc/location_bloc.dart';
 import '../bloc/location_search_bloc.dart';
 import '../bloc/quote_bloc.dart';
 import '../bloc/user_bloc.dart';
-import 'dashboard_cards/SuggestedRunningCards.dart';
 import 'dashboard_cards/breathing_card.dart';
 
 class DashboardView extends StatelessWidget {
@@ -154,71 +151,7 @@ class DashboardView extends StatelessWidget {
             CaffeineCard(),
           ],
         ),
-        Column(children: [
-          Container(
-            margin: const EdgeInsets.fromLTRB(12, 16, 12, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Suggested running days",
-                  style: topTextStyle,
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            context
-                                .read<RunningBloc>()
-                                .add(const FetchPreferences());
-                            return BlocBuilder<RunningBloc, RunningState>(
-                              builder: (context, state) {
-                                if (state.status == RunningStatus.loading) {
-                                  return Container();
-                                } else {
-                                  WeatherPreferences preference =
-                                      state.preferences ??
-                                          WeatherPreferences(
-                                              18,
-                                              true,
-                                              0,
-                                              25,
-                                              0,
-                                              const TimeOfDay(
-                                                  hour: 4, minute: 59),
-                                              const TimeOfDay(
-                                                  hour: 22, minute: 01));
-                                  final temperature = preference.targetTemp;
-                                  final precipitation = preference.rainPref;
-                                  final cloudCoverage = preference.cloudPref;
-                                  final windSpeed = preference.windPref;
-                                  final snow = preference.avoidSnow;
-                                  final startTime = preference.startTime;
-                                  final endTime = preference.endTime;
-                                  return RunningPreferences(
-                                      temperature,
-                                      precipitation,
-                                      cloudCoverage,
-                                      windSpeed,
-                                      snow,
-                                      startTime,
-                                      endTime);
-                                }
-                              },
-                            );
-                          });
-                    },
-                    child: const Text("Preferences"))
-              ],
-            ),
-          ),
-          SuggestedRunningCards(),
-        ]),
+        SuggestedRunningDays(),
       ],
     );
   }
