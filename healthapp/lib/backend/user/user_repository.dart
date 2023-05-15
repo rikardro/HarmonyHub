@@ -10,19 +10,18 @@ import 'dart:math' as math;
 import 'package:healthapp/util/weatherPreferences.dart';
 
 class UserRepository {
-  //TODO: should be in constructor instead?
-  final FirebaseAuthProvider provider = FirebaseAuthProvider();
+final FirebaseAuthProvider provider;
+  final CollectionReference instance;
 
-  //TODO: this should be broken out into DataSource with its interface!
-  final CollectionReference instance =
-      FirebaseFirestore.instance.collection('Users');
+  UserRepository()
+      : provider = FirebaseAuthProvider(),
+        instance = FirebaseFirestore.instance.collection('Users');
 
   Future<bool> hasFirstAndLastName() async {
     FirebaseUser? user = await getCurrentUser();
     if (user == null) {
       return false;
     } else {
-      //TODO: lökigt?
       return user.firstName.isNotEmpty && user.lastName.isNotEmpty;
     }
   }

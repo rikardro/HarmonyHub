@@ -445,7 +445,6 @@ class CaffeineRecordCard extends StatelessWidget {
               Text(dateText),
             ],
           ),
-          //TODO: implement next sprint!
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.black),
             onPressed: () async {
