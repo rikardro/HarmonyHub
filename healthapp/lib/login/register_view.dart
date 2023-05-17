@@ -49,20 +49,28 @@ class _RegisterViewState extends State<RegisterView> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
+        /* appBar: AppBar(
           title: const Text("Register"),
-        ),
+        ), */
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
+              /* Image.asset(
                 'assets/images/nature_image.png',
                 height: 300,
-
+              ), */
+              SizedBox(
+                height: 150,
               ),
-              const Text('Welcome to Healthapp, enter your email and password to create an account!'),
+              const Text(
+                'Enter your email and password to create an account!',
+                style: TextStyle(fontSize: 20),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               TextField(
                 controller: _email,
                 enableSuggestions: false,
@@ -81,6 +89,7 @@ class _RegisterViewState extends State<RegisterView> {
                 decoration:
                     const InputDecoration(hintText: "Enter your password here"),
               ),
+              const SizedBox(height: 16.0),
               Center(
                 child: Column(
                   children: [
